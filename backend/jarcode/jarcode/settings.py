@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,8 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+AUTH_USER_MODEL = "users.User"
 # Application definition
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -37,6 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_dramatiq",
+    "rest_framework",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -73,12 +79,26 @@ WSGI_APPLICATION = "jarcode.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['POSTGRES_DB'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        'HOST': os.environ['POSTGRES_HOST'],
+        'PORT': os.environ['POSTGRES_PORT'],
+    },
 }
 
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f"redis://redis:{os.environ['REDIS_PORT']}/1",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -97,6 +117,23 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.rabbitmq.RabbitmqBroker",
+    "OPTIONS": {
+        "url": f"amqp://{os.environ['RABBITMQ_DEFAULT_USER']}:{os.environ['RABBITMQ_DEFAULT_PASS']}@rabbitmq:{os.environ['RABBITMQ_AMQP_PORT']}",
+    },
+    "MIDDLEWARE": [
+        "dramatiq.middleware.Prometheus",
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
+        "dramatiq.middleware.Callbacks",
+        "dramatiq.middleware.Retries",
+        "django_dramatiq.middleware.DbConnectionsMiddleware",
+        "django_dramatiq.middleware.AdminMiddleware",
+    ]
+}
 
 
 # Internationalization
