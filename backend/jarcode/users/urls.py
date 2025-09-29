@@ -2,7 +2,13 @@ from django.urls import path
 from .views import (
     RegistrationApiView,
     ResendAccountVerificationLinkApiView,
-    VerifyAccountApiView
+    VerifyAccountApiView,
+    GetCSRFToken,
+    Login,
+    Logout,
+    LoggedUserInfoApiView,
+    SendPasswordResetLinkApiView,
+    ChangePasswordAPiView
     )
 
 
@@ -12,6 +18,17 @@ urlpatterns = [
     path('resend-verification-link/',
          ResendAccountVerificationLinkApiView.as_view()),
     path('verify-account/<int:user_id>/<uuid:user_uuid>/<str:token>/',
-         VerifyAccountApiView.as_view())
-
+         VerifyAccountApiView.as_view()),
+    path('csrf-init/',
+         GetCSRFToken.as_view()),
+    path('login/',
+         Login.as_view()),
+    path('logout/',
+         Logout.as_view()),
+    path('me/',
+         LoggedUserInfoApiView.as_view()),
+    path('send-password-reset-link/',
+         SendPasswordResetLinkApiView.as_view()),
+    path('change-password/',
+         ChangePasswordAPiView.as_view())
 ]

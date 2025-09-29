@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -10,6 +12,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ['email', 'first_name', 'last_name',
                   'password', 'password2', 'id', 'uuid']
         extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+        return value
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -28,14 +37,37 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class ResendAccountVerificationLinkSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
-    user = None
+class UserLoggedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'is_content_creator', 'first_name',
+                  'last_name', 'id', 'uuid']
 
-    def validate_email(self, value):
-        user = User.objects.filter(email=value).first()
-        if not user or user.is_active:
-            msg = "There is no account with given email that awaits for verification."
-            raise serializers.ValidationError(msg)
-        self.user = user
+
+class EmailUserSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True)
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(required=True)
+    user_uuid = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+    password2 = serializers.CharField(required=True)
+
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
         return value
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError("Passwords do not match")
+        return attrs
