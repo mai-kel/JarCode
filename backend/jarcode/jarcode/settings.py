@@ -21,7 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-mquv0^1%&ph4ygu547jqexwbi1x$&!d3!d3yvve7_-%=9raxy-"
+SECRET_KEY = (
+    "django-insecure-mquv0^1%&ph4ygu547jqexwbi1x$&!d3!d3yvve7_-%="
+    "9raxy-"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,6 +93,18 @@ DATABASES = {
 }
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'login': '5/minute',
+        'token_creation': '5/minute',
+        'token_consumption': '5/minute',
+    },
+}
+
+
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
@@ -105,16 +120,28 @@ CACHES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
@@ -122,7 +149,11 @@ AUTH_PASSWORD_VALIDATORS = [
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.rabbitmq.RabbitmqBroker",
     "OPTIONS": {
-        "url": f"amqp://{os.environ['RABBITMQ_DEFAULT_USER']}:{os.environ['RABBITMQ_DEFAULT_PASS']}@rabbitmq:{os.environ['RABBITMQ_AMQP_PORT']}",
+        "url": (
+            f"amqp://{os.environ['RABBITMQ_DEFAULT_USER']}:"
+            f"{os.environ['RABBITMQ_DEFAULT_PASS']}@rabbitmq:"
+            f"{os.environ['RABBITMQ_AMQP_PORT']}"
+        ),
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.Prometheus",
