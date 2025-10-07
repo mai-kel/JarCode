@@ -23,7 +23,6 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.permissions import IsAuthenticated
 from django.middleware.csrf import get_token
 from django.db import transaction
-from django.contrib.sessions.models import Session
 
 
 class RegistrationApiView(APIView):
