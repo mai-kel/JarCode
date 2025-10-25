@@ -13,6 +13,7 @@ class EmailUserManager(BaseUserManager):
         email = self.normalize_email(email)
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
+        extra_fields.setdefault("is_content_creator", True)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save()
@@ -22,7 +23,7 @@ class EmailUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
-        extra_fields.setdefault("role", "ADMIN")
+        extra_fields.setdefault("is_content_creator", True)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError(_("Superuser must have is_staff=True."))
