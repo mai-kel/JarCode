@@ -1,11 +1,13 @@
 from django.contrib import admin
 from .models import Problem, ProblemReview
 
+
 class ProblemReviewInline(admin.TabularInline):
     model = ProblemReview
     extra = 1
     readonly_fields = ('created_at',)
     autocomplete_fields = ('author',)
+
 
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
@@ -38,6 +40,7 @@ class ProblemAdmin(admin.ModelAdmin):
     )
 
     inlines = [ProblemReviewInline]
+
 
 @admin.register(ProblemReview)
 class ProblemReviewAdmin(admin.ModelAdmin):

@@ -1,12 +1,14 @@
 from django.contrib import admin
 from .models import Submission, Result
 
+
 class ResultInline(admin.StackedInline):
     model = Result
     readonly_fields = ('output', 'outcome')
     can_delete = False
     max_num = 1
     verbose_name_plural = 'Result'
+
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
@@ -40,6 +42,7 @@ class SubmissionAdmin(admin.ModelAdmin):
             'fields': ('solution',)
         }),
     )
+
 
 @admin.register(Result)
 class ResultAdmin(admin.ModelAdmin):

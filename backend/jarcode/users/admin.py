@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User
 
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     list_display = (
@@ -27,10 +28,10 @@ class CustomUserAdmin(UserAdmin):
         (None, {
             'fields': ('email', 'password')
         }),
-        ('Informacje osobiste', {
+        ('Personal info', {
             'fields': ('first_name', 'last_name')
         }),
-        ('Uprawnienia', {
+        ('Permissions', {
             'fields': (
                 'is_active',
                 'is_staff',
@@ -40,7 +41,7 @@ class CustomUserAdmin(UserAdmin):
                 'user_permissions'
             )
         }),
-        ('Ważne daty', {
+        ('Important dates', {
             'fields': ('last_login', 'date_joined', 'uuid')
         }),
     )

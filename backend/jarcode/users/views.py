@@ -35,10 +35,12 @@ class RegistrationApiView(APIView):
 
     @extend_schema(
         summary="Register a new user",
-        description="Creates a new user account and sends a verification link via email.",
+        description=("Creates a new user account and "
+                     "sends a verification link via email."),
         request=UserRegistrationSerializer,
         responses={
-            201: OpenApiResponse(UserRegistrationSerializer, description="User successfully created."),
+            201: OpenApiResponse(UserRegistrationSerializer,
+                                 description="User successfully created."),
             400: OpenApiResponse(description="Invalid input data.")
         }
     )
@@ -58,11 +60,14 @@ class ResendAccountVerificationLinkApiView(APIView):
 
     @extend_schema(
         summary="Resend account verification link",
-        description="Resends the verification email if the user exists and is not yet activated.",
+        description=("Resends the verification email if the user exists "
+                     "and is not yet activated."),
         request=EmailUserSerializer,
         responses={
-            202: OpenApiResponse(description="Verification link sent (if applicable)."),
-            400: OpenApiResponse(description="Invalid email address.")
+            202: OpenApiResponse(
+                description="Verification link sent (if applicable)."),
+            400: OpenApiResponse(
+                description="Invalid email address.")
         }
     )
     def post(self, request, format=None):
@@ -85,11 +90,15 @@ class VerifyAccountApiView(APIView):
 
     @extend_schema(
         summary="Verify user account",
-        description="Activates a user account after verifying the token sent via email.",
+        description=("Activates a user account "
+                     "after verifying the token sent via email."),
         parameters=[
-            OpenApiParameter("user_id", int, OpenApiParameter.PATH, description="User ID."),
-            OpenApiParameter("user_uuid", str, OpenApiParameter.PATH, description="User UUID."),
-            OpenApiParameter("token", str, OpenApiParameter.PATH, description="Verification token.")
+            OpenApiParameter("user_id", int, OpenApiParameter.PATH,
+                             description="User ID."),
+            OpenApiParameter("user_uuid", str, OpenApiParameter.PATH,
+                             description="User UUID."),
+            OpenApiParameter("token", str, OpenApiParameter.PATH,
+                             description="Verification token.")
         ],
         responses={
             200: OpenApiResponse(description="Account successfully verified."),
@@ -122,8 +131,10 @@ class GetCSRFToken(APIView):
 
     @extend_schema(
         summary="Get CSRF token",
-        description="Returns a CSRF token required for session-based authentication.",
-        responses={200: OpenApiResponse(description="CSRF token successfully generated.")}
+        description=("Returns a CSRF token required "
+                     "for session-based authentication."),
+        responses={200: OpenApiResponse(
+            description="CSRF token successfully generated.")}
     )
     def get(self, request, format=None):
         get_token(request)
@@ -140,7 +151,8 @@ class Login(APIView):
         description="Authenticates a user and returns their profile data.",
         request=LoginSerializer,
         responses={
-            200: OpenApiResponse(UserLoggedSerializer, description="User successfully logged in."),
+            200: OpenApiResponse(UserLoggedSerializer,
+                                 description="User successfully logged in."),
             400: OpenApiResponse(description="Invalid email or password.")
         }
     )
@@ -156,9 +168,11 @@ class Login(APIView):
         user = authenticate(request=request, email=email, password=password)
         if user is not None:
             login(request, user)
-            return Response(UserLoggedSerializer(user).data, status=status.HTTP_200_OK)
+            return Response(UserLoggedSerializer(user).data,
+                            status=status.HTTP_200_OK)
 
-        return Response('Invalid email or password.', status=status.HTTP_400_BAD_REQUEST)
+        return Response('Invalid email or password.',
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class Logout(APIView):
@@ -168,7 +182,9 @@ class Logout(APIView):
     @extend_schema(
         summary="User logout",
         description="Logs out the currently authenticated user.",
-        responses={200: OpenApiResponse(description="Successfully logged out.")}
+        responses={
+            200: OpenApiResponse(description="Successfully logged out.")
+        }
     )
     def post(self, request, format=None):
         logout(request)
@@ -181,8 +197,12 @@ class LoggedUserInfoApiView(APIView):
 
     @extend_schema(
         summary="Get logged-in user information",
-        description="Returns profile information about the currently authenticated user.",
-        responses={200: OpenApiResponse(UserLoggedSerializer, description="User information retrieved.")}
+        description=("Returns profile information "
+                     "about the currently authenticated user."),
+        responses={
+            200: OpenApiResponse(UserLoggedSerializer,
+                                 description="User information retrieved.")
+        }
     )
     def get(self, request, format=None):
         serializer = UserLoggedSerializer(request.user)
@@ -196,11 +216,14 @@ class SendPasswordResetLinkApiView(APIView):
 
     @extend_schema(
         summary="Send password reset link",
-        description="Sends a password reset link via email if the user exists and is active.",
+        description=("Sends a password reset link via email "
+                     "if the user exists and is active."),
         request=EmailUserSerializer,
         responses={
-            202: OpenApiResponse(description="Password reset link sent (if applicable)."),
-            400: OpenApiResponse(description="Invalid email address.")
+            202: OpenApiResponse(
+                description="Password reset link sent (if applicable)."),
+            400: OpenApiResponse(
+                description="Invalid email address.")
         }
     )
     def post(self, request, format=None):
@@ -223,7 +246,8 @@ class ChangePasswordAPiView(APIView):
 
     @extend_schema(
         summary="Change password after reset",
-        description="Changes the user's password after validating the password reset token.",
+        description=("Changes the user's password "
+                     "after validating the password reset token."),
         request=ResetPasswordSerializer,
         responses={
             200: OpenApiResponse(description="Password successfully changed."),

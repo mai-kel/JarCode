@@ -20,7 +20,7 @@ class PythonJudge(Judge):
 
         client = docker.from_env()
         command_string = (
-            f"echo {shlex.quote(solution_code)} > {PythonJudge.SOLUTION_FILE} && "
+            f"echo {shlex.quote(solution_code)} > {PythonJudge.SOLUTION_FILE} && "  # noqa: E501
             f"echo {shlex.quote(test_code)} > {PythonJudge.TEST_FILE} && "
             f"pytest {PythonJudge.TEST_FILE}"
         )
