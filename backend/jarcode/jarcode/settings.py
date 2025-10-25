@@ -37,6 +37,7 @@ AUTH_USER_MODEL = "users.User"
 
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     "django_filters",
     "users.apps.UsersConfig",
     "courses.apps.CoursesConfig",
+    "problems.apps.ProblemsConfig",
+    "submissions.apps.SubmissionsConfig",
     'drf_spectacular',
     'drf_spectacular_sidecar'
 ]
@@ -80,7 +83,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "jarcode.wsgi.application"
-
+ASGI_APPLICATION = "jarcode.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -108,6 +111,16 @@ REST_FRAMEWORK = {
     },
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", os.environ['REDIS_PORT'])],
+        },
+    },
 }
 
 
