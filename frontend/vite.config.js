@@ -15,4 +15,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  // TODO remove in production!!!
+  server: {
+    watch: {
+      usePolling: true,
+    },
+    host: true,
+  },
 })

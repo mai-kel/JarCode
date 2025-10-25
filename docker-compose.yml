@@ -1,4 +1,42 @@
+
+volumes:
+  postgres_data:
+  django_media:
+  django_static:
+
 services:
+  reverse-proxy:
+    image: nginx:1.27.3
+    restart: always
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/templates
+      - django_media:/backend/jarcode/media
+      - django_static:/backend/jarcode/static
+    depends_on:
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_started
+    environment:
+      DJANGO_PORT: ${DJANGO_PORT}
+      VUE_PORT: ${VUE_PORT}
+
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+    ports:
+      - "5173:${VUE_PORT}"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port ${VUE_PORT}"
+    depends_on:
+      backend:
+        condition: service_started
+
   db:
     image: postgres:17
     environment:
@@ -47,8 +85,11 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
     volumes:
       - ./backend/jarcode:/app/jarcode
+      - django_media:/app/jarcode/media
+      - django_static:/app/jarcode/static
     command: >
       sh -c "python manage.py migrate
+      && python manage.py collectstatic --no-input
       && python manage.py runserver 0.0.0.0:${DJANGO_PORT}"
     ports:
       - "8000:${DJANGO_PORT}"
@@ -99,7 +140,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-volumes:
-  postgres_data:
-

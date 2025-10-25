@@ -1,0 +1,27 @@
+server {
+    listen 80;
+    server_name localhost;
+    client_max_body_size 100M;
+
+    location /static/ {
+        alias /backend/jarcode/static/;
+    }
+
+    location /media/ {
+        alias /backend/jarcode/media/;
+    }
+
+    location /api/ {
+        proxy_pass http://backend:${DJANGO_PORT}/api/;
+        proxy_pass_request_headers on;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location / {
+        proxy_pass http://frontend:${VUE_PORT}/;
+        proxy_pass_request_headers on;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
