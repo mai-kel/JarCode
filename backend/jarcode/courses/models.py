@@ -8,6 +8,7 @@ class Course(models.Model):
     owner = models.ForeignKey(User,
                               on_delete=models.CASCADE,
                               related_name='owned_courses')
+    thumbnail = models.ImageField(blank=True, null=False)
 
 
 class Chapter(models.Model):
