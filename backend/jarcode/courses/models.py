@@ -1,9 +1,15 @@
 from django.db import models
 from users.models import User
+import time
+
+
+def get_course_image_path(instance, filename):
+    return f'courses/images/{instance.id}/{filename}'
 
 
 def get_lesson_image_path(instance, filename):
-    return f'courses/images/{instance.id}/{filename}'
+    timestamp = time.time()
+    return f'lessons/images/{instance.lesson}/{timestamp}_{filename}'
 
 
 class Course(models.Model):
@@ -13,7 +19,7 @@ class Course(models.Model):
                               on_delete=models.CASCADE,
                               related_name='owned_courses')
     thumbnail = models.ImageField(blank=True, null=True,
-                                  upload_to=get_lesson_image_path)
+                                  upload_to=get_course_image_path)
 
     class Meta:
         ordering = ['title']
@@ -65,7 +71,7 @@ class LessonImage(models.Model):
     lesson = models.ForeignKey(Lesson,
                                on_delete=models.CASCADE,
                                related_name='images')
-    image = models.ImageField()
+    image = models.ImageField(upload_to=get_lesson_image_path)
 
     @property
     def owner(self):

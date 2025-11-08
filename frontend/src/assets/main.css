@@ -41,3 +41,16 @@ code[class*="language-"] .token {
   padding: 0 !important;
   border-radius: 0 !important;
 }
+
+/* Ensure images embedded in rich content don't overflow their container */
+.prose img,
+.content img,
+.rich-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  width: auto !important;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: contain;
+}

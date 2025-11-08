@@ -153,18 +153,13 @@ watch(selectedLesson, () => {
 </script>
 
 <style scoped>
-.prose img {
-  max-width: 100%;
-  height: auto;
-}
-
 .course-thumbnail {
-  width: 100%;
-  max-width: 640px;
-  height: auto;
-  max-height: 360px;
-  display: block;
-  margin-bottom: 1rem;
-  background-color: #f5f5f5;
+width: 100%;
+max-width: 640px;
+height: auto;
+max-height: 360px;
+display: block;
+margin-bottom: 1rem;
+background-color: #f5f5f5;
 }
 </style>

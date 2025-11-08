@@ -6,6 +6,11 @@ from django.db import transaction
 from .models import Course, Chapter, Lesson
 from .serializers import CourseSerializer, ChapterSerializer, LessonSerializer
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import LessonImageSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -87,3 +92,15 @@ class LessonViewSet(viewsets.ModelViewSet):
             next_position = (max_position or 0) + 1
 
             serializer.save(chapter=chapter, position=next_position)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_lesson_image(request):
+    serializer = LessonImageSerializer(data=request.data,
+                                       context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    image_url = serializer.data.get('image')
+    return Response({'location': image_url}, status=status.HTTP_201_CREATED)

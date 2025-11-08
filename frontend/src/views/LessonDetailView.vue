@@ -50,6 +50,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useCourseStore } from '../store/course';
 import { useToast } from 'primevue/usetoast';
 import Editor from '@tinymce/tinymce-vue';
+import apiClient from '../services/api';
 
 import 'tinymce/tinymce';
 import 'tinymce/models/dom/model';
@@ -106,10 +107,31 @@ const editorInit = computed(() => ({
     'undo redo | blocks | ' +
     'bold italic backcolor | alignleft aligncenter ' +
     'alignright alignjustify | bullist numlist outdent indent | ' +
-    'removeformat | table | codesample | help',
+    'removeformat | image | table | codesample | help',
   skin: false,
   content_css: [editorContentCss, editorContentUiCss, prismThemeCss],
   codesample_global_prismjs: true,
+  automatic_uploads: true,
+  images_upload_handler: function (blobInfo, success, failure, progress) {
+  const form = new FormData();
+  form.append('image', blobInfo.blob(), blobInfo.filename());
+  form.append('lesson', lessonId);
+    return apiClient.post('/lessons/upload-image/', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (e) => {
+        if (e.lengthComputable && progress) {
+          progress((e.loaded / e.total) * 100);
+        }
+      }
+    }).then(res => {
+      if (res && res.data && res.data.location) {
+        return res.data.location;
+      }
+      throw new Error('No location returned');
+    }).catch(err => {
+      throw err;
+    });
+  },
   codesample_languages: [
     { text: 'HTML/XML', value: 'markup' },
     { text: 'JavaScript', value: 'javascript' },
