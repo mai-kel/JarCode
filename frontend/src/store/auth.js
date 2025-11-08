@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = ref(false)
   const error = ref(null)
   const csrfInitialized = ref(false);
+  const isReady = ref(false); // becomes true after initial user fetch attempt
 
   const router = useRouter()
 
@@ -28,6 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
       await ensureCsrf();
       const response = await apiClient.post('/users/login/', credentials)
       user.value = response.data
+      isReady.value = true
       router.push({ name: 'home' })
       return true;
     } catch (e) {
@@ -44,6 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await ensureCsrf();
       await apiClient.post('/users/register/', details)
+      isReady.value = true
       router.push({ name: 'login' })
       return true;
     } catch (e) {
@@ -61,6 +64,7 @@ export const useAuthStore = defineStore('auth', () => {
       await ensureCsrf();
       await apiClient.post('/users/logout/')
       user.value = null
+      isReady.value = true
       router.push({ name: 'login' })
     } catch (e) {
       error.value = e.response?.data || { message: 'An unknown error occurred' }
@@ -80,6 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null;
     } finally {
       isLoading.value = false;
+      isReady.value = true;
     }
   }
 
@@ -87,6 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     isLoading,
     error,
+    isReady,
     isAuthenticated,
     login,
     register,

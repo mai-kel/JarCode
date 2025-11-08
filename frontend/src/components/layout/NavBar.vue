@@ -7,7 +7,7 @@
       </div>
     </template>
     <template #end>
-      <Button v-if="authStore.isAuthenticated"
+      <Button v-if="authStore.isReady && authStore.isAuthenticated"
               label="Logout"
               icon="pi pi-sign-out"
               @click="handleLogout"
@@ -35,16 +35,28 @@ const items = computed(() => [
     command: () => router.push({ name: 'home' })
   },
   {
+    label: 'Create Course',
+    icon: 'pi pi-plus-circle',
+    command: () => router.push({ name: 'create-course' }),
+    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
+  },
+  {
+    label: 'My Courses',
+    icon: 'pi pi-book',
+    command: () => router.push({ name: 'my-courses' }),
+    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
+  },
+  {
     label: 'Login',
     icon: 'pi pi-sign-in',
     command: () => router.push({ name: 'login' }),
-    visible: () => !authStore.isAuthenticated
+    visible: () => authStore.isReady && !authStore.isAuthenticated
   },
   {
     label: 'Register',
     icon: 'pi pi-user-plus',
     command: () => router.push({ name: 'register' }),
-    visible: () => !authStore.isAuthenticated
+    visible: () => authStore.isReady && !authStore.isAuthenticated
   }
 ]);
 </script>

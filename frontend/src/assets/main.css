@@ -1,4 +1,10 @@
 /* Global styles */
+@import 'tinymce/skins/ui/oxide/skin.css';
+@import 'tinymce/skins/content/default/content.css';
+@import 'tinymce/skins/ui/oxide/content.min.css';
+
+@import 'prismjs/themes/prism-okaidia.css';
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   -webkit-font-smoothing: antialiased;

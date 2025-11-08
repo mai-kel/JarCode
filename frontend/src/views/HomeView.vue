@@ -3,7 +3,7 @@
     <div class="col-12">
       <Card>
         <template #title>
-          Welcome to CodeLearner!
+          Welcome to JarCode!
         </template>
         <template #content>
           <p v-if="!authStore.isAuthenticated">
