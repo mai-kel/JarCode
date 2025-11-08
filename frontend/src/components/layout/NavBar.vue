@@ -47,6 +47,12 @@ const items = computed(() => [
     visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
   },
   {
+    label: 'Create Problem',
+    icon: 'pi pi-question',
+    command: () => router.push({ name: 'create-problem' }),
+    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
+  },
+  {
     label: 'My Courses',
     icon: 'pi pi-book',
     command: () => router.push({ name: 'my-courses' }),

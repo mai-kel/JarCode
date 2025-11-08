@@ -5,6 +5,7 @@ import RegisterView from '../views/RegisterView.vue'
 import CreateCourseView from '../views/CreateCourseView.vue'
 import CreateChapterView from '../views/CreateChapterView.vue'
 import CreateLessonView from '../views/CreateLessonView.vue'
+import CreateProblemView from '../views/CreateProblemView.vue'
 import CourseChaptersView from '../views/CourseChaptersView.vue'
 import ChapterLessonsView from '../views/ChapterLessonsView.vue'
 import MyCoursesView from '../views/MyCoursesView.vue'
@@ -48,6 +49,12 @@ const routes = [
     path: '/create-course',
     name: 'create-course',
     component: CreateCourseView,
+    meta: { requiresAuth: true, requiresCreator: true }
+  },
+  {
+    path: '/create-problem',
+    name: 'create-problem',
+    component: CreateProblemView,
     meta: { requiresAuth: true, requiresCreator: true }
   },
   {
