@@ -1,18 +1,21 @@
 <template>
   <Card>
     <template #title>
-      <h2>Create a New Course</h2>
+      <div class="flex align-items-center justify-content-between w-full">
+        <h2 class="m-0">Create a New Course</h2>
+        <Button class="p-button-text" label="Back to My Courses" icon="pi pi-angle-left" @click="goBackToMyCourses" />
+      </div>
     </template>
     <template #content>
       <form @submit.prevent="handleCreateCourse">
         <div class="p-fluid grid">
-          <div class="field col-12 md:col-6">
+          <div class="field col-12">
             <label for="courseTitle">Course Title</label>
             <InputText id="courseTitle" v-model="title" :invalid="submitted && !title" />
             <small v-if="submitted && !title" class="p-error">Title is required.</small>
           </div>
 
-          <div class="field col-12 md:col-6">
+          <div class="field col-12">
             <label for="courseThumbnail">Thumbnail Image</label>
             <FileUpload
               id="courseThumbnail"
@@ -56,7 +59,6 @@
 
           <div class="col-12 flex align-items-center">
             <Button type="submit" label="Create Course" icon="pi pi-save" :loading="courseStore.isLoading" />
-            <Button type="button" class="ml-2 p-button-text" label="Back to My Courses" icon="pi pi-angle-left" @click="goBackToMyCourses"/>
           </div>
         </div>
       </form>

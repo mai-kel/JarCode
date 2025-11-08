@@ -1,7 +1,10 @@
 <template>
   <Card class="p-3">
     <template #title>
-      <h2>Create Chapter</h2>
+      <div class="flex align-items-center justify-content-between w-full">
+        <h2 class="m-0">Create Chapter</h2>
+        <Button class="p-button-text" label="Back to Chapters" icon="pi pi-angle-left" @click="goChapters" />
+      </div>
     </template>
     <template #content>
       <form @submit.prevent="handleCreateChapter" class="p-fluid grid">
@@ -13,7 +16,6 @@
 
         <div class="col-12 flex align-items-center">
           <Button type="submit" label="Create Chapter" icon="pi pi-plus" :loading="courseStore.isLoading" :disabled="!isDirty"/>
-          <Button class="ml-2 p-button-text" label="Back to Chapters" icon="pi pi-angle-left" @click="goChapters"/>
         </div>
 
         <div class="col-12 mt-3">

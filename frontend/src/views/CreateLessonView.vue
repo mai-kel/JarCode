@@ -1,7 +1,10 @@
 <template>
   <Card class="p-3">
     <template #title>
-      <h2>Create Lesson</h2>
+      <div class="flex align-items-center justify-content-between w-full">
+        <h2 class="m-0">Create Lesson</h2>
+        <Button class="p-button-text" label="Back to Lessons" icon="pi pi-angle-left" @click="goBackToLessons" />
+      </div>
     </template>
     <template #content>
       <form @submit.prevent="handleCreateLesson" class="p-fluid grid">
@@ -23,7 +26,6 @@
 
         <div class="col-12 flex align-items-center">
           <Button type="submit" label="Create Lesson" icon="pi pi-plus" :loading="courseStore.isLoading" :disabled="!isDirty"/>
-          <Button class="ml-2 p-button-text" label="Back to Lessons" icon="pi pi-angle-left" @click="goBackToLessons"/>
         </div>
 
         <div class="col-12 mt-3">

@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex align-items-center justify-content-between w-full">
         <h2 class="m-0">Edit Course</h2>
-        <Button class="p-button-text" label="Go back to my courses" icon="pi pi-list" @click="goMyCourses" />
+        <Button class="p-button-text" label="Go back to my courses" icon="pi pi-angle-left" @click="goMyCourses" />
       </div>
     </template>
     <template #content>
