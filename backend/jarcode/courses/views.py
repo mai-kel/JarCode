@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
+from django.db.models import Max
+from django.db import transaction
 from .models import Course, Chapter, Lesson
 from .serializers import CourseSerializer, ChapterSerializer, LessonSerializer
 from .permissions import IsOwnerOrReadOnly
@@ -32,15 +34,23 @@ class ChapterViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         course_id = self.kwargs.get('course_pk')
-        try:
-            course = Course.objects.get(pk=course_id)
-        except Course.DoesNotExist:
-            raise serializers.ValidationError("Course does not exist")
 
-        if course.owner != self.request.user:
-            raise serializers.ValidationError("You can only add chapters to your own courses")
+        with transaction.atomic():
+            try:
+                course = Course.objects.select_for_update().get(pk=course_id)
+            except Course.DoesNotExist:
+                raise serializers.ValidationError("Course does not exist")
 
-        serializer.save(course=course)
+            if course.owner != self.request.user:
+                raise serializers.ValidationError(
+                    "You can only add chapters to your own courses"
+                )
+
+            max_position = Chapter.objects.filter(
+                course=course).aggregate(Max('position'))['position__max']
+            next_position = (max_position or 0) + 1
+
+            serializer.save(course=course, position=next_position)
 
 
 class LessonViewSet(viewsets.ModelViewSet):
@@ -58,12 +68,22 @@ class LessonViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         chapter_id = self.kwargs.get('chapter_pk')
-        try:
-            chapter = Chapter.objects.get(pk=chapter_id)
-        except Chapter.DoesNotExist:
-            raise serializers.ValidationError("Chapter does not exist")
 
-        if chapter.owner != self.request.user:
-            raise serializers.ValidationError("You can only add lessons to your own chapters")
+        with transaction.atomic():
+            try:
+                chapter = Chapter.objects.select_for_update().get(
+                    pk=chapter_id
+                )
+            except Chapter.DoesNotExist:
+                raise serializers.ValidationError("Chapter does not exist")
 
-        serializer.save(chapter=chapter)
+            if chapter.owner != self.request.user:
+                raise serializers.ValidationError(
+                    "You can only add lessons to your own chapters"
+                )
+
+            max_position = Lesson.objects.filter(
+                chapter=chapter).aggregate(Max('position'))['position__max']
+            next_position = (max_position or 0) + 1
+
+            serializer.save(chapter=chapter, position=next_position)

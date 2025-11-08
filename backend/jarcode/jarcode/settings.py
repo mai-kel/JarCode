@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_dramatiq",
     "rest_framework",
     "django_filters",
+    "django_cleanup.apps.CleanupConfig",
     "users.apps.UsersConfig",
     "courses.apps.CoursesConfig",
     "problems.apps.ProblemsConfig",
@@ -213,6 +214,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# Upload size limits (10 MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
