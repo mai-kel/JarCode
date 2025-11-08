@@ -96,7 +96,7 @@ const chapterId = route.params.chapterId;
 const lessonId = route.params.lessonId;
 
 const editorInit = computed(() => ({
-  height: 400,
+  height: 800,
   menubar: false,
   plugins: [
     'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
@@ -110,6 +110,15 @@ const editorInit = computed(() => ({
     'removeformat | image | table | codesample | help',
   skin: false,
   content_css: [editorContentCss, editorContentUiCss, prismThemeCss],
+  /* Inject editor-specific styles into the TinyMCE iframe so Prism tokens were formatted correctly */
+  content_style: `
+    .token, .token.operator, .token.number, .token.string, .token.function {
+      background: transparent !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+    }
+    pre[class*="language-"] .token { background: transparent !important; }
+  `,
   codesample_global_prismjs: true,
   automatic_uploads: true,
   images_upload_handler: function (blobInfo, success, failure, progress) {
