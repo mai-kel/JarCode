@@ -10,6 +10,8 @@ import ChapterLessonsView from '../views/ChapterLessonsView.vue'
 import MyCoursesView from '../views/MyCoursesView.vue'
 import CourseDetailView from '../views/CourseDetailView.vue'
 import LessonDetailView from '../views/LessonDetailView.vue'
+import BrowseCoursesView from '../views/BrowseCoursesView.vue'
+import CourseView from '../views/CourseView.vue'
 import { useAuthStore } from '../store/auth'
 
 const routes = [
@@ -17,6 +19,18 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/browse-courses',
+    name: 'browse-courses',
+    component: BrowseCoursesView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/courses/:courseId',
+    name: 'course-view',
+    component: CourseView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/login',
@@ -85,8 +99,12 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+  // Ensure the user fetch attempt has completed before proceeding
+  if (!authStore.isReady) {
+    await authStore.fetchUser();
+  }
   const isAuthenticated = authStore.isAuthenticated
   const isCreator = authStore.user?.is_content_creator === true
 

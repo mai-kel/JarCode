@@ -35,6 +35,12 @@ const items = computed(() => [
     command: () => router.push({ name: 'home' })
   },
   {
+    label: 'Browse Courses',
+    icon: 'pi pi-search',
+    command: () => router.push({ name: 'browse-courses' }),
+    visible: () => authStore.isReady && authStore.isAuthenticated
+  },
+  {
     label: 'Create Course',
     icon: 'pi pi-plus-circle',
     command: () => router.push({ name: 'create-course' }),

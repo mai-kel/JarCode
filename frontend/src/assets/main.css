@@ -33,3 +33,11 @@ body {
   width: 100%;
   max-width: 450px;
 }
+
+/* Ensure Prism tokens don't get unexpected backgrounds from other global styles */
+pre[class*="language-"] .token,
+code[class*="language-"] .token {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
