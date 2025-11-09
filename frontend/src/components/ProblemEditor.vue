@@ -7,12 +7,12 @@
 
     <div class="field mt-3">
       <label>Starting Code</label>
-      <div ref="startingEditor" class="monaco-editor" style="height:320px;border:1px solid #ddd" />
+      <div ref="startingEditor" class="monaco-editor" style="height:600px;border:1px solid #ddd" />
     </div>
 
     <div class="field mt-3">
       <label>Test Code</label>
-      <div ref="testEditor" class="monaco-editor" style="height:320px;border:1px solid #ddd" />
+      <div ref="testEditor" class="monaco-editor" style="height:600px;border:1px solid #ddd" />
     </div>
   </div>
 </template>
@@ -67,7 +67,7 @@ let monacoApi = null;
 const localDescription = ref(props.description);
 
 const editorInit = {
-  height: 300,
+  height: 500,
   menubar: false,
   plugins: [
     'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
@@ -96,7 +96,8 @@ onMounted(async () => {
       language: mapToMonacoLanguage(props.language),
       automaticLayout: true,
       theme: 'vs-dark',
-      minimap: { enabled: false }
+      minimap: { enabled: false },
+      scrollBeyondLastLine: false
     });
 
     testMonacoEditor = monaco.editor.create(testEditor.value, {
@@ -104,7 +105,8 @@ onMounted(async () => {
       language: mapToMonacoLanguage(props.language),
       automaticLayout: true,
       theme: 'vs-dark',
-      minimap: { enabled: false }
+      minimap: { enabled: false },
+      scrollBeyondLastLine: false
     });
 
     monacoApi = monaco;

@@ -48,14 +48,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onBeforeUnmount } from 'vue';
+import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import Message from 'primevue/message';
+import { useConfirm } from 'primevue/useconfirm';
 
 import ProblemEditor from '../components/ProblemEditor.vue';
 import { Languages, Difficulties } from '../constants/problems';
@@ -63,6 +64,7 @@ import problemService from '../services/problemService';
 
 const router = useRouter();
 const toast = useToast();
+const confirm = useConfirm();
 
 const title = ref('');
 const description = ref('');
@@ -77,6 +79,41 @@ const error = ref(null);
 
 const languageOptions = Languages;
 const difficultyOptions = Difficulties;
+
+const isDirty = computed(() => {
+  return (
+    !!title.value ||
+    !!description.value ||
+    !!startingCode.value ||
+    !!testCode.value ||
+    !!(language.value && language.value !== Languages[0].value) ||
+    !!(difficulty.value && difficulty.value !== Difficulties[0].value)
+  );
+});
+
+onBeforeRouteLeave((to, from, next) => {
+  if (!isDirty.value) return next();
+  confirm.require({
+    header: 'Unsaved changes',
+    message: 'You have unsaved changes. Leave without saving?',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Leave',
+    rejectLabel: 'Stay',
+    acceptClass: 'p-button-danger',
+    accept: () => next(),
+    reject: () => next(false)
+  });
+});
+
+const beforeUnload = (e) => {
+  if (isDirty.value) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+};
+
+window.addEventListener('beforeunload', beforeUnload);
+onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload));
 
 const handleCreate = async () => {
   submitted.value = true;
@@ -101,7 +138,7 @@ const handleCreate = async () => {
     const created = await problemService.createProblem(payload);
     if (created?.id) {
       toast.add({ severity: 'success', summary: 'Problem created', life: 2500 });
-      router.push({ name: 'home' });
+      router.push({ name: 'edit-problem', params: { problemId: created.id } });
     } else {
       error.value = { message: 'Unexpected response from server.' };
     }
@@ -114,17 +151,6 @@ const handleCreate = async () => {
 
 const goHome = () => router.push({ name: 'home' });
 
-function onUpdateDescription(v) {
-  description.value = v;
-}
-
-function onUpdateStartingCode(v) {
-  startingCode.value = v;
-}
-
-function onUpdateTestCode(v) {
-  testCode.value = v;
-}
 </script>
 
 <style scoped>

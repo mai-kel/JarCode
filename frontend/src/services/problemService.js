@@ -7,6 +7,16 @@ export async function createProblem(payload) {
   return resp.data;
 }
 
+export async function getProblem(id) {
+  const resp = await apiClient.get(`${BASE}${id}/`);
+  return resp.data;
+}
+
+export async function updateProblem(id, payload) {
+  const resp = await apiClient.put(`${BASE}${id}/`, payload);
+  return resp.data;
+}
+
 export default {
   createProblem
 };
