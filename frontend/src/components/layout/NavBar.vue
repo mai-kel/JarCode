@@ -41,21 +41,21 @@ const items = computed(() => [
     visible: () => authStore.isReady && authStore.isAuthenticated
   },
   {
-    label: 'Create Course',
-    icon: 'pi pi-plus-circle',
-    command: () => router.push({ name: 'create-course' }),
-    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
-  },
-  {
-    label: 'Create Problem',
-    icon: 'pi pi-question',
-    command: () => router.push({ name: 'create-problem' }),
-    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
+    label: 'Browse Problems',
+    icon: 'pi pi-list',
+    command: () => router.push({ name: 'browse-problems' }),
+    visible: () => authStore.isReady && authStore.isAuthenticated
   },
   {
     label: 'My Courses',
     icon: 'pi pi-book',
     command: () => router.push({ name: 'my-courses' }),
+    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
+  },
+  {
+    label: 'My Problems',
+    icon: 'pi pi-question-circle',
+    command: () => router.push({ name: 'my-problems' }),
     visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
   },
   {

@@ -12,7 +12,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
     queryset = Problem.objects.all()
     permission_classes = [IsAuthorOrReadOnly, IsAuthenticated]
     authentication_classes = [SessionAuthentication]
-    filterset_fields = ['title', 'language', 'difficulty']
+    filterset_fields = ['title', 'language', 'difficulty', 'author']
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

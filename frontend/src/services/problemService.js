@@ -17,6 +17,16 @@ export async function updateProblem(id, payload) {
   return resp.data;
 }
 
+export async function listProblems({ search = '', language = null, difficulty = null, author = null } = {}) {
+  const params = {};
+  if (search) params.title = search;
+  if (language) params.language = language;
+  if (difficulty) params.difficulty = difficulty;
+  if (author) params.author = author;
+  const resp = await apiClient.get(BASE, { params });
+  return resp.data;
+}
+
 export default {
   createProblem
 };
