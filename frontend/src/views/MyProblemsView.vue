@@ -28,7 +28,7 @@ const fetcher = async (filters) => {
 
 const onCreate = () => router.push({ name: 'create-problem' })
 const onEdit = (p) => router.push({ name: 'edit-problem', params: { problemId: p.id } })
-const onView = (p) => router.push({ name: 'home' })
+const onView = (p) => router.push({ name: 'problem', params: { problemId: p.id } })
 </script>
 
 <style scoped>

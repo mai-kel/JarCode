@@ -21,7 +21,7 @@ const fetcher = async (filters) => {
 }
 
 const onView = (p) => {
-  router.push({ name: 'home' })
+  router.push({ name: 'problem', params: { problemId: p.id } })
 }
 </script>
 

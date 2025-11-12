@@ -1,0 +1,116 @@
+<template>
+  <div v-if="!problem" class="w-full flex align-items-center justify-content-center" style="min-height:320px;">
+    <ProgressSpinner style="width:3.5rem;height:3.5rem"></ProgressSpinner>
+  </div>
+  <Card v-else class="py-3">
+    <template #title>
+      <div class="flex align-items-center justify-content-between w-full">
+        <h2 class="m-0">{{ problem?.title || 'Problem' }}</h2>
+        <Button class="p-button-text" label="Back" icon="pi pi-angle-left" @click="goBack"></Button>
+      </div>
+
+      <div class="mt-3">
+        <Button class="p-mr-2" :class="editorTab ? 'p-button-text p-button-active' : 'p-button-text'" label="Editor" @click="() => (editorTab = true)"></Button>
+        <Button :class="!editorTab ? 'p-button-text p-button-active' : 'p-button-text'" label="Submissions" @click="switchToSubmissions"></Button>
+      </div>
+    </template>
+
+    <template #content>
+      <div class="p-fluid grid">
+          <ProblemEditorPanel v-if="editorTab" :problem="problem" @submit="handleSubmitFromPanel" @back="goBack"></ProblemEditorPanel>
+          <ProblemSubmissionsPanel v-else :submissions="submissions" :loading="loadingSubmissions" :selected="selectedSubmission" :problem="problem" @select="selectSubmission"></ProblemSubmissionsPanel>
+      </div>
+    </template>
+  </Card>
+</template>
+
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import Card from 'primevue/card';
+import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
+
+import ProblemEditorPanel from '../components/ProblemEditorPanel.vue';
+import ProblemSubmissionsPanel from '../components/ProblemSubmissionsPanel.vue';
+
+import { getProblem } from '../services/problemService';
+import submissionService from '../services/submissionService';
+
+const route = useRoute();
+const router = useRouter();
+const problemId = route.params.problemId;
+
+const problem = ref(null);
+const editorTab = ref(true);
+
+const submissions = ref([]);
+const loadingSubmissions = ref(false);
+const selectedSubmission = ref(null);
+const ws = ref(null);
+
+const goBack = () => router.push({ name: 'browse-problems' });
+
+async function fetchProblem() {
+  try { const data = await getProblem(problemId); problem.value = data; } catch (err) { console.error(err); }
+}
+
+async function fetchSubmissions() {
+  loadingSubmissions.value = true;
+  try {
+    const list = await submissionService.listSubmissions(problemId);
+    submissions.value = list;
+    if (submissions.value.length && !selectedSubmission.value) selectedSubmission.value = submissions.value[0];
+  } catch (err) { console.error('Error loading submissions', err); }
+  finally { loadingSubmissions.value = false; }
+}
+
+function selectSubmission(s) { selectedSubmission.value = s; }
+
+async function handleSubmitFromPanel(payload) {
+  try {
+    const created = await submissionService.createSubmission(problemId, payload);
+    submissions.value.unshift(created);
+    selectedSubmission.value = created;
+    editorTab.value = false;
+  } catch (err) { console.error('submit error', err); }
+}
+
+function switchToSubmissions() {
+  if (editorTab.value) {
+    editorTab.value = false;
+    fetchSubmissions();
+  }
+}
+
+function setupWebsocket() {
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  const url = `${proto}://${location.host}/ws/submission/`;
+
+  const connect = (url) => {
+    try {
+      const socket = new WebSocket(url);
+      let opened = false;
+      const openTimeout = setTimeout(() => { if (!opened) { try { socket.close(); } catch (e) {} } }, 2500);
+      socket.onopen = () => { opened = true; clearTimeout(openTimeout); };
+      socket.onmessage = (evt) => {
+        try {
+          const data = JSON.parse(evt.data);
+          const idx = submissions.value.findIndex(s => s.id === data.id);
+          if (idx !== -1) submissions.value[idx] = { ...submissions.value[idx], ...data };
+          else submissions.value.unshift(data);
+          if (selectedSubmission.value && selectedSubmission.value.id === data.id) selectedSubmission.value = { ...selectedSubmission.value, ...data };
+        } catch (e) { console.error('invalid ws message', e); }
+      };
+      socket.onclose = () => { setTimeout(() => connect(url), 5000); };
+      socket.onerror = (err) => { console.warn('ws error', err, url); };
+      ws.value = socket;
+    } catch (e) { console.error('could not open websocket', e, url); }
+  };
+
+  connect(url);
+}
+
+onMounted(async () => { await fetchProblem(); await fetchSubmissions(); setupWebsocket(); });
+onBeforeUnmount(() => { if (ws.value) ws.value.close(); });
+</script>

@@ -40,7 +40,7 @@
               <div class="flex align-items-center">
                 <slot name="item-action">
                   <Button v-if="showItemButtons" class="p-button-text mr-2" label="Edit" icon="pi pi-pencil" @click="onEdit(p)" />
-                  <Button class="p-button-text" label="View" icon="pi pi-eye" @click="onView(p)" />
+                  <Button v-if="!showItemButtons" class="p-button-text" label="View" icon="pi pi-eye" @click="onView(p)" />
                 </slot>
               </div>
             </li>

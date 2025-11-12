@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex align-items-center justify-content-between w-full">
         <h2 class="m-0">Edit Problem</h2>
-        <Button class="p-button-text" label="Back" icon="pi pi-angle-left" @click="goBack" />
+        <Button class="p-button-text" label="Back to my problems" icon="pi pi-angle-left" @click="goBack" />
       </div>
     </template>
     <template #content>
@@ -148,7 +148,7 @@ const handleUpdate = async () => {
   }
 };
 
-const goBack = () => router.push({ name: 'home' });
+const goBack = () => router.push({ name: 'my-problems' });
 
 const isDirty = computed(() => {
   return (

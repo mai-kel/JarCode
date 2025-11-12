@@ -7,6 +7,7 @@ import CreateChapterView from '../views/CreateChapterView.vue'
 import CreateLessonView from '../views/CreateLessonView.vue'
 import CreateProblemView from '../views/CreateProblemView.vue'
 import ProblemEditView from '../views/ProblemEditView.vue'
+import ProblemView from '../views/ProblemView.vue'
 import BrowseProblemsView from '../views/BrowseProblemsView.vue'
 import MyProblemsView from '../views/MyProblemsView.vue'
 import CourseChaptersView from '../views/CourseChaptersView.vue'
@@ -77,6 +78,12 @@ const routes = [
     name: 'edit-problem',
     component: ProblemEditView,
     meta: { requiresAuth: true, requiresCreator: true }
+  },
+  {
+    path: '/problems/:problemId',
+    name: 'problem',
+    component: ProblemView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/my-courses',

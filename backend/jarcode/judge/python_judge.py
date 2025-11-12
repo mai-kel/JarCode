@@ -12,6 +12,7 @@ class PythonJudge(Judge):
     SOLUTION_FILE = 'solution.py'
     TEST_FILE = 'test.py'
     IMAGE = 'python_judge:latest'
+    MAX_CHARS = 100_000
 
     @staticmethod
     def run_solution(solution_code: str,
@@ -22,7 +23,7 @@ class PythonJudge(Judge):
         command_string = (
             f"echo {shlex.quote(solution_code)} > {PythonJudge.SOLUTION_FILE} && "  # noqa: E501
             f"echo {shlex.quote(test_code)} > {PythonJudge.TEST_FILE} && "
-            f"pytest {PythonJudge.TEST_FILE}"
+            f"pytest -q --tb=short --disable-warnings -rA {PythonJudge.TEST_FILE}"  # noqa: E501
         )
 
         container = None
@@ -57,7 +58,7 @@ class PythonJudge(Judge):
                     outcome=Result.Outcome.INTERNAL_SERVER_ERROR)
                 return result
 
-            output = container.logs().decode('utf-8')
+            output = container.logs().decode('utf-8')[:PythonJudge.MAX_CHARS]
             status_code = response.get('StatusCode', 1)
 
             if status_code == 0:
