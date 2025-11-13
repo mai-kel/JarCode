@@ -47,8 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
       await ensureCsrf();
       await apiClient.post('/users/register/', details)
       isReady.value = true
-      router.push({ name: 'login' })
-      return true;
+      return true
     } catch (e) {
       error.value = e.response?.data || { message: 'An unknown error occurred' }
       return false;
@@ -88,6 +87,22 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function verifyAccount({ user_id, user_uuid, token }) {
+    isLoading.value = true
+    error.value = null
+    try {
+      await ensureCsrf();
+      const payload = { user_id, user_uuid, token }
+      const resp = await apiClient.post('/users/verify-account/', payload)
+      return resp.status === 200
+    } catch (e) {
+      error.value = e.response?.data || { message: 'An unknown error occurred' }
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   return {
     user,
     isLoading,
@@ -98,5 +113,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     fetchUser
+    , verifyAccount
   }
 })

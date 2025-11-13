@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
+import VerifyAccountView from '../views/VerifyAccountView.vue'
+import NotFoundView from '../views/NotFoundView.vue'
 import CreateCourseView from '../views/CreateCourseView.vue'
 import CreateChapterView from '../views/CreateChapterView.vue'
 import CreateLessonView from '../views/CreateLessonView.vue'
@@ -53,6 +55,12 @@ const routes = [
     path: '/register',
     name: 'register',
     component: RegisterView,
+    meta: { guestOnly: true }
+  },
+  {
+    path: '/verify-account/:user_id/:user_uuid/:token',
+    name: 'verify-account',
+    component: VerifyAccountView,
     meta: { guestOnly: true }
   },
   {
@@ -126,6 +134,11 @@ const routes = [
     name: 'lesson-detail',
     component: LessonDetailView,
     meta: { requiresAuth: true, requiresCreator: true }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: NotFoundView
   }
 ]
 
