@@ -17,7 +17,7 @@ urlpatterns = [
          RegistrationApiView.as_view()),
     path('resend-verification-link/',
          ResendAccountVerificationLinkApiView.as_view()),
-    path('verify-account/<int:user_id>/<uuid:user_uuid>/<str:token>/',
+    path('verify-account/',
          VerifyAccountApiView.as_view()),
     path('csrf-init/',
          GetCSRFToken.as_view()),

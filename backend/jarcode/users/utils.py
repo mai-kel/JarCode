@@ -21,7 +21,7 @@ def get_account_verification_redis_key(user_id: int) -> str:
 
 
 def make_verification_link(user_id: int, user_uuid: str, token: str):
-    link = f'{ACCOUNT_VERIFICATION_BASE_URL}{user_id}/{user_uuid}/{token}/'
+    link = f'{ACCOUNT_VERIFICATION_BASE_URL}{user_id}/{user_uuid}/{token}'
     return link
 
 

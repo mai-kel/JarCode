@@ -4,7 +4,8 @@ from users.serializers import (
     EmailUserSerializer,
     LoginSerializer,
     UserLoggedSerializer,
-    ResetPasswordSerializer
+    ResetPasswordSerializer,
+    VerifyAccountSerializer
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -26,7 +27,6 @@ from django.db import transaction
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiResponse,
-    OpenApiParameter
 )
 
 
@@ -92,20 +92,20 @@ class VerifyAccountApiView(APIView):
         summary="Verify user account",
         description=("Activates a user account "
                      "after verifying the token sent via email."),
-        parameters=[
-            OpenApiParameter("user_id", int, OpenApiParameter.PATH,
-                             description="User ID."),
-            OpenApiParameter("user_uuid", str, OpenApiParameter.PATH,
-                             description="User UUID."),
-            OpenApiParameter("token", str, OpenApiParameter.PATH,
-                             description="Verification token.")
-        ],
+        request=VerifyAccountSerializer,
         responses={
             200: OpenApiResponse(description="Account successfully verified."),
             404: OpenApiResponse(description="Invalid or expired token.")
         }
     )
-    def get(self, request, user_id, user_uuid, token):
+    def post(self, request, format=None):
+        serializer = VerifyAccountSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user_id = serializer.validated_data['user_id']
+        user_uuid = serializer.validated_data['user_uuid']
+        token = serializer.validated_data['token']
+
         user = User.objects.filter(id=user_id, uuid=user_uuid).first()
         key = get_account_verification_redis_key(user_id=user_id)
 

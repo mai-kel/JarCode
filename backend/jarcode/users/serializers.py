@@ -77,3 +77,9 @@ class ResetPasswordSerializer(serializers.Serializer):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError("Passwords do not match")
         return attrs
+
+
+class VerifyAccountSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(required=True)
+    user_uuid = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
