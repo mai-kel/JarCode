@@ -92,7 +92,7 @@ const isDirty = computed(() => {
 });
 
 onBeforeRouteLeave((to, from, next) => {
-  if (!isDirty.value) return next();
+  if (!isDirty.value || to.name === "edit-problem") return next();
   confirm.require({
     header: 'Unsaved changes',
     message: 'You have unsaved changes. Leave without saving?',
