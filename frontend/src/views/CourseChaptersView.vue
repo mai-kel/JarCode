@@ -23,9 +23,9 @@
         </Message>
 
         <ul v-if="chapters.length > 0" class="list-none p-0 m-0">
-          <li v-for="ch in chapters" :key="ch.id" class="p-3 border-1 border-round mb-2 flex align-items-center justify-content-between">
+          <li v-for="(ch, index) in chapters" :key="ch.id" class="p-3 border-1 border-round mb-2 flex align-items-center justify-content-between">
             <div class="flex align-items-center">
-              <span class="font-bold mr-3">#{{ ch.position }}</span>
+              <span class="font-bold mr-3">#{{ index + 1 }}</span>
               <div v-if="editingId !== ch.id">{{ ch.title }}</div>
               <div v-else class="flex align-items-center">
                 <InputText v-model="editTitle" class="mr-2" />
@@ -123,6 +123,9 @@ const confirmDeleteChapter = (ch) => {
 
 onBeforeRouteLeave((to, from, next) => {
   if (editingId.value === null) return next();
+  const ChapterChanged = chapters.value.find(ch => ch.id === editingId.value).title === editTitle.value
+  if (ChapterChanged) return next();
+
   confirm.require({
     header: 'Unsaved changes',
     message: 'You have unsaved chapter edits. Leave without saving?',

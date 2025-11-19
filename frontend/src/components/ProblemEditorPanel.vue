@@ -7,9 +7,13 @@
         <div v-else class="p-fluid grid">
             <div class="col-12 lg:col-5">
                 <Card>
-                <template #title>
-                    <h4 class="m-0">Description</h4>
+                <template #title> Description </template>
+                <template #subtitle>
+                  Language: {{ formattedLanguage }}
+                  <br/>
+                  Difficulty: {{ formattedDifficulty }}
                 </template>
+
                 <template #content>
                     <div class="prose left-panel-scroll" v-html="sanitizedDescription"></div>
                 </template>
@@ -44,6 +48,7 @@ import loader from '@monaco-editor/loader';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
+import { Languages, Difficulties } from '../constants/problems'
 
 const props = defineProps({ problem: Object });
 const emits = defineEmits(['submit', 'back']);
@@ -60,6 +65,14 @@ const isEditorReady = ref(false);
 const sanitizedDescription = computed(() => {
   return props.problem?.description ? DOMPurify.sanitize(props.problem.description) : '';
 });
+
+const formattedLanguage = computed(() =>
+  Languages.find(l => l.value === props.problem.language).text
+);
+
+const formattedDifficulty = computed(() =>
+  Difficulties.find(l => l.value === props.problem.difficulty).text
+);
 
 async function createEditor() {
   try {

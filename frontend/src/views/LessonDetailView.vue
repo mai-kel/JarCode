@@ -96,7 +96,7 @@ const chapterId = route.params.chapterId;
 const lessonId = route.params.lessonId;
 
 const editorInit = computed(() => ({
-  height: 800,
+  height: 700,
   menubar: false,
   plugins: [
     'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',

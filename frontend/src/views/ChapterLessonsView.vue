@@ -23,9 +23,9 @@
         </Message>
 
           <ul v-if="lessons.length > 0" class="list-none p-0 m-0">
-            <li v-for="ls in lessons" :key="ls.id" class="p-3 border-1 border-round mb-2 flex align-items-center justify-content-between">
+            <li v-for="(ls, index) in lessons" :key="ls.id" class="p-3 border-1 border-round mb-2 flex align-items-center justify-content-between">
               <div>
-                <span class="font-bold mr-3">#{{ ls.position }}</span>
+                <span class="font-bold mr-3">#{{ index + 1 }}</span>
                 <span>{{ ls.title }}</span>
               </div>
               <div class="flex align-items-center">

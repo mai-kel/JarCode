@@ -87,7 +87,7 @@ const courseId = route.params.courseId;
 const chapterId = route.params.chapterId;
 
 const editorInit = computed(() => ({
-  height: 400,
+  height: 700,
   menubar: false,
   plugins: [
     'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
@@ -101,6 +101,14 @@ const editorInit = computed(() => ({
     'removeformat | table | codesample | help',
   skin: false,
   content_css: [editorContentCss, editorContentUiCss, prismThemeCss],
+  content_style: `
+    .token, .token.operator, .token.number, .token.string, .token.function {
+      background: transparent !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+    }
+    pre[class*="language-"] .token { background: transparent !important; }
+  `,
   codesample_global_prismjs: true,
   codesample_languages: [
     { text: 'HTML/XML', value: 'markup' },
@@ -124,7 +132,7 @@ const handleCreateLesson = async () => {
   const result = await courseStore.createLesson(courseId, chapterId, { title: title.value, content: content.value });
   if (result?.id) {
     toast.add({ severity: 'success', summary: 'Lesson created', life: 2500 });
-    router.push({ name: 'chapter-lessons', params: { courseId, chapterId } });
+    router.push({ name: 'lesson-detail', params: { courseId, chapterId, lessonId: result.id } });
   }
 };
 

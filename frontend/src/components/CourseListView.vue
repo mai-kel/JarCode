@@ -28,7 +28,7 @@
         </div>
 
         <div v-else class="grid">
-          <div v-for="c in courses" :key="c.id" class="col-12 md:col-6 lg:col-4">
+          <div v-for="c in courses" :key="c.id" class="col-12 md:col-6 lg:col-3">
             <Card class="h-full">
               <template #header>
                 <img :src="courseImage(c)" alt="Course thumbnail" class="w-full" style="height:180px;object-fit:cover" />
