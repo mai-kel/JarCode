@@ -9,7 +9,7 @@ def get_course_image_path(instance, filename):
 
 def get_lesson_image_path(instance, filename):
     timestamp = time.time()
-    return f'lessons/images/{instance.lesson}/{timestamp}_{filename}'
+    return f'lessons/images/{instance.lesson.id}/{timestamp}_{filename}'
 
 
 class Course(models.Model):
