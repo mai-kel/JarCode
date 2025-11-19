@@ -17,6 +17,11 @@ export async function updateProblem(id, payload) {
   return resp.data;
 }
 
+export async function deleteProblem(id) {
+  const resp = await apiClient.delete(`${BASE}${id}/`);
+  return resp.data;
+}
+
 export async function listProblems({ search = '', language = null, difficulty = null, author = null } = {}) {
   const params = {};
   if (search) params.title = search;

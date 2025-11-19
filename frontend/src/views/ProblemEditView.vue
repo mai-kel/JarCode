@@ -33,8 +33,23 @@
           />
         </div>
 
-        <div class="col-12 mt-3 flex align-items-center">
-          <Button type="submit" label="Save" icon="pi pi-save" :loading="isLoading" :disabled="!isDirty" />
+        <div class="col-12 mt-3">
+          <div class="flex flex-column align-items-stretch">
+            <div class="mb-2">
+              <Button
+                type="button"
+                label="Delete Problem"
+                icon="pi pi-trash"
+                class="p-button-danger p-button-text"
+                style="width: auto"
+                @click="confirmDeleteProblem"
+              />
+            </div>
+
+            <div>
+              <Button type="submit" label="Save" icon="pi pi-save" :loading="isLoading" :disabled="!isDirty" style="width: 100%;" />
+            </div>
+          </div>
         </div>
 
         <div class="col-12 mt-3">
@@ -60,7 +75,7 @@ import Message from 'primevue/message';
 
 import ProblemEditor from '../components/ProblemEditor.vue';
 import { Languages, Difficulties } from '../constants/problems';
-import { getProblem, updateProblem } from '../services/problemService';
+import { getProblem, updateProblem, deleteProblem } from '../services/problemService';
 
 const route = useRoute();
 const router = useRouter();
@@ -149,6 +164,29 @@ const handleUpdate = async () => {
 };
 
 const goBack = () => router.push({ name: 'my-problems' });
+
+const confirmDeleteProblem = () => {
+  confirm.require({
+    header: 'Delete problem',
+    message: 'Are you sure you want to delete this problem? This cannot be undone.',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Delete',
+    rejectLabel: 'Cancel',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      isLoading.value = true;
+      try {
+        await deleteProblem(problemId);
+        toast.add({ severity: 'success', summary: 'Problem deleted', life: 2000 });
+        router.push({ name: 'my-problems' });
+      } catch (err) {
+        toast.add({ severity: 'error', summary: 'Failed to delete problem', detail: err.response?.data || err.message || err, life: 4000 });
+      } finally {
+        isLoading.value = false;
+      }
+    }
+  });
+};
 
 const isDirty = computed(() => {
   return (
