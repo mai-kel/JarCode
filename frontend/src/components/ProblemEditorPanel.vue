@@ -38,7 +38,7 @@
 
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import DOMPurify from 'dompurify';
 import loader from '@monaco-editor/loader';
 import Card from 'primevue/card';
@@ -47,6 +47,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 
 const props = defineProps({ problem: Object });
 const emits = defineEmits(['submit', 'back']);
+const editorCode = defineModel('editorCode');
 
 const editorContainer = ref(null);
 let monacoEditor = null;
@@ -66,12 +67,15 @@ async function createEditor() {
     monacoApi = monaco;
     if (editorContainer.value) {
       monacoEditor = monaco.editor.create(editorContainer.value, {
-        value: props.problem?.starting_code || '',
+        value: (editorCode.value || ""),
         language: (props.problem?.language || 'PYTHON').toLowerCase(),
         automaticLayout: true,
         theme: 'vs-dark',
         minimap: { enabled: false },
         scrollBeyondLastLine: false
+      });
+      monacoEditor.onDidChangeModelContent(() => {
+        editorCode.value = monacoEditor.getValue();
       });
       isEditorReady.value = true;
     }

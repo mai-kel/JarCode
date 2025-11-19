@@ -17,7 +17,7 @@
 
     <template #content>
       <div class="p-fluid grid">
-          <ProblemEditorPanel v-if="editorTab" :problem="problem" @submit="handleSubmitFromPanel" @back="goBack"></ProblemEditorPanel>
+          <ProblemEditorPanel v-if="editorTab" :problem="problem" v-model:editorCode="editorCode" @submit="handleSubmitFromPanel" @back="goBack"></ProblemEditorPanel>
           <ProblemSubmissionsPanel v-else :submissions="submissions" :loading="loadingSubmissions" :selected="selectedSubmission" :problem="problem" @select="selectSubmission"></ProblemSubmissionsPanel>
       </div>
     </template>
@@ -43,6 +43,7 @@ const problemId = route.params.problemId;
 
 const problem = ref(null);
 const editorTab = ref(true);
+const editorCode = ref("")
 
 const submissions = ref([]);
 const loadingSubmissions = ref(false);
@@ -52,7 +53,12 @@ const ws = ref(null);
 const goBack = () => router.push({ name: 'browse-problems' });
 
 async function fetchProblem() {
-  try { const data = await getProblem(problemId); problem.value = data; } catch (err) { console.error(err); }
+  try {
+    const data = await getProblem(problemId);
+    problem.value = data;
+    editorCode.value = data.starting_code;
+  }
+  catch (err) { console.error(err); }
 }
 
 async function fetchSubmissions() {
