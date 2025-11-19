@@ -30,12 +30,12 @@ class PythonJudge(Judge):
         try:
             container = client.containers.run(
                 image=PythonJudge.IMAGE,
+                runtime='runsc',
                 network_disabled=True,
                 command=['/bin/sh', '-c', command_string],
                 detach=True,
                 mem_limit='512m',
                 memswap_limit='512m',
-                pids_limit=20,
                 nano_cpus=1*1_000_000_000,
                 user=1000,
                 tmpfs={'/home/user': 'size=50m,uid=1000'},
