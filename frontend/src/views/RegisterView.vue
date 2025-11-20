@@ -57,11 +57,11 @@
   </div>
   <Card v-else>
     <template #title>
-      Account created.
+      Account created
     </template>
     <template #content>
       <Message severity="info" :closable="false">
-         Please check your email — a verification link will be sent shortly.
+         Please check your email - a verification link will be sent shortly.
       </Message>
     </template>
   </Card>

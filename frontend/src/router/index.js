@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import VerifyAccountView from '../views/VerifyAccountView.vue'
+import ResendVerificationView from '../views/ResendVerificationView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import CreateCourseView from '../views/CreateCourseView.vue'
 import CreateChapterView from '../views/CreateChapterView.vue'
@@ -61,6 +62,12 @@ const routes = [
     path: '/verify-account/:user_id/:user_uuid/:token',
     name: 'verify-account',
     component: VerifyAccountView,
+    meta: { guestOnly: true }
+  },
+  {
+    path: '/resend-verification',
+    name: 'resend-verification',
+    component: ResendVerificationView,
     meta: { guestOnly: true }
   },
   {

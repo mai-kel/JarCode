@@ -18,6 +18,6 @@ export function statusLabel(status) {
 }
 
 export function outcomeInfo(outcome) {
-  if (!outcome) return { label: '—', color: 'gray', icon: '✖', isPass: false };
+  if (!outcome) return { label: '-', color: 'gray', icon: '✖', isPass: false };
   return OUTCOME_MAP[outcome] || { label: outcome, color: 'red', icon: '✖', isPass: false };
 }

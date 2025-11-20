@@ -103,6 +103,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function resendVerification(email) {
+    try {
+      await ensureCsrf();
+      await apiClient.post('/users/resend-verification-link/', { email })
+      return { ok: true }
+    } catch (e) {
+      const respErr = e.response?.data || { message: 'An unknown error occurred' }
+      return { ok: false, error: respErr }
+    }
+  }
+
   return {
     user,
     isLoading,
@@ -113,6 +124,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     fetchUser
-    , verifyAccount
+    , verifyAccount,
+    resendVerification
   }
 })

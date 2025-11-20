@@ -27,8 +27,11 @@
         </form>
       </template>
       <template #footer>
-        <div class="text-center">
+        <div style="padding-bottom: 5px;">
           Don't have an account? <router-link to="/register">Register here</router-link>
+        </div>
+        <div>
+          Resend verification email <router-link to="/resend-verification">  here </router-link>
         </div>
       </template>
     </Card>
