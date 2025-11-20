@@ -11,15 +11,21 @@
             <div class="field">
               <label for="email">Email</label>
               <InputText id="email" v-model="email" type="email" />
+              <div v-if="fieldErrors.email">
+                <div v-for="(m,i) in fieldErrors.email" :key="i" class="p-error" style="margin-top:6px">{{ m }}</div>
+              </div>
             </div>
 
             <div class="field">
               <label for="password">Password</label>
               <InputText id="password" v-model="password" type="password" />
+              <div v-if="fieldErrors.password">
+                <div v-for="(m,i) in fieldErrors.password" :key="i" class="p-error" style="margin-top:6px">{{ m }}</div>
+              </div>
             </div>
 
-            <Message v-if="authStore.error" severity="error" :closable="false">
-              {{ getErrorMessage(authStore.error) }}
+            <Message v-if="fieldErrors._non_field && fieldErrors._non_field.length" severity="error" :closable="false">
+              <div v-for="(m,i) in fieldErrors._non_field" :key="i">{{ m }}</div>
             </Message>
 
             <Button type="submit" label="Login" class="mt-4" :loading="authStore.isLoading" />
@@ -27,6 +33,9 @@
         </form>
       </template>
       <template #footer>
+        <div style="padding-bottom: 5px;">
+          Forgot password? <router-link to="/send-password-reset">Reset here</router-link>
+        </div>
         <div style="padding-bottom: 5px;">
           Don't have an account? <router-link to="/register">Register here</router-link>
         </div>
@@ -42,11 +51,13 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../store/auth';
 import { useToast } from 'primevue/usetoast';
+import parseApiError, { parseApiErrorFields } from '../utils/parseApiError'
 
 const email = ref('');
 const password = ref('');
 const authStore = useAuthStore();
 const toast = useToast();
+const fieldErrors = ref({})
 
 const handleLogin = async () => {
   const success = await authStore.login({
@@ -55,17 +66,11 @@ const handleLogin = async () => {
   });
 
   if (success) {
+    fieldErrors.value = {}
     toast.add({ severity: 'success', summary: 'Success', detail: 'Logged in successfully!', life: 3000 });
+  } else {
+    fieldErrors.value = parseApiErrorFields(authStore.error)
   }
 };
 
-const getErrorMessage = (error) => {
-  if (error.non_field_errors) {
-    return error.non_field_errors.join(', ');
-  }
-  if(error.message) {
-    return error.message;
-  }
-  return 'Login failed. Please check your credentials.';
-};
 </script>

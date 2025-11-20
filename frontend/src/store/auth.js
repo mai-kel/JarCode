@@ -114,6 +114,29 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function sendPasswordReset(email) {
+    try {
+      await ensureCsrf();
+      await apiClient.post('/users/send-password-reset-link/', { email })
+      return { ok: true }
+    } catch (e) {
+      const respErr = e.response?.data || { message: 'An unknown error occurred' }
+      return { ok: false, error: respErr }
+    }
+  }
+
+  async function changePassword({ user_id, user_uuid, token, password, password2 }) {
+    try {
+      await ensureCsrf();
+      const payload = { user_id, user_uuid, token, password, password2 }
+      const resp = await apiClient.put('/users/change-password/', payload)
+      return { ok: resp.status === 200 }
+    } catch (e) {
+      const respErr = e.response?.data || { message: 'An unknown error occurred' }
+      return { ok: false, error: respErr }
+    }
+  }
+
   return {
     user,
     isLoading,
@@ -123,8 +146,10 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
-    fetchUser
-    , verifyAccount,
-    resendVerification
+    fetchUser,
+    verifyAccount,
+    resendVerification,
+    sendPasswordReset,
+    changePassword
   }
 })

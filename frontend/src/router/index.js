@@ -4,6 +4,8 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import VerifyAccountView from '../views/VerifyAccountView.vue'
 import ResendVerificationView from '../views/ResendVerificationView.vue'
+import SendPasswordResetView from '../views/SendPasswordResetView.vue'
+import ResetPasswordView from '../views/ResetPasswordView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import CreateCourseView from '../views/CreateCourseView.vue'
 import CreateChapterView from '../views/CreateChapterView.vue'
@@ -68,6 +70,18 @@ const routes = [
     path: '/resend-verification',
     name: 'resend-verification',
     component: ResendVerificationView,
+    meta: { guestOnly: true }
+  },
+  {
+    path: '/send-password-reset',
+    name: 'send-password-reset',
+    component: SendPasswordResetView,
+    meta: { guestOnly: true }
+  },
+  {
+    path: '/reset-password/:user_id/:user_uuid/:token',
+    name: 'reset-password',
+    component: ResetPasswordView,
     meta: { guestOnly: true }
   },
   {

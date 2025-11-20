@@ -2,11 +2,11 @@
   <div class="form-container">
     <Card class="form-card">
       <template #title>
-        <h2 class="text-center">Resend verification link</h2>
+        <h2 class="text-center">Send password reset link</h2>
       </template>
 
       <template #content>
-        <form @submit.prevent="handleResend">
+        <form @submit.prevent="handleSend">
           <div class="p-fluid">
             <div class="field">
               <label for="email">Email</label>
@@ -28,7 +28,7 @@
 
       <template #footer>
         <div class="text-center">
-          Your account is already verified? <router-link to="/login">Login</router-link>
+          Remembered your password? <router-link to="/login">Login</router-link>
         </div>
       </template>
     </Card>
@@ -49,14 +49,14 @@ const successMessage = ref('')
 import parseApiError from '../utils/parseApiError'
 const getErrorMessage = parseApiError
 
-const handleResend = async () => {
+const handleSend = async () => {
   isLoading.value = true
   error.value = null
   successMessage.value = ''
   try {
-    const resp = await authStore.resendVerification(email.value)
+    const resp = await authStore.sendPasswordReset(email.value)
     if (resp.ok) {
-      successMessage.value = 'If an account with this email exists and is not yet activated, a verification link was sent.'
+      successMessage.value = 'If an account with this email exists and is active, a password reset link was sent.'
     } else {
       error.value = resp.error
     }
