@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import LessonImageSerializer
-
+from .pagination import CourseCursorPagination
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -19,6 +19,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title', 'owner']
+    pagination_class = CourseCursorPagination
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

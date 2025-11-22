@@ -19,8 +19,3 @@ const viewCourse = (course) => {
   router.push({ name: 'course-view', params: { courseId: course.id } })
 }
 </script>
-
-<style scoped>
-.ellipsis-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; line-clamp: 1; }
-.ellipsis-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-clamp: 3; }
-</style>

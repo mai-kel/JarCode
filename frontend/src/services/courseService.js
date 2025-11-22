@@ -1,8 +1,12 @@
 import apiClient from './api'
 
 export default {
-  getAllCourses (searchQuery = '') {
-    return apiClient.get(`/courses/`, { params: { title: searchQuery } })
+  getAllCourses (searchQuery = '', cursor = null, owner = null) {
+    const params = {}
+    if (searchQuery) params.title = searchQuery
+    if (cursor) params.cursor = cursor
+    if (owner) params.owner = owner
+    return apiClient.get(`/courses/`, { params })
   },
 
   getCourseDetail (courseId) {
