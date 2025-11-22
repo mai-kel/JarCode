@@ -5,7 +5,7 @@ from .models import Problem, ProblemReview
 from .permissions import IsAuthorOrReadOnly
 from .serializers import ProblemSeriazlier, ProblemReviewSerializer
 from rest_framework.generics import get_object_or_404
-
+from.pagination import ProblemCursorPagination
 
 class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSeriazlier
@@ -13,6 +13,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOrReadOnly, IsAuthenticated]
     authentication_classes = [SessionAuthentication]
     filterset_fields = ['title', 'language', 'difficulty', 'author']
+    pagination_class = ProblemCursorPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

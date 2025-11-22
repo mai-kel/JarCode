@@ -46,6 +46,10 @@
             </li>
           </ul>
 
+          <div v-if="loadingMore" class="flex justify-content-center py-3">
+            <ProgressSpinner style="width:30px;height:30px" strokeWidth="4"/>
+          </div>
+
           <div v-if="problems.length === 0" class="text-color-secondary p-3">{{ emptyMessage }}</div>
         </div>
       </div>
@@ -78,6 +82,8 @@ const searchQuery = ref('')
 const languageFilter = ref(null)
 const difficultyFilter = ref(null)
 const loading = ref(true)
+const loadingMore = ref(false)
+const nextCursor = ref(null)
 let debounceTimer = null
 
 const languageOptions = computed(() => [{ text: 'All', value: null }, ...Languages])
@@ -85,24 +91,52 @@ const difficultyOptions = computed(() => [{ text: 'All', value: null }, ...Diffi
 
 const hasCreateSlot = !!(false)
 
-const normalize = (res) => {
-  if (!res) return []
-  if (res.data !== undefined) return res.data
-  return res
+const extractCursor = (nextUrl) => {
+  if (!nextUrl) return null
+  try {
+    const u = new URL(nextUrl)
+    return u.searchParams.get('cursor')
+  } catch (e) {
+    const m = nextUrl.match(/[?&]cursor=([^&]+)/)
+    return m ? decodeURIComponent(m[1]) : null
+  }
 }
 
-const fetch = async () => {
-  loading.value = true
+const normalizePage = (res) => {
+  if (!res) return { results: [], next: null }
+  if (Array.isArray(res)) return { results: res, next: null }
+  if (res.results !== undefined) {
+    return { results: res.results || [], next: extractCursor(res.next) }
+  }
+  if (res.data !== undefined) {
+    if (Array.isArray(res.data)) return { results: res.data, next: null }
+    if (res.data.results !== undefined) return { results: res.data.results || [], next: extractCursor(res.data.next) }
+  }
+  return { results: [], next: null }
+}
+
+const fetchPage = async (cursor = null, append = false) => {
+  if (append) loadingMore.value = true
+  else loading.value = true
   try {
     const res = await props.fetcher({
       search: searchQuery.value,
       language: languageFilter.value,
-      difficulty: difficultyFilter.value
+      difficulty: difficultyFilter.value,
+      cursor
     })
-    problems.value = normalize(res) || []
+
+    const page = normalizePage(res)
+    nextCursor.value = page.next
+    if (append) {
+      problems.value = problems.value.concat(page.results || [])
+    } else {
+      problems.value = page.results || []
+    }
   } catch (e) {
-    problems.value = []
+    if (!append) problems.value = []
   } finally {
+    loadingMore.value = false
     loading.value = false
   }
 }
@@ -114,7 +148,9 @@ const onSearchInput = () => {
 const scheduleFetch = () => {
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => {
-    fetch()
+    nextCursor.value = null
+    problems.value = []
+    fetchPage(null, false)
     debounceTimer = null
   }, 300)
 }
@@ -138,8 +174,26 @@ const languageText = (val) => {
   return found ? found.text : val
 }
 
-onMounted(() => fetch())
-onBeforeUnmount(() => { if (debounceTimer) clearTimeout(debounceTimer) })
+const onScroll = () => {
+  if (!nextCursor.value) return
+  if (loadingMore.value || loading.value) return
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+  const winH = window.innerHeight || document.documentElement.clientHeight
+  const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
+  if (docH - (scrollTop + winH) < 200) {
+    fetchPage(nextCursor.value, true)
+  }
+}
+
+onMounted(() => {
+  fetchPage()
+  window.addEventListener('scroll', onScroll, { passive: true })
+})
+
+onBeforeUnmount(() => {
+  if (debounceTimer) clearTimeout(debounceTimer)
+  window.removeEventListener('scroll', onScroll)
+})
 </script>
 
 <style scoped>
