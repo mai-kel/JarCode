@@ -18,7 +18,17 @@
     <template #content>
       <div class="p-fluid grid">
           <ProblemEditorPanel v-if="editorTab" :problem="problem" v-model:editorCode="editorCode" @submit="handleSubmitFromPanel" @back="goBack"></ProblemEditorPanel>
-          <ProblemSubmissionsPanel v-else :submissions="submissions" :loading="loadingSubmissions" :selected="selectedSubmission" :problem="problem" @select="selectSubmission"></ProblemSubmissionsPanel>
+          <ProblemSubmissionsPanel
+            v-else
+            :submissions="submissions"
+            :loading="loadingSubmissions"
+            :loadingMore="loadingMore"
+            :hasNext="!!nextCursor"
+            :selected="selectedSubmission"
+            :problem="problem"
+            @select="selectSubmission"
+            @load-more="loadMoreSubmissions"
+          ></ProblemSubmissionsPanel>
       </div>
     </template>
   </Card>
@@ -47,6 +57,8 @@ const editorCode = ref("")
 
 const submissions = ref([]);
 const loadingSubmissions = ref(false);
+const loadingMore = ref(false);
+const nextCursor = ref(null);
 const selectedSubmission = ref(null);
 const ws = ref(null);
 
@@ -61,14 +73,29 @@ async function fetchProblem() {
   catch (err) { console.error(err); }
 }
 
-async function fetchSubmissions() {
-  loadingSubmissions.value = true;
+function parseCursorFromUrl(url) {
   try {
-    const list = await submissionService.listSubmissions(problemId);
-    submissions.value = list;
+    if (!url) return null;
+    const u = url.includes('://') ? new URL(url) : new URL(url, location.origin);
+    return u.searchParams.get('cursor');
+  } catch (e) {
+    try {
+      const m = url.match(/[?&]cursor=([^&]+)/);
+      return m ? decodeURIComponent(m[1]) : null;
+    } catch (e2) { return null; }
+  }
+}
+
+async function fetchSubmissions(cursor = null, append = false) {
+  if (append) loadingMore.value = true; else loadingSubmissions.value = true;
+  try {
+    const data = await submissionService.listSubmissions(problemId, cursor);
+    if (append) submissions.value.push(...(data.results || []));
+    else submissions.value = data.results || [];
+    nextCursor.value = parseCursorFromUrl(data.next);
     if (submissions.value.length && !selectedSubmission.value) selectedSubmission.value = submissions.value[0];
   } catch (err) { console.error('Error loading submissions', err); }
-  finally { loadingSubmissions.value = false; }
+  finally { loadingMore.value = false; loadingSubmissions.value = false; }
 }
 
 function selectSubmission(s) { selectedSubmission.value = s; }
@@ -87,6 +114,11 @@ function switchToSubmissions() {
     editorTab.value = false;
     fetchSubmissions();
   }
+}
+
+async function loadMoreSubmissions() {
+  if (!nextCursor.value || loadingMore.value) return;
+  await fetchSubmissions(nextCursor.value, true);
 }
 
 function setupWebsocket() {

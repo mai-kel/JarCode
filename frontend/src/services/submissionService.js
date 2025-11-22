@@ -2,8 +2,10 @@ import apiClient from './api';
 
 const BASE = (problemId) => `/problems/${problemId}/submissions/`;
 
-export async function listSubmissions(problemId) {
-  const resp = await apiClient.get(BASE(problemId));
+
+export async function listSubmissions(problemId, cursor = null) {
+  const url = cursor ? `${BASE(problemId)}?cursor=${encodeURIComponent(cursor)}` : BASE(problemId);
+  const resp = await apiClient.get(url);
   return resp.data;
 }
 

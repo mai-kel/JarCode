@@ -6,6 +6,7 @@ from .serializers import SubmissionSerializer
 from rest_framework.generics import get_object_or_404
 from problems.models import Problem
 from .tasks import evaluate_submission
+from .pagination import SubmissionCursorPagination
 
 
 class SubmissionViewSet(mixins.CreateModelMixin,
@@ -13,6 +14,7 @@ class SubmissionViewSet(mixins.CreateModelMixin,
     serializer_class = SubmissionSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication]
+    pagination_class = SubmissionCursorPagination
 
     def get_queryset(self):
         problem = get_object_or_404(Problem, id=self.kwargs['problem_pk'])

@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, computed, nextTick } from 'vue'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
@@ -84,6 +84,7 @@ const difficultyFilter = ref(null)
 const loading = ref(true)
 const loadingMore = ref(false)
 const nextCursor = ref(null)
+const autoLoading = ref(false)
 let debounceTimer = null
 
 const languageOptions = computed(() => [{ text: 'All', value: null }, ...Languages])
@@ -147,12 +148,31 @@ const onSearchInput = () => {
 
 const scheduleFetch = () => {
   if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => {
+  debounceTimer = setTimeout(async () => {
     nextCursor.value = null
     problems.value = []
-    fetchPage(null, false)
+    await fetchPage(null, false)
+    await fillIfNoScroll()
     debounceTimer = null
   }, 300)
+}
+
+const fillIfNoScroll = async () => {
+  if (autoLoading.value) return
+  if (!nextCursor.value) return
+  autoLoading.value = true
+  try {
+    while (nextCursor.value) {
+      await nextTick()
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const winH = window.innerHeight || document.documentElement.clientHeight
+      const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
+      if (docH - (scrollTop + winH) >= 200) break
+      await fetchPage(nextCursor.value, true)
+    }
+  } finally {
+    autoLoading.value = false
+  }
 }
 
 watch([languageFilter, difficultyFilter], () => {
@@ -185,8 +205,9 @@ const onScroll = () => {
   }
 }
 
-onMounted(() => {
-  fetchPage()
+onMounted(async () => {
+  await fetchPage()
+  await fillIfNoScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
 })
 
