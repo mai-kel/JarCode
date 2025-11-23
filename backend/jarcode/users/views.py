@@ -208,6 +208,21 @@ class LoggedUserInfoApiView(APIView):
         serializer = UserLoggedSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        summary="Edit your profile",
+        request=UserLoggedSerializer,
+        responses={
+            201: OpenApiResponse(UserLoggedSerializer)
+        }
+    )
+    def put(self, request, format=None):
+        serializer = UserLoggedSerializer(request.user,
+                                          data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
 
 class SendPasswordResetLinkApiView(APIView):
     authentication_classes = [SessionAuthentication]

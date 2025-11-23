@@ -42,6 +42,8 @@ class UserLoggedSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'is_content_creator', 'first_name',
                   'last_name', 'id', 'uuid']
+        read_only_fields = ['email', 'is_content_creator',
+                            'id', 'uuid']
 
 
 class UserGenericInfoSerializer(serializers.ModelSerializer):
