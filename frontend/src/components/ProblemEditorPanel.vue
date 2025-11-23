@@ -26,7 +26,7 @@
                     <h4 class="m-0">Editor</h4>
                 </template>
                 <template #content>
-                    <div ref="editorContainer" class="monaco-editor" style="height:575px;border:1px solid #ddd;margin-bottom:1rem"></div>
+                    <div ref="editorContainer" class="monaco-editor" style="height:583px;border:1px solid #ddd;margin-bottom:1rem"></div>
 
                     <div class="flex gap-2">
                     <Button label="Submit" icon="pi pi-play" @click="submit" :loading="isSubmitting" :disabled="!isEditorReady"></Button>

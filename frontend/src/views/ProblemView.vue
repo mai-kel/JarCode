@@ -8,7 +8,12 @@
         <h2 class="m-0">{{ problem?.title || 'Problem' }}</h2>
         <Button class="p-button-text" label="Back" icon="pi pi-angle-left" @click="goBack"></Button>
       </div>
+    </template>
 
+    <template #subtitle>
+      <div>
+        Author: {{ problem?.author.first_name }} {{ problem?.author.last_name }}
+      </div>
       <div class="mt-3">
         <Button class="p-mr-2" :class="editorTab ? 'p-button-text p-button-active' : 'p-button-text'" label="Editor" @click="() => (editorTab = true)"></Button>
         <Button :class="!editorTab ? 'p-button-text p-button-active' : 'p-button-text'" label="Submissions" @click="switchToSubmissions"></Button>

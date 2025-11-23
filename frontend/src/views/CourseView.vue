@@ -6,6 +6,11 @@
         <Button label="Go back to courses" icon="pi pi-arrow-left" class="p-button-text" @click="goBackToCourses" />
       </div>
     </template>
+    <template #subtitle>
+      <div>
+        Author: {{ course?.owner.first_name }} {{ course?.owner.last_name }}
+      </div>
+    </template>
     <template #content>
       <div class="p-fluid grid">
         <!-- Chapters and Lessons -->
