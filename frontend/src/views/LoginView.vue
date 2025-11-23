@@ -67,7 +67,6 @@ const handleLogin = async () => {
 
   if (success) {
     fieldErrors.value = {}
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Logged in successfully!', life: 3000 });
   } else {
     fieldErrors.value = parseApiErrorFields(authStore.error)
   }

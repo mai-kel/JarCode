@@ -6,6 +6,7 @@ import VerifyAccountView from '../views/VerifyAccountView.vue'
 import ResendVerificationView from '../views/ResendVerificationView.vue'
 import SendPasswordResetView from '../views/SendPasswordResetView.vue'
 import ResetPasswordView from '../views/ResetPasswordView.vue'
+import ProfileView from '../views/ProfileView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import CreateCourseView from '../views/CreateCourseView.vue'
 import CreateChapterView from '../views/CreateChapterView.vue'
@@ -77,6 +78,12 @@ const routes = [
     name: 'send-password-reset',
     component: SendPasswordResetView,
     meta: { guestOnly: true }
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/reset-password/:user_id/:user_uuid/:token',

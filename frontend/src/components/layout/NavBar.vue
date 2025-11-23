@@ -59,6 +59,12 @@ const items = computed(() => [
     visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
   },
   {
+    label: 'Profile',
+    icon: 'pi pi-user',
+    command: () => router.push({ name: 'profile' }),
+    visible: () => authStore.isReady && authStore.isAuthenticated
+  },
+  {
     label: 'Login',
     icon: 'pi pi-sign-in',
     command: () => router.push({ name: 'login' }),

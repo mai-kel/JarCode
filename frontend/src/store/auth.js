@@ -137,6 +137,24 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function updateProfile({ first_name, last_name }) {
+    isLoading.value = true
+    error.value = null
+    try {
+      await ensureCsrf();
+      const payload = { first_name, last_name }
+      const resp = await apiClient.put('/users/me/', payload)
+      user.value = resp.data
+      return { ok: true, data: resp.data }
+    } catch (e) {
+      const respErr = e.response?.data || { message: 'An unknown error occurred' }
+      error.value = respErr
+      return { ok: false, error: respErr }
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   return {
     user,
     isLoading,
@@ -150,6 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
     verifyAccount,
     resendVerification,
     sendPasswordReset,
-    changePassword
+    changePassword,
+    updateProfile
   }
 })
