@@ -233,3 +233,19 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+ALLOWED_TAGS = {
+    'a', 'abbr', 'acronym', 'b', 'blockquote', 'br', 'code', 'div', 'em',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p',
+    'pre', 'span', 'strong', 'table', 'tbody', 'td', 'th', 'thead', 'tr', 'ul',
+    'colgroup', 'col'
+}
+ALLOWED_ATTRIBUTES = {
+    'a': {'href', 'title', 'target', 'style', 'class', 'border'},
+    'img': {'src', 'alt', 'title', 'width', 'height', 'style', 'class', 'border'},
+}
+ALLOWED_ATTRIBUTES.update({
+    tag: {'style', 'class', 'border'}
+    for tag in ALLOWED_TAGS
+    if tag not in ALLOWED_ATTRIBUTES
+})
