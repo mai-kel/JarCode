@@ -1,5 +1,6 @@
 export const Languages = [
   { text: 'Python', value: 'PYTHON' },
+  { text: 'C++', value: 'CPP' },
 ];
 
 export const Difficulties = [

@@ -163,6 +163,9 @@ function mapToMonacoLanguage(value) {
     case 'JAVA':
       return 'java';
     case 'PYTHON':
+      return 'python';
+    case 'CPP':
+      return 'cpp';
     default:
       return 'python';
   }

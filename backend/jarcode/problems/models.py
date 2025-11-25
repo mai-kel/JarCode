@@ -5,6 +5,7 @@ from users.models import User
 class Problem(models.Model):
     class Language(models.TextChoices):
         PYTHON = 'PYTHON', 'Python'
+        CPP = 'CPP', 'C++'
 
     class Difficulty(models.TextChoices):
         EASY = 'EASY', 'Easy'
