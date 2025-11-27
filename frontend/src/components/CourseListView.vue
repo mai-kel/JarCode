@@ -36,6 +36,9 @@
               <template #title>
                 <span class="ellipsis-1">{{ c.title }}</span>
               </template>
+              <template #subtitle>
+                {{ c.owner.first_name }} {{ c.owner.last_name }}
+              </template>
               <template #content>
                 <p class="ellipsis-3">{{ c.description }}</p>
               </template>
