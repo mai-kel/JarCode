@@ -6,6 +6,7 @@ class Problem(models.Model):
     class Language(models.TextChoices):
         PYTHON = 'PYTHON', 'Python'
         CPP = 'CPP', 'C++'
+        JAVA = 'JAVA', 'Java'
 
     class Difficulty(models.TextChoices):
         EASY = 'EASY', 'Easy'

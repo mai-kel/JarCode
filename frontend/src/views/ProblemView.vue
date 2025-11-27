@@ -15,8 +15,8 @@
         Author: {{ problem?.author.first_name }} {{ problem?.author.last_name }}
       </div>
       <div class="mt-3">
-        <Button class="p-mr-2" :class="editorTab ? 'p-button-text p-button-active' : 'p-button-text'" label="Editor" @click="() => (editorTab = true)"></Button>
-        <Button :class="!editorTab ? 'p-button-text p-button-active' : 'p-button-text'" label="Submissions" @click="switchToSubmissions"></Button>
+        <Button class="mr-2" :class="editorTab ? '' : 'p-button-outlined'" label="Editor" @click="() => (editorTab = true)"></Button>
+        <Button :class="!editorTab ? '' : 'p-button-outlined'" label="Submissions" @click="switchToSubmissions"></Button>
       </div>
     </template>
 

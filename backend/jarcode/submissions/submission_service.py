@@ -1,5 +1,6 @@
 from judge.python_judge import PythonJudge
 from judge.cpp_judge import CppJudge
+from judge.java_judge import JavaJudge
 from judge.judge import Judge
 from judge.result_dto import ResultDto
 from problems.models import Problem
@@ -12,12 +13,14 @@ from .serializers import SubmissionSerializer
 class SubmissionService:
     LANGUAGE_TO_JUDGE_MAP = {
         Problem.Language.PYTHON: PythonJudge,
-        Problem.Language.CPP: CppJudge
+        Problem.Language.CPP: CppJudge,
+        Problem.Language.JAVA: JavaJudge,
     }
 
     LANGUAGE_TIMEOUT_MAP = {
         Problem.Language.PYTHON: 30.0,
-        Problem.Language.CPP: 30.0
+        Problem.Language.CPP: 30.0,
+        Problem.Language.JAVA: 30.0,
     }
 
     def __init__(self, submission: Submission) -> None:
