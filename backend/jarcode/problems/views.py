@@ -6,13 +6,15 @@ from .permissions import IsAuthorOrReadOnly
 from .serializers import ProblemSeriazlier, ProblemReviewSerializer
 from rest_framework.generics import get_object_or_404
 from.pagination import ProblemCursorPagination
+from .filters import ProblemFilter
+
 
 class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSeriazlier
     queryset = Problem.objects.all()
     permission_classes = [IsAuthorOrReadOnly, IsAuthenticated]
     authentication_classes = [SessionAuthentication]
-    filterset_fields = ['title', 'language', 'difficulty', 'author']
+    filterset_class = ProblemFilter
     pagination_class = ProblemCursorPagination
 
     def perform_create(self, serializer):

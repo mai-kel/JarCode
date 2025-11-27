@@ -12,13 +12,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import LessonImageSerializer
 from .pagination import CourseCursorPagination
+from .filters import CourseFilter
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['title', 'owner']
+    filterset_class = CourseFilter
     pagination_class = CourseCursorPagination
 
     def perform_create(self, serializer):
