@@ -6,6 +6,7 @@ from nh3 import clean
 
 class ProblemSeriazlier(serializers.ModelSerializer):
     author = UserGenericInfoSerializer(read_only=True)
+    is_solved = serializers.BooleanField(read_only=True, default=False)
 
     class Meta:
         model = Problem

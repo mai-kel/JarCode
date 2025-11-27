@@ -22,12 +22,13 @@ export async function deleteProblem(id) {
   return resp.data;
 }
 
-export async function listProblems({ search = '', language = null, difficulty = null, author = null, cursor = null } = {}) {
+export async function listProblems({ search = '', language = null, difficulty = null, author = null, cursor = null, is_solved = null } = {}) {
   const params = {};
   if (search) params.title = search;
   if (language) params.language = language;
   if (difficulty) params.difficulty = difficulty;
   if (author) params.author = author;
+  if (is_solved !== null && is_solved !== undefined) params.is_solved = is_solved;
   if (cursor) params.cursor = cursor;
   const resp = await apiClient.get(BASE, { params });
   return resp.data;

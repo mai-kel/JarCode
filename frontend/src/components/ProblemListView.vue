@@ -10,11 +10,14 @@
           <div class="col-12 md:col-6">
             <InputText type="text" v-model="searchQuery" @input="onSearchInput" :placeholder="placeholder" class="w-full" />
           </div>
-          <div class="col-6 md:col-3">
+          <div class="col-6 md:col-2">
             <Dropdown :options="languageOptions" optionLabel="text" optionValue="value" v-model="languageFilter" placeholder="Language" />
           </div>
-          <div class="col-6 md:col-3">
+          <div class="col-6 md:col-2">
             <Dropdown :options="difficultyOptions" optionLabel="text" optionValue="value" v-model="difficultyFilter" placeholder="Difficulty" />
+          </div>
+          <div class="col-12 md:col-2">
+            <Dropdown :options="isSolvedOptions" optionLabel="text" optionValue="value" v-model="isSolvedFilter" placeholder="Status" />
           </div>
         </div>
 
@@ -33,9 +36,15 @@
         <div v-else>
           <ul class="list-none p-0 m-0">
             <li v-for="p in problems" :key="p.id" class="py-3 border-bottom flex align-items-center justify-content-between">
-              <div class="flex flex-column">
-                <span class="font-medium">{{ p.title }}</span>
-                <small class="text-color-secondary">{{ difficultyText(p.difficulty) }} • {{ languageText(p.language) }}</small>
+              <div class="flex align-items-center">
+                <span v-if="p.is_solved" class="flex align-items-center" style="margin-right:0.75rem;font-size:1.1rem;color:#28a745">
+                  <i class="pi pi-check"></i>
+                </span>
+                <span v-else style="display:inline-block;width:1.1rem;margin-right:0.75rem"></span>
+                <div class="flex flex-column">
+                  <span class="font-medium">{{ p.title }}</span>
+                  <small class="text-color-secondary">{{ difficultyText(p.difficulty) }} • {{ languageText(p.language) }}</small>
+                </div>
               </div>
               <div class="flex align-items-center">
                 <slot name="item-action">
@@ -81,6 +90,7 @@ const problems = ref([])
 const searchQuery = ref('')
 const languageFilter = ref(null)
 const difficultyFilter = ref(null)
+const isSolvedFilter = ref(null)
 const loading = ref(true)
 const loadingMore = ref(false)
 const nextCursor = ref(null)
@@ -89,6 +99,7 @@ let debounceTimer = null
 
 const languageOptions = computed(() => [{ text: 'All', value: null }, ...Languages])
 const difficultyOptions = computed(() => [{ text: 'All', value: null }, ...Difficulties])
+const isSolvedOptions = computed(() => [{ text: 'All', value: null }, { text: 'Solved', value: true }, { text: 'Unsolved', value: false }])
 
 const hasCreateSlot = !!(false)
 
@@ -124,6 +135,7 @@ const fetchPage = async (cursor = null, append = false) => {
       search: searchQuery.value,
       language: languageFilter.value,
       difficulty: difficultyFilter.value,
+      is_solved: isSolvedFilter.value,
       cursor
     })
 
@@ -175,7 +187,7 @@ const fillIfNoScroll = async () => {
   }
 }
 
-watch([languageFilter, difficultyFilter], () => {
+watch([languageFilter, difficultyFilter, isSolvedFilter], () => {
   scheduleFetch()
 })
 
