@@ -185,7 +185,6 @@ DRAMATIQ_BROKER = {
         ),
     },
     "MIDDLEWARE": [
-        "dramatiq.middleware.Prometheus",
         "dramatiq.middleware.AgeLimit",
         "dramatiq.middleware.TimeLimit",
         "dramatiq.middleware.Callbacks",

@@ -5,7 +5,7 @@ from .models import Submission, Result
 class ResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
-        fields = ['id', 'output', 'outcome']
+        fields = ['id', 'output', 'outcome', 'ai_evaluation']
 
 
 class SubmissionSerializer(serializers.ModelSerializer):

@@ -35,3 +35,4 @@ class Result(models.Model):
     )
     output = models.TextField(blank=True)
     outcome = models.CharField(choices=Outcome.choices)
+    ai_evaluation = models.TextField(blank=True)
