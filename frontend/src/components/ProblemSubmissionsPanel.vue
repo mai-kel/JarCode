@@ -45,7 +45,18 @@
         </Card>
       </div>
 
-      <div v-if="selected && selected.result && selected.result.output" class="col-12" style="margin-top:1rem">
+      <div v-if="selected && selected.result && selected.result.ai_evaluation" class="col-12 lg:col-5" style="margin-top:1rem">
+        <Card>
+          <template #title>
+            <h4 class="m-0">AI Evaluation</h4>
+          </template>
+          <template #content>
+            <div v-html="sanitizedAiEvaluation" class="submission-ai-evaluation"></div>
+          </template>
+        </Card>
+      </div>
+
+      <div v-if="selected && selected.result && selected.result.output" class="col-12 lg:col-7" style="margin-top:1rem">
         <Card>
           <template #title>
           <h4 class="m-0">Output</h4>
@@ -61,7 +72,9 @@
 
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { ref, onMounted, computed, onBeforeUnmount, watch, nextTick } from 'vue';
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
 import Card from 'primevue/card';
 import ProgressSpinner from 'primevue/progressspinner';
 import loader from '@monaco-editor/loader';
@@ -69,6 +82,14 @@ import { outcomeInfo, statusLabel } from '../constants/submissions';
 
 const props = defineProps({ submissions: Array, loading: Boolean, selected: Object, problem: Object, hasNext: Boolean, loadingMore: Boolean });
 const emits = defineEmits(['select', 'load-more']);
+
+const sanitizedAiEvaluation = computed(() => {
+  if (props.selected && props.selected.result && props.selected.result.ai_evaluation){
+    const html = marked.parse(props.selected.result.ai_evaluation);
+    return DOMPurify.sanitize(html);
+  }
+  return "";
+});
 
 const submittedEditor = ref(null);
 let submittedMonacoEditor = null;
@@ -189,5 +210,6 @@ function fillIfNoScroll() {
 .bg-100 { background-color: #f5f5f5; }
 .outcome-pass { color: #28a745; font-weight: 700; font-size: 1.05rem; }
 .outcome-fail { color: #dc3545; font-weight: 700; font-size: 1.05rem; }
-.submission-output { background:#f7f7f7; white-space:pre-wrap; max-height:720px; overflow:auto; margin:0; padding:1rem; }
+.submission-ai-evaluation { max-height:720px; min-height: 300px; overflow:auto; padding-right:0.5rem; }
+.submission-output { background:#f7f7f7; white-space:pre-wrap; max-height:720px; min-height: 300px; overflow:auto; margin:0; padding:1rem; }
 </style>
