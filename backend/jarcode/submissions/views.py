@@ -16,6 +16,14 @@ class SubmissionViewSet(mixins.CreateModelMixin,
     authentication_classes = [SessionAuthentication]
     pagination_class = SubmissionCursorPagination
 
+    def get_throttles(self):
+        if self.action == 'create':
+            self.throttle_scope = 'solution_submission'
+        else:
+            self.throttle_scope = None
+
+        return super().get_throttles()
+
     def get_queryset(self):
         problem = get_object_or_404(Problem, id=self.kwargs['problem_pk'])
         return (

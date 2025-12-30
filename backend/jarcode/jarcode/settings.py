@@ -108,6 +108,7 @@ REST_FRAMEWORK = {
         'login': '5/minute',
         'token_creation': '5/minute',
         'token_consumption': '5/minute',
+        'solution_submission': '3/minute'
     },
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'

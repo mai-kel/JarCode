@@ -51,6 +51,7 @@ import ProblemSubmissionsPanel from '../components/ProblemSubmissionsPanel.vue';
 
 import { getProblem } from '../services/problemService';
 import submissionService from '../services/submissionService';
+import { useToast } from 'primevue/usetoast';
 
 const route = useRoute();
 const router = useRouter();
@@ -66,6 +67,7 @@ const loadingMore = ref(false);
 const nextCursor = ref(null);
 const selectedSubmission = ref(null);
 const ws = ref(null);
+const toast = useToast();
 
 const goBack = () => router.push({ name: 'browse-problems' });
 
@@ -111,7 +113,17 @@ async function handleSubmitFromPanel(payload) {
     submissions.value.unshift(created);
     selectedSubmission.value = created;
     editorTab.value = false;
-  } catch (err) { console.error('submit error', err); }
+  } catch (err) {
+    if (err && err.response && err.response.status === 429) {
+      const retryAfter = err.response.headers && err.response.headers['retry-after'];
+      const detail = retryAfter ? `You're sending submissions too quickly - please wait ${retryAfter} seconds before trying again.`
+                                : "You're sending submissions too quickly - please wait a few moments before trying again.";
+      toast.add({ severity: 'warn', summary: 'Too many submissions', detail, life: 6000 });
+    } else {
+      console.error('submit error', err);
+      toast.add({ severity: 'error', summary: 'Submission failed', detail: 'An error occurred while submitting. Please try again later.', life: 4000 });
+    }
+  }
 }
 
 function switchToSubmissions() {
