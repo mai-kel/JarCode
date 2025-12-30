@@ -2,17 +2,18 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
 from django.db.models import Exists, OuterRef
-from .models import Problem, ProblemReview
-from .permissions import IsAuthorOrReadOnly
-from .serializers import ProblemSeriazlier, ProblemReviewSerializer
-from rest_framework.generics import get_object_or_404
-from.pagination import ProblemCursorPagination
+from .models import Problem
+from .permissions import IsAuthorOrReadOnly, IsContentCreatorOrReadOnly
+from .serializers import ProblemSeriazlier
+from .pagination import ProblemCursorPagination
 from .filters import ProblemFilter
 from submissions.models import Submission, Result
 
+
 class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSeriazlier
-    permission_classes = [IsAuthorOrReadOnly, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly,
+                          IsContentCreatorOrReadOnly]
     authentication_classes = [SessionAuthentication]
     filterset_class = ProblemFilter
     pagination_class = ProblemCursorPagination
@@ -35,17 +36,3 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-
-class ProblemReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = ProblemReviewSerializer
-    permission_classes = [IsAuthorOrReadOnly, IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
-
-    def get_queryset(self):
-        problem = get_object_or_404(Problem, id=self.kwargs['problem_pk'])
-        return ProblemReview.objects.filter(problem=problem)
-
-    def perform_create(self, serializer):
-        problem = get_object_or_404(Problem, id=self.kwargs['problem_pk'])
-        serializer.save(author=self.request.user, problem=problem)

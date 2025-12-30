@@ -1,12 +1,5 @@
 from django.contrib import admin
-from .models import Problem, ProblemReview
-
-
-class ProblemReviewInline(admin.TabularInline):
-    model = ProblemReview
-    extra = 1
-    readonly_fields = ('created_at',)
-    autocomplete_fields = ('author',)
+from .models import Problem
 
 
 @admin.register(Problem)
@@ -38,14 +31,3 @@ class ProblemAdmin(admin.ModelAdmin):
             'fields': ('starting_code', 'test_code')
         }),
     )
-
-    inlines = [ProblemReviewInline]
-
-
-@admin.register(ProblemReview)
-class ProblemReviewAdmin(admin.ModelAdmin):
-    list_display = ('problem', 'author', 'value', 'created_at')
-    list_filter = ('value', 'problem__title')
-    search_fields = ('problem__title', 'author__email', 'comment')
-    readonly_fields = ('created_at',)
-    autocomplete_fields = ('author', 'problem')

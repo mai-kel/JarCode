@@ -23,18 +23,3 @@ class Problem(models.Model):
     test_code = models.TextField()
     difficulty = models.CharField(choices=Difficulty.choices)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-class ProblemReview(models.Model):
-    author = models.ForeignKey(User,
-                               related_name='problem_reviews',
-                               on_delete=models.CASCADE)
-    problem = models.ForeignKey(Problem,
-                                related_name="reviews",
-                                on_delete=models.CASCADE)
-    value = models.PositiveSmallIntegerField()
-    comment = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('author', 'problem')
