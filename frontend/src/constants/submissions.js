@@ -7,7 +7,7 @@ export const STATUS_MAP = {
 
 export const OUTCOME_MAP = {
   "PASSED": { label: 'Passed', color: 'green', icon: '✔', isPass: true },
-  "RUN_ERR": { label: 'Runtime error', color: 'red', icon: '✖', isPass: false },
+  "FAILED": { label: 'Failed', color: 'red', icon: '✖', isPass: false },
   "COMP_ERR": { label: 'Compilation error', color: 'red', icon: '✖', isPass: false },
   "TIMEOUT": { label: 'Timeout', color: 'red', icon: '✖', isPass: false },
   "INT_SERV_ERR": { label: 'Server error', color: 'red', icon: '✖', isPass: false },

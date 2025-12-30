@@ -23,7 +23,7 @@ class Submission(models.Model):
 class Result(models.Model):
     class Outcome(models.TextChoices):
         PASSED = 'PASSED', 'Passed'
-        RUNTIME_ERROR = 'RUN_ERR', 'Runtime error'
+        FAILED = 'FAILED', 'Failed'
         COMPILATION_ERROR = 'COMP_ERR', 'Compilation error'
         TIMEOUT = 'TIMEOUT', 'Timeout'
         INTERNAL_SERVER_ERROR = 'INT_SERV_ERR', 'Internal server error'

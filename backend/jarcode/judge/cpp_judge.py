@@ -44,7 +44,7 @@ class CppJudge(Judge):
                 detach=True,
                 mem_limit="512m",
                 memswap_limit="512m",
-                nano_cpus=0.5 * 1_000_000_000,
+                nano_cpus=int(0.5 * 1_000_000_000),
                 user=1000,
                 tmpfs={"/home/user": "size=50m,uid=1000,exec"},
                 read_only=True,
@@ -70,7 +70,7 @@ class CppJudge(Judge):
             elif status_code == 100:
                 outcome = Result.Outcome.COMPILATION_ERROR
             else:
-                outcome = Result.Outcome.RUNTIME_ERROR
+                outcome = Result.Outcome.FAILED
 
             return ResultDto(output=output, outcome=outcome)
 
