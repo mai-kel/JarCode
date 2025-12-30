@@ -28,8 +28,9 @@ class SubmissionService:
         self.submission: Submission = submission
         self.submission_author = self.submission.author
         self.problem: Problem = self.submission.problem
-        self.judge_cls: Judge = self.LANGUAGE_TO_JUDGE_MAP[self.problem.language] # TODO think of some error mechanism
+        self.judge_cls: Judge = self.LANGUAGE_TO_JUDGE_MAP[self.problem.language]
         self.timeout: float = self.LANGUAGE_TIMEOUT_MAP[self.problem.language]
+        self.AI_EVALUATOR = GeminiEvaluator
 
     def _get_results(self) -> ResultDto:
         return self.judge_cls.run_solution(
@@ -62,7 +63,7 @@ class SubmissionService:
     def evaluate(self) -> None:
         results = self._get_results()
         try:
-            ai_evaluation = GeminiEvaluator.get_evaluation(
+            ai_evaluation = self.AI_EVALUATOR.get_evaluation(
                 problem_title=self.problem.title,
                 problem_description=self.problem.description,
                 problem_language=self.problem.language,

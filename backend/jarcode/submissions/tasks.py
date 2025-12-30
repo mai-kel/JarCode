@@ -11,7 +11,6 @@ def evaluate_submission(submission_id):
     submission = Submission.objects.select_related(
         'author', 'problem').filter(id=submission_id).first()
     submission.status = Submission.Status.EVALUATING
-    submission.save()
 
     submission_serialized = SubmissionSerializer(submission).data
     channel_layer = get_channel_layer()
