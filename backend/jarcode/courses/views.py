@@ -5,7 +5,7 @@ from django.db.models import Max
 from django.db import transaction
 from .models import Course, Chapter, Lesson
 from .serializers import CourseSerializer, ChapterSerializer, LessonSerializer
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsContentCreatorOrReadOnly
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,10 +14,12 @@ from .serializers import LessonImageSerializer
 from .pagination import CourseCursorPagination
 from .filters import CourseFilter
 
+
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly,
+                          IsContentCreatorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = CourseFilter
     pagination_class = CourseCursorPagination
@@ -28,7 +30,8 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class ChapterViewSet(viewsets.ModelViewSet):
     serializer_class = ChapterSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly,
+                          IsContentCreatorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
 
@@ -62,7 +65,8 @@ class ChapterViewSet(viewsets.ModelViewSet):
 
 class LessonViewSet(viewsets.ModelViewSet):
     serializer_class = LessonSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly,
+                          IsContentCreatorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
 
@@ -97,7 +101,7 @@ class LessonViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsContentCreatorOrReadOnly])
 def upload_lesson_image(request):
     serializer = LessonImageSerializer(data=request.data,
                                        context={'request': request})

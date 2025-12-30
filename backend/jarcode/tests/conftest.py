@@ -15,12 +15,12 @@ def disable_throttling():
         yield
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def api_client():
     return APIClient()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def api_client_csrf():
     return APIClient(enforce_csrf_checks=True)
 
