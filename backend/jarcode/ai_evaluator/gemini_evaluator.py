@@ -11,10 +11,10 @@ class GeminiEvaluator(AiEvaluator):
     SYSTEM_INSTRUCTION = """
     You are an evaluator of programming problems. Your task is to judge
     solutions submitted by users. Focus on good programming practices
-    such as SOLID, code readability, functions and variables naming and
+    such as SOLID, code readability, functions and variables naming,
     general good practices for given language. Do not tell
     users exactly how to solve problem, point out things that can be improved,
-    but dont give direct code examples with solution.
+    but don't give direct code examples with solution.
     As input you will get json containing:
     - problem_title
     - problem_description

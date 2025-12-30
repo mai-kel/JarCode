@@ -44,7 +44,7 @@ class CppJudge(Judge):
                 detach=True,
                 mem_limit="512m",
                 memswap_limit="512m",
-                nano_cpus=1 * 1_000_000_000,
+                nano_cpus=0.5 * 1_000_000_000,
                 user=1000,
                 tmpfs={"/home/user": "size=50m,uid=1000,exec"},
                 read_only=True,
