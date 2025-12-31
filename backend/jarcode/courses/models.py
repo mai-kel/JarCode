@@ -4,7 +4,8 @@ import time
 
 
 def get_course_image_path(instance, filename):
-    return f'courses/images/{instance.id}/{filename}'
+    timestamp = time.time()
+    return f'courses/images/{timestamp}_{filename}'
 
 
 def get_lesson_image_path(instance, filename):

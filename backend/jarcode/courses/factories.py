@@ -11,7 +11,6 @@ class CourseFactory(DjangoModelFactory):
     title = factory.Faker('sentence', nb_words=4)
     description = factory.Faker('paragraph')
     owner = factory.SubFactory(UserFactory)
-    thumbnail = factory.django.ImageField(color='blue')
 
 
 class ChapterFactory(DjangoModelFactory):
@@ -31,11 +30,3 @@ class LessonFactory(DjangoModelFactory):
     chapter = factory.SubFactory(ChapterFactory)
     content = "<p>Valid HTML content for lesson.</p>"
     position = factory.Sequence(lambda n: n + 1)
-
-
-class LessonImageFactory(DjangoModelFactory):
-    class Meta:
-        model = LessonImage
-
-    lesson = factory.SubFactory(LessonFactory)
-    image = factory.django.ImageField(color='red')
