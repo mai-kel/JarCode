@@ -37,3 +37,8 @@ def broker():
 def decode_message():
     encoder = JSONEncoder()
     return lambda raw: encoder.decode(raw)
+
+
+@pytest.fixture(autouse=True)
+def set_tmp_media_root(settings, tmp_path):
+    settings.MEDIA_ROOT = tmp_path / "media"
