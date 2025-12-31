@@ -47,8 +47,8 @@
 
 <script setup>
 import { ref, watchEffect, computed } from 'vue'
-import { useAuthStore } from '../store/auth'
-import parseApiError from '../utils/parseApiError'
+import { useAuthStore } from '../../store/auth'
+import parseApiError from '../../utils/parseApiError'
 import { useToast } from 'primevue/usetoast'
 
 const authStore = useAuthStore()

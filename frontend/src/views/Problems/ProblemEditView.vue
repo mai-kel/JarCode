@@ -73,9 +73,9 @@ import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import Message from 'primevue/message';
 
-import ProblemEditor from '../components/ProblemEditor.vue';
-import { Languages, Difficulties } from '../constants/problems';
-import { getProblem, updateProblem, deleteProblem } from '../services/problemService';
+import ProblemEditor from '../../components/ProblemEditor.vue';
+import { Languages, Difficulties } from '../../constants/problems';
+import { getProblem, updateProblem, deleteProblem } from '../../services/problemService';
 
 const route = useRoute();
 const router = useRouter();

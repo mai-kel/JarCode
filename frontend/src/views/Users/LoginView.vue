@@ -49,9 +49,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from '../../store/auth';
 import { useToast } from 'primevue/usetoast';
-import parseApiError, { parseApiErrorFields } from '../utils/parseApiError'
+import parseApiError, { parseApiErrorFields } from '../../utils/parseApiError'
 
 const email = ref('');
 const password = ref('');

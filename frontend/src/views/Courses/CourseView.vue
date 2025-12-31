@@ -81,9 +81,8 @@
 <script setup>
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import courseService from '../services/courseService'
+import courseService from '../../services/courseService'
 import DOMPurify from 'dompurify'
-import Card from 'primevue/card'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import ProgressSpinner from 'primevue/progressspinner'

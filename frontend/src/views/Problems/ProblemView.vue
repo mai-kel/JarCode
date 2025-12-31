@@ -46,11 +46,11 @@ import Card from 'primevue/card';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 
-import ProblemEditorPanel from '../components/ProblemEditorPanel.vue';
-import ProblemSubmissionsPanel from '../components/ProblemSubmissionsPanel.vue';
+import ProblemEditorPanel from '../../components/ProblemEditorPanel.vue';
+import ProblemSubmissionsPanel from '../../components/ProblemSubmissionsPanel.vue';
 
-import { getProblem } from '../services/problemService';
-import submissionService from '../services/submissionService';
+import { getProblem } from '../../services/problemService';
+import submissionService from '../../services/submissionService';
 import { useToast } from 'primevue/usetoast';
 
 const route = useRoute();

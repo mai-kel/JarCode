@@ -52,7 +52,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useConfirm } from 'primevue/useconfirm';
-import { useCourseStore } from '../store/course';
+import { useCourseStore } from '../../store/course';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
 

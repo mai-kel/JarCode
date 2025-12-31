@@ -69,9 +69,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from '../../store/auth';
 import { useToast } from 'primevue/usetoast';
-import { parseApiErrorFields } from '../utils/parseApiError'
+import { parseApiErrorFields } from '../../utils/parseApiError'
 
 const authStore = useAuthStore();
 const toast = useToast();

@@ -69,10 +69,10 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useCourseStore } from '../store/course';
+import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
-import { MAX_THUMBNAIL_BYTES, MAX_THUMBNAIL_LABEL } from '../constants/upload';
+import { MAX_THUMBNAIL_BYTES, MAX_THUMBNAIL_LABEL } from '../../constants/upload';
 
 const title = ref('');
 const description = ref('');
@@ -139,4 +139,3 @@ const goBackToMyCourses = () => {
 
 <style scoped>
 </style>
-

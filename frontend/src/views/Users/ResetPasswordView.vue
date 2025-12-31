@@ -56,7 +56,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '../store/auth'
+import { useAuthStore } from '../../store/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -79,7 +79,7 @@ const isSubmitDisabled = computed(() => {
 const goToLogin = () => router.push({ name: 'login' })
 const goHome = () => router.push({ name: 'home' })
 
-import parseApiError, { parseApiErrorFields } from '../utils/parseApiError'
+import parseApiError, { parseApiErrorFields } from '../../utils/parseApiError'
 const getErrorMessage = parseApiError
 
 onMounted(() => {

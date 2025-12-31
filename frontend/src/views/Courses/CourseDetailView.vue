@@ -74,10 +74,10 @@
 import { ref, onMounted, watch, computed, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useConfirm } from 'primevue/useconfirm';
-import { useCourseStore } from '../store/course';
+import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
-import { useAuthStore } from '../store/auth';
-import { MAX_THUMBNAIL_BYTES, MAX_THUMBNAIL_LABEL } from '../constants/upload';
+import { useAuthStore } from '../../store/auth';
+import { MAX_THUMBNAIL_BYTES, MAX_THUMBNAIL_LABEL } from '../../constants/upload';
 
 const route = useRoute();
 const router = useRouter();

@@ -58,9 +58,9 @@ import Dropdown from 'primevue/dropdown';
 import Message from 'primevue/message';
 import { useConfirm } from 'primevue/useconfirm';
 
-import ProblemEditor from '../components/ProblemEditor.vue';
-import { Languages, Difficulties } from '../constants/problems';
-import problemService from '../services/problemService';
+import ProblemEditor from '../../components/ProblemEditor.vue';
+import { Languages, Difficulties } from '../../constants/problems';
+import problemService from '../../services/problemService';
 
 const router = useRouter();
 const toast = useToast();

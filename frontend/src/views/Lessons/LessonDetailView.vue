@@ -47,10 +47,10 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useConfirm } from 'primevue/useconfirm';
-import { useCourseStore } from '../store/course';
+import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
 import Editor from '@tinymce/tinymce-vue';
-import apiClient from '../services/api';
+import apiClient from '../../services/api';
 
 import 'tinymce/tinymce';
 import 'tinymce/models/dom/model';

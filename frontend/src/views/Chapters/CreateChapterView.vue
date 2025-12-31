@@ -32,7 +32,7 @@
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useConfirm } from 'primevue/useconfirm';
-import { useCourseStore } from '../store/course';
+import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
 
 const route = useRoute();

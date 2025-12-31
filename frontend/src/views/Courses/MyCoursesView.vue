@@ -14,10 +14,10 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { useCourseStore } from '../store/course'
-import { useAuthStore } from '../store/auth'
-import CourseListView from '../components/CourseListView.vue'
-import courseService from '../services/courseService'
+import { useCourseStore } from '../../store/course'
+import { useAuthStore } from '../../store/auth'
+import CourseListView from '../../components/CourseListView.vue'
+import courseService from '../../services/courseService'
 
 const router = useRouter()
   const courseStore = useCourseStore()

@@ -41,7 +41,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useCourseStore } from '../store/course';
+import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import Editor from '@tinymce/tinymce-vue';

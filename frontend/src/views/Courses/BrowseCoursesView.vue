@@ -10,8 +10,8 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import CourseListView from '../components/CourseListView.vue'
-import courseService from '../services/courseService'
+import CourseListView from '../../components/CourseListView.vue'
+import courseService from '../../services/courseService'
 
 const router = useRouter()
 

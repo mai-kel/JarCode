@@ -13,9 +13,9 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import ProblemListView from '../components/ProblemListView.vue'
-import { listProblems } from '../services/problemService'
-import { useAuthStore } from '../store/auth'
+import ProblemListView from '../../components/ProblemListView.vue'
+import { listProblems } from '../../services/problemService'
+import { useAuthStore } from '../../store/auth'
 
 const router = useRouter()
 
