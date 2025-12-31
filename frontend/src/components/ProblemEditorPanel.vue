@@ -26,13 +26,25 @@
                     <h4 class="m-0">Editor</h4>
                 </template>
                 <template #content>
-                    <div ref="editorContainer" class="monaco-editor" style="height:575px;border:1px solid #ddd;margin-bottom:1rem"></div>
+                  <div class="relative" style="height:575px; border:1px solid #ddd; margin-bottom:1rem">
+                    <div v-if="!isEditorReady"
+                        class="w-full h-full flex flex-column align-items-center justify-content-center"
+                        style="background-color: #1e1e1e;">
 
-                    <div class="flex gap-2">
-                    <Button label="Submit" icon="pi pi-play" @click="submit" :loading="isSubmitting" :disabled="!isEditorReady"></Button>
+                        <ProgressSpinner
+                            style="width: 50px; height: 50px"
+                            strokeWidth="4"
+                            animationDuration=".5s"
+                            aria-label="Loading" />
                     </div>
+                    <div ref="editorContainer" class="w-full h-full"></div>
+                  </div>
 
-                    <div v-if="submitError" class="mt-3 text-red-600">Error: {{ submitError.message || submitError }}</div>
+                  <div class="flex gap-2">
+                  <Button label="Submit" icon="pi pi-play" @click="submit" :loading="isSubmitting" :disabled="!isEditorReady"></Button>
+                  </div>
+
+                  <div v-if="submitError" class="mt-3 text-red-600">Error: {{ submitError.message || submitError }}</div>
                 </template>
                 </Card>
             </div>

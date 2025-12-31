@@ -45,7 +45,7 @@
         </Card>
       </div>
 
-      <div v-if="selected && selected.result && selected.result.ai_evaluation" class="col-12 lg:col-5" style="margin-top:1rem">
+      <div v-if="selected && selected.result && selected.result.ai_evaluation" class="col-12 lg:col-5">
         <Card>
           <template #title>
             <h4 class="m-0">AI Evaluation</h4>
@@ -56,7 +56,7 @@
         </Card>
       </div>
 
-      <div v-if="selected && selected.result && selected.result.output" class="col-12 lg:col-7" style="margin-top:1rem">
+      <div v-if="selected && selected.result && selected.result.output" class="col-12 lg:col-7">
         <Card>
           <template #title>
           <h4 class="m-0">Output</h4>
