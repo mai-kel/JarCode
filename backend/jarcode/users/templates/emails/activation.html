@@ -1,0 +1,18 @@
+{% extends 'emails/base.html' %}
+
+{% block content %}
+    <h2>Verify your email address</h2>
+    <p>Welcome to JarCode! We're excited to have you on board.</p>
+    <p>Please click the button below to verify your account and get started:</p>
+
+    <div class="btn-container">
+        <a href="{{ link }}" class="btn">Verify Account</a>
+    </div>
+
+    <p>If you didn't create an account with us, you can safely ignore this email.</p>
+
+    <div class="link-fallback">
+        <p>If the button doesn't work, copy and paste this link into your browser:<br>
+        <a href="{{ link }}">{{ link }}</a></p>
+    </div>
+{% endblock %}

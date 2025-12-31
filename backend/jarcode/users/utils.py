@@ -21,7 +21,7 @@ def get_account_verification_redis_key(user_id: int) -> str:
 
 
 def make_verification_link(user_id: int, user_uuid: str, token: str):
-    link = f'{ACCOUNT_VERIFICATION_BASE_URL}{user_id}/{user_uuid}/{token}'
+    link = f'{ACCOUNT_VERIFICATION_BASE_URL}/{user_id}/{user_uuid}/{token}'
     return link
 
 
@@ -30,10 +30,8 @@ def get_password_reset_redis_key(user_id: int) -> str:
 
 
 def make_password_reset_link(user_id: int, user_uuid: str, token: str) -> str:
-    return (
-        f'{PASSWORD_RESET_BASE_URL}/?id={user_id}'
-        f'&uuid={user_uuid}&token={token}/'
-    )
+    link = f'{PASSWORD_RESET_BASE_URL}/{user_id}/{user_uuid}/{token}'
+    return link
 
 
 def genereate_and_send_verification_token(user: User) -> None:
