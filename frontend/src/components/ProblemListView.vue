@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div v-if="showCreate || hasCreateSlot" class="flex align-items-center justify-content-between mb-3">
+        <div v-if="showCreate" class="flex align-items-center justify-content-between mb-3">
           <div>
             <slot name="create">
               <Button v-if="showCreate" label="Create Problem" icon="pi pi-plus" @click="$emit('create')" />
@@ -67,13 +67,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, computed, nextTick } from 'vue'
-import Card from 'primevue/card'
-import InputText from 'primevue/inputtext'
-import Dropdown from 'primevue/dropdown'
-import ProgressSpinner from 'primevue/progressspinner'
-import Button from 'primevue/button'
-import { Languages, Difficulties } from '../constants/problems'
+import { ref, watch, computed } from 'vue';
+import Card from 'primevue/card';
+import InputText from 'primevue/inputtext';
+import Dropdown from 'primevue/dropdown';
+import ProgressSpinner from 'primevue/progressspinner';
+import Button from 'primevue/button';
+import { Languages, Difficulties } from '../constants/problems';
+import { useCursorPagination } from '../composables/useCursorPagination';
+import { useInfiniteScroll } from '../composables/useInfiniteScroll';
+import { useDebounce } from '../composables/useDebounce';
 
 const props = defineProps({
   title: { type: String, default: 'Problems' },
@@ -82,151 +85,75 @@ const props = defineProps({
   emptyMessage: { type: String, default: 'No problems found.' },
   showCreate: { type: Boolean, default: false },
   showItemButtons: { type: Boolean, default: false }
-})
+});
 
-const emit = defineEmits(['create','view','edit','item-click'])
+const emit = defineEmits(['create', 'view', 'edit', 'item-click']);
 
-const problems = ref([])
-const searchQuery = ref('')
-const languageFilter = ref(null)
-const difficultyFilter = ref(null)
-const isSolvedFilter = ref(null)
-const loading = ref(true)
-const loadingMore = ref(false)
-const nextCursor = ref(null)
-const autoLoading = ref(false)
-let debounceTimer = null
+const searchQuery = ref('');
+const languageFilter = ref(null);
+const difficultyFilter = ref(null);
+const isSolvedFilter = ref(null);
 
-const languageOptions = computed(() => [{ text: 'All', value: null }, ...Languages])
-const difficultyOptions = computed(() => [{ text: 'All', value: null }, ...Difficulties])
-const isSolvedOptions = computed(() => [{ text: 'All', value: null }, { text: 'Solved', value: true }, { text: 'Unsolved', value: false }])
+const languageOptions = computed(() => [{ text: 'All', value: null }, ...Languages]);
+const difficultyOptions = computed(() => [{ text: 'All', value: null }, ...Difficulties]);
+const isSolvedOptions = computed(() => [{ text: 'All', value: null }, { text: 'Solved', value: true }, { text: 'Unsolved', value: false }]);
 
-const hasCreateSlot = !!(false)
+const pagination = useCursorPagination(
+  (cursor) => props.fetcher({
+    search: searchQuery.value,
+    language: languageFilter.value,
+    difficulty: difficultyFilter.value,
+    is_solved: isSolvedFilter.value,
+    cursor
+  }),
+  { initialLoad: true }
+);
 
-const extractCursor = (nextUrl) => {
-  if (!nextUrl) return null
-  try {
-    const u = new URL(nextUrl)
-    return u.searchParams.get('cursor')
-  } catch (e) {
-    const m = nextUrl.match(/[?&]cursor=([^&]+)/)
-    return m ? decodeURIComponent(m[1]) : null
-  }
-}
+const problems = computed(() => pagination.items.value);
+const loading = computed(() => pagination.loading.value);
+const loadingMore = computed(() => pagination.loadingMore.value);
 
-const normalizePage = (res) => {
-  if (!res) return { results: [], next: null }
-  if (Array.isArray(res)) return { results: res, next: null }
-  if (res.results !== undefined) {
-    return { results: res.results || [], next: extractCursor(res.next) }
-  }
-  if (res.data !== undefined) {
-    if (Array.isArray(res.data)) return { results: res.data, next: null }
-    if (res.data.results !== undefined) return { results: res.data.results || [], next: extractCursor(res.data.next) }
-  }
-  return { results: [], next: null }
-}
-
-const fetchPage = async (cursor = null, append = false) => {
-  if (append) loadingMore.value = true
-  else loading.value = true
-  try {
-    const res = await props.fetcher({
-      search: searchQuery.value,
-      language: languageFilter.value,
-      difficulty: difficultyFilter.value,
-      is_solved: isSolvedFilter.value,
-      cursor
-    })
-
-    const page = normalizePage(res)
-    nextCursor.value = page.next
-    if (append) {
-      problems.value = problems.value.concat(page.results || [])
-    } else {
-      problems.value = page.results || []
-    }
-  } catch (e) {
-    if (!append) problems.value = []
-  } finally {
-    loadingMore.value = false
-    loading.value = false
-  }
-}
-
-const onSearchInput = () => {
-  scheduleFetch()
-}
+const { debouncedFunction: debouncedRefresh } = useDebounce(async () => {
+  await pagination.refresh();
+  infiniteScroll.fillIfNoScroll();
+}, 300);
 
 const scheduleFetch = () => {
-  if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(async () => {
-    nextCursor.value = null
-    problems.value = []
-    await fetchPage(null, false)
-    await fillIfNoScroll()
-    debounceTimer = null
-  }, 300)
-}
+  debouncedRefresh();
+};
 
-const fillIfNoScroll = async () => {
-  if (autoLoading.value) return
-  if (!nextCursor.value) return
-  autoLoading.value = true
-  try {
-    while (nextCursor.value) {
-      await nextTick()
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-      const winH = window.innerHeight || document.documentElement.clientHeight
-      const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
-      if (docH - (scrollTop + winH) >= 200) break
-      await fetchPage(nextCursor.value, true)
-    }
-  } finally {
-    autoLoading.value = false
-  }
-}
+const onSearchInput = () => {
+  scheduleFetch();
+};
+
+const infiniteScroll = useInfiniteScroll({
+  hasNext: pagination.hasNext,
+  loading: pagination.loading,
+  loadingMore: pagination.loadingMore,
+  onLoadMore: pagination.loadMore,
+  threshold: 200,
+  autoFill: true,
+  autoFillOnce: false
+});
 
 watch([languageFilter, difficultyFilter, isSolvedFilter], () => {
-  scheduleFetch()
-})
+  scheduleFetch();
+});
 
-const onEdit = (p) => emit('edit', p)
-const onView = (p) => emit('view', p)
+const onEdit = (p) => emit('edit', p);
+const onView = (p) => emit('view', p);
 
 const difficultyText = (val) => {
-  if (val === null || val === undefined) return 'All'
-  const found = difficultyOptions.value.find(d => d.value === val)
-  return found ? found.text : val
-}
+  if (val === null || val === undefined) return 'All';
+  const found = difficultyOptions.value.find(d => d.value === val);
+  return found ? found.text : val;
+};
 
 const languageText = (val) => {
-  if (val === null || val === undefined) return 'All'
-  const found = languageOptions.value.find(l => l.value === val)
-  return found ? found.text : val
-}
-
-const onScroll = () => {
-  if (!nextCursor.value) return
-  if (loadingMore.value || loading.value) return
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-  const winH = window.innerHeight || document.documentElement.clientHeight
-  const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
-  if (docH - (scrollTop + winH) < 200) {
-    fetchPage(nextCursor.value, true)
-  }
-}
-
-onMounted(async () => {
-  await fetchPage()
-  await fillIfNoScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-})
-
-onBeforeUnmount(() => {
-  if (debounceTimer) clearTimeout(debounceTimer)
-  window.removeEventListener('scroll', onScroll)
-})
+  if (val === null || val === undefined) return 'All';
+  const found = languageOptions.value.find(l => l.value === val);
+  return found ? found.text : val;
+};
 </script>
 
 <style scoped>

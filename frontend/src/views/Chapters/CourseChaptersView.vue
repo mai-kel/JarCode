@@ -18,8 +18,8 @@
           </div>
         </div>
 
-        <Message v-if="courseStore.error" severity="error" :closable="true">
-          <strong>Error:</strong> {{ courseStore.error.message }}
+        <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+          <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
         </Message>
 
         <ul v-if="chapters.length > 0" class="list-none p-0 m-0">
@@ -55,6 +55,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useCourseStore } from '../../store/course';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
+import { useDeleteConfirmation } from '../../composables/useDeleteConfirmation';
 
 const route = useRoute();
 const router = useRouter();
@@ -104,21 +105,19 @@ const saveEdit = async (ch) => {
 };
 
 const confirmDeleteChapter = (ch) => {
-  confirm.require({
+  const deleteChapter = useDeleteConfirmation({
     header: 'Delete chapter',
     message: `Delete chapter "${ch.title}" and all its lessons? This cannot be undone.`,
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel',
-    acceptClass: 'p-button-danger',
-    accept: async () => {
+    onConfirm: async () => {
       const ok = await courseStore.deleteChapter(courseId, ch.id);
       if (ok) {
         chapters.value = await courseStore.fetchChapters(courseId) || [];
-        toast.add({ severity: 'success', summary: 'Chapter deleted', life: 2000 });
       }
-    }
+      return ok;
+    },
+    successMessage: 'Chapter deleted'
   });
+  deleteChapter();
 };
 
 onBeforeRouteLeave((to, from, next) => {

@@ -10,17 +10,18 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import ProblemListView from '../../components/ProblemListView.vue'
-import { listProblems } from '../../services/problemService'
+import { useRouter } from 'vue-router';
+import ProblemListView from '../../components/ProblemListView.vue';
+import { useProblemStore } from '../../store/problem';
 
-const router = useRouter()
+const router = useRouter();
+const problemStore = useProblemStore();
 
 const fetcher = async (filters) => {
-  return await listProblems(filters)
-}
+  return await problemStore.listProblems(filters);
+};
 
 const onView = (p) => {
-  router.push({ name: 'problem', params: { problemId: p.id } })
-}
+  router.push({ name: 'problem', params: { problemId: p.id } });
+};
 </script>

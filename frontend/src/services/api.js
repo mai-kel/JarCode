@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { transformApiError } from '../utils/errorHandler';
 
 const API_URL = '/api';
 
@@ -12,7 +12,6 @@ const apiClient = axios.create({
   }
 });
 
-
 function getCsrfToken() {
   const cookieValue = document.cookie
     .split('; ')
@@ -20,7 +19,6 @@ function getCsrfToken() {
     ?.split('=')[1];
   return cookieValue;
 }
-
 
 export const initCSRF = async () => {
   try {
@@ -47,12 +45,21 @@ apiClient.interceptors.request.use(
   }
 );
 
-
 apiClient.interceptors.response.use(
-  response => response,
-  error => {
-    console.error('API Error:', error.response?.data || error.message);
-    return Promise.reject(error);
+  (response) => response,
+  (error) => {
+    // Transform error to standardized format
+    const standardizedError = transformApiError(error);
+
+    // Log error for debugging
+    console.error('API Error:', {
+      message: standardizedError.message,
+      status: standardizedError.status,
+      details: standardizedError.details
+    });
+
+    // Reject with standardized error
+    return Promise.reject(standardizedError);
   }
 );
 

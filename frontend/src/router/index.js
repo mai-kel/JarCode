@@ -88,8 +88,7 @@ const routes = [
   {
     path: '/reset-password/:user_id/:user_uuid/:token',
     name: 'reset-password',
-    component: ResetPasswordView,
-    meta: { guestOnly: true }
+    component: ResetPasswordView
   },
   {
     path: '/create-course',

@@ -18,8 +18,8 @@
           </div>
         </div>
 
-        <Message v-if="courseStore.error" severity="error" :closable="true">
-          <strong>Error:</strong> {{ courseStore.error.message }}
+        <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+          <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
         </Message>
 
           <ul v-if="lessons.length > 0" class="list-none p-0 m-0">
@@ -47,13 +47,12 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCourseStore } from '../../store/course';
 import ProgressSpinner from 'primevue/progressspinner';
-import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
+import { useDeleteConfirmation } from '../../composables/useDeleteConfirmation';
 
 const route = useRoute();
 const router = useRouter();
 const courseStore = useCourseStore();
-const confirm = useConfirm();
 const toast = useToast();
 
 const courseId = route.params.courseId;
@@ -75,23 +74,20 @@ const goBackToChapters = () => router.push({ name: 'course-chapters', params: { 
 const openLesson = (ls) => router.push({ name: 'lesson-detail', params: { courseId, chapterId, lessonId: ls.id } });
 
 const confirmDeleteLesson = (ls) => {
-  confirm.require({
+  const deleteLesson = useDeleteConfirmation({
     header: 'Delete lesson',
     message: `Are you sure you want to delete "${ls.title}"? This cannot be undone.`,
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel',
-    acceptClass: 'p-button-danger',
-    accept: async () => {
+    onConfirm: async () => {
       const ok = await courseStore.deleteLesson(courseId, chapterId, ls.id);
       if (ok) {
         lessons.value = await courseStore.fetchLessons(courseId, chapterId) || [];
-        toast.add({ severity: 'success', summary: 'Lesson deleted', life: 2000 });
-      } else {
-        toast.add({ severity: 'error', summary: 'Failed to delete lesson', life: 2500 });
       }
-    }
+      return ok;
+    },
+    successMessage: 'Lesson deleted',
+    errorMessage: 'Failed to delete lesson'
   });
+  deleteLesson();
 };
 </script>
 

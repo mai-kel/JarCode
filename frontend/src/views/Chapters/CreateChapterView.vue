@@ -19,8 +19,8 @@
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="courseStore.error" severity="error" :closable="true">
-            <strong>Error:</strong> {{ courseStore.error.message }}
+          <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+            <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
           </Message>
         </div>
       </form>
@@ -48,13 +48,20 @@ const courseId = route.params.courseId;
 
 const handleCreateChapter = async () => {
   submitted.value = true;
-  courseStore.error = null;
+  courseStore.clearError();
   if (!title.value) return;
 
   const result = await courseStore.createChapter(courseId, { title: title.value });
   if (result?.id) {
     toast.add({ severity: 'success', summary: 'Chapter created', life: 2500 });
     router.push({ name: 'course-chapters', params: { courseId } });
+  } else if (courseStore.error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to create chapter',
+      detail: courseStore.error.message || 'An error occurred',
+      life: 4000
+    });
   }
 };
 const isDirty = computed(() => !!title.value);

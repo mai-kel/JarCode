@@ -1,6 +1,8 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import apiClient from '../services/api';
+import * as courseService from '../services/courseService';
+import * as lessonService from '../services/lessonService';
+import { getErrorMessage } from '../utils/errorHandler';
 
 export const useCourseStore = defineStore('course', () => {
   const isLoading = ref(false);
@@ -10,19 +12,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.post('/courses/', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      return res.data;
-    } catch (e) {
-      if (e.response?.data) {
-        const errorDetails = Object.entries(e.response.data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join('; ');
-        error.value = { message: `Failed to create course. ${errorDetails}`, details: e.response.data };
-      } else {
-        error.value = { message: 'Failed to create course.' };
-      }
+      const data = await courseService.createCourse(formData);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -33,10 +30,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.get(`/courses/${courseId}/`);
-      return res.data;
-    } catch (e) {
-      error.value = { message: 'Failed to fetch course.' };
+      const data = await courseService.getCourseDetail(courseId);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -47,19 +48,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.put(`/courses/${courseId}/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      return res.data;
-    } catch (e) {
-      if (e.response?.data) {
-        const errorDetails = Object.entries(e.response.data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join('; ');
-        error.value = { message: `Failed to update course. ${errorDetails}`, details: e.response.data };
-      } else {
-        error.value = { message: 'Failed to update course.' };
-      }
+      const data = await courseService.updateCourse(courseId, formData);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -70,17 +66,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.patch(`/courses/${courseId}/`, payload);
-      return res.data;
-    } catch (e) {
-      if (e.response?.data) {
-        const errorDetails = Object.entries(e.response.data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join('; ');
-        error.value = { message: `Failed to update course. ${errorDetails}`, details: e.response.data };
-      } else {
-        error.value = { message: 'Failed to update course.' };
-      }
+      const data = await courseService.updateCourseMeta(courseId, payload);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -91,17 +84,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.post(`/courses/${courseId}/chapters/`, payload);
-      return res.data;
-    } catch (e) {
-      if (e.response?.data) {
-        const errorDetails = Object.entries(e.response.data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join('; ');
-        error.value = { message: `Failed to create chapter. ${errorDetails}`, details: e.response.data };
-      } else {
-        error.value = { message: 'Failed to create chapter.' };
-      }
+      const data = await courseService.createChapter(courseId, payload);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -112,17 +102,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.patch(`/courses/${courseId}/chapters/${chapterId}/`, payload);
-      return res.data;
-    } catch (e) {
-      if (e.response?.data) {
-        const errorDetails = Object.entries(e.response.data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join('; ');
-        error.value = { message: `Failed to update chapter. ${errorDetails}`, details: e.response.data };
-      } else {
-        error.value = { message: 'Failed to update chapter.' };
-      }
+      const data = await courseService.updateChapter(courseId, chapterId, payload);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -133,17 +120,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.post(`/courses/${courseId}/chapters/${chapterId}/lessons/`, payload);
-      return res.data;
-    } catch (e) {
-      if (e.response?.data) {
-        const errorDetails = Object.entries(e.response.data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join('; ');
-        error.value = { message: `Failed to create lesson. ${errorDetails}`, details: e.response.data };
-      } else {
-        error.value = { message: 'Failed to create lesson.' };
-      }
+      const data = await courseService.createLesson(courseId, chapterId, payload);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -154,10 +138,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.get(`/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}/`);
-      return res.data;
-    } catch (e) {
-      error.value = { message: 'Failed to fetch lesson.' };
+      const data = await courseService.getLesson(courseId, chapterId, lessonId);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
@@ -168,32 +156,32 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.patch(`/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}/`, payload);
-      return res.data;
-    } catch (e) {
-      if (e.response?.data) {
-        const errorDetails = Object.entries(e.response.data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-          .join('; ');
-        error.value = { message: `Failed to update lesson. ${errorDetails}`, details: e.response.data };
-      } else {
-        error.value = { message: 'Failed to update lesson.' };
-      }
+      const data = await courseService.updateLesson(courseId, chapterId, lessonId, payload);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return null;
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Lists
   async function fetchChapters(courseId) {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.get(`/courses/${courseId}/chapters/`);
-      return res.data;
-    } catch (e) {
-      error.value = { message: 'Failed to fetch chapters.' };
+      const data = await courseService.getChaptersForCourse(courseId);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return [];
     } finally {
       isLoading.value = false;
@@ -204,11 +192,33 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.get(`/courses/${courseId}/chapters/${chapterId}/lessons/`);
-      return res.data;
-    } catch (e) {
-      error.value = { message: 'Failed to fetch lessons.' };
+      const data = await courseService.getLessonsForChapter(courseId, chapterId);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return [];
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function getAllCourses(searchQuery = '', cursor = null, ownerId = null) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const data = await courseService.getAllCourses(searchQuery, cursor, ownerId);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      return { results: [], next: null, previous: null };
     } finally {
       isLoading.value = false;
     }
@@ -218,25 +228,32 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      const res = await apiClient.get(`/courses/`, { params: { owner: ownerId } });
-      return res.data;
-    } catch (e) {
-      error.value = { message: 'Failed to fetch your courses.' };
-      return [];
+      const data = await courseService.getAllCourses('', null, ownerId);
+      return data;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      return { results: [], next: null, previous: null };
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Deletes
   async function deleteCourse(courseId) {
     isLoading.value = true;
     error.value = null;
     try {
-      await apiClient.delete(`/courses/${courseId}/`);
+      await courseService.deleteCourse(courseId);
       return true;
-    } catch (e) {
-      error.value = { message: 'Failed to delete course.' };
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return false;
     } finally {
       isLoading.value = false;
@@ -247,10 +264,14 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      await apiClient.delete(`/courses/${courseId}/chapters/${chapterId}/`);
+      await courseService.deleteChapter(courseId, chapterId);
       return true;
-    } catch (e) {
-      error.value = { message: 'Failed to delete chapter.' };
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return false;
     } finally {
       isLoading.value = false;
@@ -261,15 +282,72 @@ export const useCourseStore = defineStore('course', () => {
     isLoading.value = true;
     error.value = null;
     try {
-      await apiClient.delete(`/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}/`);
+      await courseService.deleteLesson(courseId, chapterId, lessonId);
       return true;
-    } catch (e) {
-      error.value = { message: 'Failed to delete lesson.' };
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return false;
     } finally {
       isLoading.value = false;
     }
   }
 
-  return { isLoading, error, createCourse, fetchCourse, updateCourse, updateCourseMeta, createChapter, updateChapter, createLesson, fetchLesson, updateLesson, fetchChapters, fetchLessons, fetchMyCourses, deleteCourse, deleteChapter, deleteLesson };
+  /**
+   * Upload image for a lesson
+   * @param {number} lessonId - Lesson ID
+   * @param {Blob} imageBlob - Image blob
+   * @param {string} filename - Image filename
+   * @param {Function} onProgress - Progress callback
+   * @returns {Promise<string>} Image location URL
+   */
+  async function uploadLessonImage(lessonId, imageBlob, filename, onProgress) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      return await lessonService.uploadLessonImage(lessonId, imageBlob, filename, onProgress);
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /**
+   * Clear error
+   */
+  function clearError() {
+    error.value = null;
+  }
+
+  return {
+    isLoading,
+    error,
+    createCourse,
+    fetchCourse,
+    updateCourse,
+    updateCourseMeta,
+    createChapter,
+    updateChapter,
+    createLesson,
+    fetchLesson,
+    updateLesson,
+    fetchChapters,
+    fetchLessons,
+    getAllCourses,
+    fetchMyCourses,
+    deleteCourse,
+    deleteChapter,
+    deleteLesson,
+    uploadLessonImage,
+    clearError
+  };
 });

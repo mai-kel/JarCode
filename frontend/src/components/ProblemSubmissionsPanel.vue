@@ -40,7 +40,12 @@
           <h4 class="m-0">Submitted code</h4>
         </template>
         <template #content>
-          <div ref="submittedEditor" class="monaco-editor" style="height:570px;border:1px solid #ddd"></div>
+          <MonacoCodeEditor
+            :model-value="selected?.solution || ''"
+            :language="problem?.language || 'PYTHON'"
+            :read-only="true"
+            :height="570"
+          />
         </template>
         </Card>
       </div>
@@ -77,7 +82,7 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import Card from 'primevue/card';
 import ProgressSpinner from 'primevue/progressspinner';
-import loader from '@monaco-editor/loader';
+import MonacoCodeEditor from './editors/MonacoCodeEditor.vue';
 import { outcomeInfo, statusLabel } from '../constants/submissions';
 
 const props = defineProps({ submissions: Array, loading: Boolean, selected: Object, problem: Object, hasNext: Boolean, loadingMore: Boolean });
@@ -91,9 +96,6 @@ const sanitizedAiEvaluation = computed(() => {
   return "";
 });
 
-const submittedEditor = ref(null);
-let submittedMonacoEditor = null;
-let monacoApi = null;
 const listContainer = ref(null);
 let observer = null;
 let autoFillInterval = null;
@@ -102,41 +104,7 @@ function formatDate(d) {
   try { return new Date(d).toLocaleString(); } catch (e) { return d; }
 }
 
-async function createSubmittedEditor() {
-  try {
-    const monaco = await loader.init();
-    monacoApi = monaco;
-    if (submittedEditor.value) {
-      submittedMonacoEditor = monaco.editor.create(submittedEditor.value, {
-        value: props.selected?.solution || '',
-        language: (props.problem?.language || 'PYTHON').toLowerCase(),
-        automaticLayout: true,
-        theme: 'vs-dark',
-        minimap: { enabled: false },
-        readOnly: true,
-        scrollBeyondLastLine: false
-      });
-    }
-  } catch (err) {
-    console.error('Error creating submitted editor', err);
-  }
-}
-
-watch(() => props.selected, (newVal) => {
-  nextTick(() => {
-    try {
-      if (!submittedMonacoEditor && submittedEditor.value) createSubmittedEditor();
-      if (submittedMonacoEditor) submittedMonacoEditor.setValue(newVal?.solution || '');
-    } catch (e) { console.error(e); }
-  });
-});
-
-onMounted(() => {
-  if (props.selected) createSubmittedEditor();
-});
-
 onBeforeUnmount(() => {
-  if (submittedMonacoEditor) submittedMonacoEditor.dispose();
   if (observer) observer.disconnect();
   if (autoFillInterval) clearInterval(autoFillInterval);
 });

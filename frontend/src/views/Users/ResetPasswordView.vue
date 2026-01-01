@@ -54,78 +54,75 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '../../store/auth'
+import { ref, onMounted, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '../../store/auth';
+import { getErrorMessage } from '../../utils/errorHandler';
+import { parseApiErrorFields } from '../../utils/parseApiError';
 
-const route = useRoute()
-const router = useRouter()
-const authStore = useAuthStore()
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 
-const status = ref('form')
-const password = ref('')
-const password2 = ref('')
-const isLoading = ref(false)
-const error = ref(null)
-const fieldErrors = ref({})
+const status = ref('form');
+const password = ref('');
+const password2 = ref('');
+const isLoading = computed(() => authStore.isLoading);
+const fieldErrors = ref({});
 
 const isSubmitDisabled = computed(() => {
-  if (isLoading.value) return true
-  if (!password.value || !password2.value) return true
-  if (password.value !== password2.value) return true
-  return false
-})
+  if (isLoading.value) return true;
+  if (!password.value || !password2.value) return true;
+  if (password.value !== password2.value) return true;
+  return false;
+});
 
-const goToLogin = () => router.push({ name: 'login' })
-const goHome = () => router.push({ name: 'home' })
-
-import parseApiError, { parseApiErrorFields } from '../../utils/parseApiError'
-const getErrorMessage = parseApiError
+const goToLogin = () => router.push({ name: 'login' });
+const goHome = () => router.push({ name: 'home' });
 
 onMounted(() => {
-  const { user_id, user_uuid, token } = route.params
+  const { user_id, user_uuid, token } = route.params;
   if (!user_id || !user_uuid || !token) {
-    status.value = 'invalid'
-    return
+    status.value = 'invalid';
+    return;
   }
   try {
-    const basePath = '/reset-password'
-    window.history.replaceState(null, '', basePath)
-  } catch (e) {}
-})
+    const basePath = '/reset-password';
+    window.history.replaceState(null, '', basePath);
+  } catch (e) {
+    // Ignore history API errors
+  }
+});
 
 const handleReset = async () => {
-  const { user_id, user_uuid, token } = route.params
+  const { user_id, user_uuid, token } = route.params;
   if (!user_id || !user_uuid || !token) {
-    status.value = 'invalid'
-    return
+    status.value = 'invalid';
+    return;
   }
 
-  isLoading.value = true
-  error.value = null
+  fieldErrors.value = {};
+  authStore.clearError();
+
   try {
-    const resp = await authStore.changePassword({
+    const success = await authStore.changePassword({
       user_id: Number(user_id),
       user_uuid: String(user_uuid),
       token: String(token),
       password: password.value,
       password2: password2.value
-    })
+    });
 
-    if (resp.ok) {
-      status.value = 'success'
-      fieldErrors.value = {}
-      error.value = null
+    if (success) {
+      status.value = 'success';
+      fieldErrors.value = {};
     } else {
-      fieldErrors.value = parseApiErrorFields(resp.error)
-      error.value = null
+      const storeError = authStore.error;
+      fieldErrors.value = storeError?.fields || parseApiErrorFields(storeError?.details || storeError);
     }
   } catch (e) {
-    const respErr = e.response?.data || e.message || 'An unknown error occurred'
-    fieldErrors.value = parseApiErrorFields(respErr)
-    error.value = null
-  } finally {
-    isLoading.value = false
+    const respErr = e.response?.data || e.message || 'An unknown error occurred';
+    fieldErrors.value = parseApiErrorFields(respErr);
   }
 }
 </script>

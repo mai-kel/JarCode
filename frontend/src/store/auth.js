@@ -1,74 +1,90 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import apiClient, { initCSRF } from '../services/api'
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import * as userService from '../services/userService';
+import { getErrorMessage } from '../utils/errorHandler';
 
 export const useAuthStore = defineStore('auth', () => {
-
-  const user = ref(null)
-  const isLoading = ref(false)
-  const error = ref(null)
+  const user = ref(null);
+  const isLoading = ref(false);
+  const error = ref(null);
   const csrfInitialized = ref(false);
   const isReady = ref(false); // becomes true after initial user fetch attempt
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const isAuthenticated = computed(() => !!user.value)
+  const isAuthenticated = computed(() => !!user.value);
 
   async function ensureCsrf() {
     if (!csrfInitialized.value) {
-      await initCSRF();
-      csrfInitialized.value = true;
+      try {
+        await userService.initializeCSRF();
+        csrfInitialized.value = true;
+      } catch (err) {
+        console.error('Error initializing CSRF token:', err);
+      }
     }
   }
 
   async function login(credentials) {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      const response = await apiClient.post('/users/login/', credentials)
-      user.value = response.data
-      isReady.value = true
-      router.push({ name: 'home' })
+      const userData = await userService.login(credentials);
+      user.value = userData;
+      isReady.value = true;
+      router.push({ name: 'home' });
       return true;
-    } catch (e) {
-      error.value = e.response?.data || { message: 'An unknown error occurred' }
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return false;
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 
   async function register(details) {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      await apiClient.post('/users/register/', details)
-      isReady.value = true
-      return true
-    } catch (e) {
-      error.value = e.response?.data || { message: 'An unknown error occurred' }
+      await userService.register(details);
+      isReady.value = true;
+      return true;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
       return false;
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 
   async function logout() {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      await apiClient.post('/users/logout/')
-      user.value = null
-      isReady.value = true
-      router.push({ name: 'login' })
-    } catch (e) {
-      error.value = e.response?.data || { message: 'An unknown error occurred' }
+      await userService.logout();
+      user.value = null;
+      isReady.value = true;
+      router.push({ name: 'login' });
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 
@@ -77,10 +93,15 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null;
     try {
       await ensureCsrf();
-      const response = await apiClient.get('/users/me/');
-      user.value = response.data;
-    } catch (e) {
+      const userData = await userService.getCurrentUser();
+      user.value = userData;
+    } catch (err) {
       user.value = null;
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
     } finally {
       isLoading.value = false;
       isReady.value = true;
@@ -88,71 +109,103 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function verifyAccount({ user_id, user_uuid, token }) {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      const payload = { user_id, user_uuid, token }
-      const resp = await apiClient.post('/users/verify-account/', payload)
-      return resp.status === 200
-    } catch (e) {
-      error.value = e.response?.data || { message: 'An unknown error occurred' }
-      return false
+      const success = await userService.verifyAccount({ user_id, user_uuid, token });
+      return success;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      return false;
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 
   async function resendVerification(email) {
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      await apiClient.post('/users/resend-verification-link/', { email })
-      return { ok: true }
-    } catch (e) {
-      const respErr = e.response?.data || { message: 'An unknown error occurred' }
-      return { ok: false, error: respErr }
+      await userService.resendVerification(email);
+      return true;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
   async function sendPasswordReset(email) {
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      await apiClient.post('/users/send-password-reset-link/', { email })
-      return { ok: true }
-    } catch (e) {
-      const respErr = e.response?.data || { message: 'An unknown error occurred' }
-      return { ok: false, error: respErr }
+      await userService.sendPasswordReset(email);
+      return true;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
   async function changePassword({ user_id, user_uuid, token, password, password2 }) {
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      const payload = { user_id, user_uuid, token, password, password2 }
-      const resp = await apiClient.put('/users/change-password/', payload)
-      return { ok: resp.status === 200 }
-    } catch (e) {
-      const respErr = e.response?.data || { message: 'An unknown error occurred' }
-      return { ok: false, error: respErr }
+      const success = await userService.changePassword({ user_id, user_uuid, token, password, password2 });
+      return success;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
   async function updateProfile({ first_name, last_name }) {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
     try {
       await ensureCsrf();
-      const payload = { first_name, last_name }
-      const resp = await apiClient.put('/users/me/', payload)
-      user.value = resp.data
-      return { ok: true, data: resp.data }
-    } catch (e) {
-      const respErr = e.response?.data || { message: 'An unknown error occurred' }
-      error.value = respErr
-      return { ok: false, error: respErr }
+      const userData = await userService.updateProfile({ first_name, last_name });
+      user.value = userData;
+      return true;
+    } catch (err) {
+      error.value = {
+        message: getErrorMessage(err),
+        details: err.details || err,
+        status: err.status || 0
+      };
+      return false;
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
+  }
+
+  function clearError() {
+    error.value = null;
   }
 
   return {
@@ -169,6 +222,7 @@ export const useAuthStore = defineStore('auth', () => {
     resendVerification,
     sendPasswordReset,
     changePassword,
-    updateProfile
-  }
-})
+    updateProfile,
+    clearError
+  };
+});

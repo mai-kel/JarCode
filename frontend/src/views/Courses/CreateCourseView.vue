@@ -52,8 +52,8 @@
           </div>
 
           <div class="col-12 mt-3">
-            <Message v-if="courseStore.error" severity="error" :closable="true">
-              <strong>Error:</strong> {{ courseStore.error.message }}
+            <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+              <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
             </Message>
           </div>
 
@@ -99,7 +99,7 @@ const handleThumbnailRemove = () => {
 
 const handleCreateCourse = async () => {
   submitted.value = true;
-  courseStore.error = null;
+  courseStore.clearError();
 
   if (!title.value || !description.value) {
     return;
@@ -116,6 +116,13 @@ const handleCreateCourse = async () => {
   if (created?.id) {
     toast.add({ severity: 'success', summary: 'Course created', life: 2500 });
     router.push({ name: 'course-detail', params: { courseId: created.id } });
+  } else if (courseStore.error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to create course',
+      detail: courseStore.error.message || 'An error occurred',
+      life: 4000
+    });
   }
 };
 

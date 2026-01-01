@@ -13,25 +13,26 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { useCourseStore } from '../../store/course'
-import { useAuthStore } from '../../store/auth'
-import CourseListView from '../../components/CourseListView.vue'
-import courseService from '../../services/courseService'
+import { useRouter } from 'vue-router';
+import { useCourseStore } from '../../store/course';
+import { useAuthStore } from '../../store/auth';
+import CourseListView from '../../components/CourseListView.vue';
 
-const router = useRouter()
-  const courseStore = useCourseStore()
-const authStore = useAuthStore()
+const router = useRouter();
+const courseStore = useCourseStore();
+const authStore = useAuthStore();
 
-const goCreateCourse = () => router.push({ name: 'create-course' })
-const editCourse = (course) => router.push({ name: 'course-detail', params: { courseId: course.id } })
+const goCreateCourse = () => router.push({ name: 'create-course' });
+const editCourse = (course) => router.push({ name: 'course-detail', params: { courseId: course.id } });
 
 const fetchMyCourses = async (searchQuery = '', cursor = null) => {
   if (!authStore.user) {
-    await authStore.fetchUser()
+    await authStore.fetchUser();
   }
-  const ownerId = authStore.user?.id
-  if (!ownerId) return { next: null, previous: null, results: [] }
-  return await courseService.getAllCourses(searchQuery, cursor, ownerId)
-}
+  const ownerId = authStore.user?.id;
+  if (!ownerId) {
+    return { next: null, previous: null, results: [] };
+  }
+  return await courseStore.getAllCourses(searchQuery, cursor, ownerId);
+};
 </script>

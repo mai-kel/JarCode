@@ -16,11 +16,7 @@
 
         <div class="field col-12">
           <label for="lessonContent">Content</label>
-          <Editor
-            id="lessonContent"
-            v-model="content"
-            :init="editorInit"
-          />
+          <LessonEditor v-model="content" />
           <small v-if="submitted && !content" class="p-error">Content is required.</small>
         </div>
 
@@ -29,8 +25,8 @@
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="courseStore.error" severity="error" :closable="true">
-            <strong>Error:</strong> {{ courseStore.error.message }}
+          <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+            <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
           </Message>
         </div>
       </form>
@@ -44,34 +40,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
-import Editor from '@tinymce/tinymce-vue';
-
-import 'tinymce/tinymce';
-import 'tinymce/models/dom/model';
-import 'tinymce/themes/silver';
-import 'tinymce/icons/default';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/autolink';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/preview';
-import 'tinymce/plugins/anchor';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/visualblocks';
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/media';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/codesample';
-import 'tinymce/plugins/help';
-import 'tinymce/plugins/wordcount';
-
-import editorContentCss from 'tinymce/skins/content/default/content.css?url';
-import editorContentUiCss from 'tinymce/skins/ui/oxide/content.min.css?url';
-import prismThemeCss from 'prismjs/themes/prism-okaidia.css?url';
+import LessonEditor from '../../components/editors/LessonEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -86,53 +55,22 @@ const content = ref('');
 const courseId = route.params.courseId;
 const chapterId = route.params.chapterId;
 
-const editorInit = computed(() => ({
-  height: 700,
-  menubar: false,
-  plugins: [
-    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-    'insertdatetime', 'media', 'table', 'codesample', 'help', 'wordcount'
-  ],
-  toolbar:
-    'undo redo | blocks | ' +
-    'bold italic backcolor | alignleft aligncenter ' +
-    'alignright alignjustify | bullist numlist outdent indent | ' +
-    'removeformat | table | codesample | help',
-  skin: false,
-  content_css: [editorContentCss, editorContentUiCss, prismThemeCss],
-  content_style: `
-    .token, .token.operator, .token.number, .token.string, .token.function {
-      background: transparent !important;
-      padding: 0 !important;
-      border-radius: 0 !important;
-    }
-    pre[class*="language-"] .token { background: transparent !important; }
-  `,
-  codesample_global_prismjs: true,
-  codesample_languages: [
-    { text: 'HTML/XML', value: 'markup' },
-    { text: 'JavaScript', value: 'javascript' },
-    { text: 'CSS', value: 'css' },
-    { text: 'Python', value: 'python' },
-    { text: 'Java', value: 'java' },
-    { text: 'C', value: 'c' },
-    { text: 'C++', value: 'cpp' },
-    { text: 'C#', value: 'csharp' },
-    { text: 'SQL', value: 'sql' },
-    { text: 'Bash/Shell', value: 'bash' }
-  ]
-}));
-
 const handleCreateLesson = async () => {
   submitted.value = true;
-  courseStore.error = null;
+  courseStore.clearError();
   if (!title.value || !content.value) return;
 
   const result = await courseStore.createLesson(courseId, chapterId, { title: title.value, content: content.value });
   if (result?.id) {
     toast.add({ severity: 'success', summary: 'Lesson created', life: 2500 });
     router.push({ name: 'lesson-detail', params: { courseId, chapterId, lessonId: result.id } });
+  } else if (courseStore.error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to create lesson',
+      detail: courseStore.error.message || 'An error occurred',
+      life: 4000
+    });
   }
 };
 

@@ -50,14 +50,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../../store/auth';
-import { useToast } from 'primevue/usetoast';
-import parseApiError, { parseApiErrorFields } from '../../utils/parseApiError'
+import { parseApiErrorFields } from '../../utils/parseApiError';
 
 const email = ref('');
 const password = ref('');
 const authStore = useAuthStore();
-const toast = useToast();
-const fieldErrors = ref({})
+const fieldErrors = ref({});
 
 const handleLogin = async () => {
   const success = await authStore.login({
@@ -66,9 +64,9 @@ const handleLogin = async () => {
   });
 
   if (success) {
-    fieldErrors.value = {}
+    fieldErrors.value = {};
   } else {
-    fieldErrors.value = parseApiErrorFields(authStore.error)
+    fieldErrors.value = authStore.error?.fields || parseApiErrorFields(authStore.error?.details || authStore.error);
   }
 };
 

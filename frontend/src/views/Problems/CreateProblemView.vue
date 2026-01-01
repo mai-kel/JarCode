@@ -38,8 +38,8 @@
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="error" severity="error" :closable="true">
-            <strong>Error:</strong> {{ error.message || error }}
+          <Message v-if="error" severity="error" :closable="true" @close="problemStore.clearError()">
+            <strong>Error:</strong> {{ error?.message || 'An error occurred' }}
           </Message>
         </div>
       </form>
@@ -48,23 +48,23 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeUnmount } from 'vue';
-import { useRouter, onBeforeRouteLeave } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import Message from 'primevue/message';
-import { useConfirm } from 'primevue/useconfirm';
 
 import ProblemEditor from '../../components/ProblemEditor.vue';
 import { Languages, Difficulties } from '../../constants/problems';
-import problemService from '../../services/problemService';
+import { useProblemStore } from '../../store/problem';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const router = useRouter();
 const toast = useToast();
-const confirm = useConfirm();
+const problemStore = useProblemStore();
 
 const title = ref('');
 const description = ref('');
@@ -74,78 +74,47 @@ const language = ref(Languages[0].value);
 const difficulty = ref(Difficulties[0].value);
 
 const submitted = ref(false);
-const isLoading = ref(false);
-const error = ref(null);
+
+const isLoading = computed(() => problemStore.isLoading);
+const error = computed(() => problemStore.error);
 
 const languageOptions = Languages;
 const difficultyOptions = Difficulties;
 
-const isDirty = computed(() => {
-  return (
-    !!title.value ||
-    !!description.value ||
-    !!startingCode.value ||
-    !!testCode.value ||
-    !!(language.value && language.value !== Languages[0].value) ||
-    !!(difficulty.value && difficulty.value !== Difficulties[0].value)
-  );
-});
-
-onBeforeRouteLeave((to, from, next) => {
-  if (!isDirty.value || to.name === "edit-problem") return next();
-  confirm.require({
-    header: 'Unsaved changes',
-    message: 'You have unsaved changes. Leave without saving?',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Leave',
-    rejectLabel: 'Stay',
-    acceptClass: 'p-button-danger',
-    accept: () => next(),
-    reject: () => next(false)
-  });
-});
-
-const beforeUnload = (e) => {
-  if (isDirty.value) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
-};
-
-window.addEventListener('beforeunload', beforeUnload);
-onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload));
-
 const handleCreate = async () => {
   submitted.value = true;
-  error.value = null;
+  problemStore.clearError();
 
   if (!title.value || !description.value || !startingCode.value || !testCode.value || !language.value || !difficulty.value) {
-    error.value = { message: 'All fields are required.' };
+    toast.add({
+      severity: 'error',
+      summary: 'Validation error',
+      detail: 'All fields are required.',
+      life: 4000
+    });
     return;
   }
 
-  isLoading.value = true;
-  try {
-    const payload = {
-      title: title.value,
-      description: description.value,
-      language: language.value,
-      starting_code: startingCode.value,
-      test_code: testCode.value,
-      difficulty: difficulty.value
-    };
+  const payload = {
+    title: title.value,
+    description: description.value,
+    language: language.value,
+    starting_code: startingCode.value,
+    test_code: testCode.value,
+    difficulty: difficulty.value
+  };
 
-    const created = await problemService.createProblem(payload);
-    if (created?.id) {
-      toast.add({ severity: 'success', summary: 'Problem created', life: 2500 });
-      router.push({ name: 'edit-problem', params: { problemId: created.id } });
-    } else {
-      error.value = { message: 'Unexpected response from server.' };
-    }
-  } catch (err) {
-    error.value = err.response?.data || err.message || err;
-  } finally {
-    isLoading.value = false;
+  const created = await problemStore.createProblem(payload);
+  if (created?.id) {
+    toast.add({ severity: 'success', summary: 'Problem created', life: 2500 });
+    router.push({ name: 'edit-problem', params: { problemId: created.id } });
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to create problem',
+      detail: problemStore.error?.message || 'An error occurred',
+      life: 4000
+    });
   }
 };
 

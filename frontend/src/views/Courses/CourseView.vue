@@ -23,7 +23,7 @@
               <div v-if="loading" class="flex justify-content-center py-4">
                 <ProgressSpinner style="width:50px;height:50px" strokeWidth="6"/>
               </div>
-              <div v-else-if="error" class="text-center text-red-500">Error: {{ error.message }}</div>
+              <div v-else-if="error" class="text-center text-red-500">Error: {{ error?.message || 'An error occurred' }}</div>
               <div v-else-if="!course || chapters.length === 0" class="text-color-secondary p-3">No chapters or lessons available.</div>
               <div v-else>
                 <Accordion :activeIndex="0">
@@ -79,42 +79,49 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import courseService from '../../services/courseService'
-import DOMPurify from 'dompurify'
-import Accordion from 'primevue/accordion'
-import AccordionTab from 'primevue/accordiontab'
-import ProgressSpinner from 'primevue/progressspinner'
-import Button from 'primevue/button'
+import { ref, onMounted, computed, watch, nextTick } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useCourseStore } from '../../store/course';
+import DOMPurify from 'dompurify';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+import ProgressSpinner from 'primevue/progressspinner';
+import Button from 'primevue/button';
 
-const route = useRoute()
-const router = useRouter()
-const course = ref(null)
-const chapters = ref([])
-const selectedLesson = ref(null)
-const loading = ref(true)
-const error = ref(null)
+const route = useRoute();
+const router = useRouter();
+const courseStore = useCourseStore();
+
+const course = ref(null);
+const chapters = ref([]);
+const selectedLesson = ref(null);
+
+const loading = computed(() => courseStore.isLoading);
+const error = computed(() => courseStore.error);
 
 const fetchCourseDetails = async () => {
-  try {
-    loading.value = true
-    const courseResponse = await courseService.getCourseDetail(route.params.courseId)
-    course.value = courseResponse.data
+  courseStore.clearError();
+  const courseData = await courseStore.fetchCourse(route.params.courseId);
+  if (courseData) {
+    course.value = courseData;
+  }
 
-    const chaptersResponse = await courseService.getChaptersForCourse(route.params.courseId)
-    chapters.value = chaptersResponse.data
+  const chaptersData = await courseStore.fetchChapters(route.params.courseId);
+  if (chaptersData && Array.isArray(chaptersData)) {
+    chapters.value = chaptersData;
 
     for (const chapter of chapters.value) {
-      const lessonsResponse = await courseService.getLessonsForChapter(route.params.courseId, chapter.id)
-      chapter.lessons = lessonsResponse.data
+      const lessonsData = await courseStore.fetchLessons(route.params.courseId, chapter.id);
+      if (lessonsData && Array.isArray(lessonsData)) {
+        chapter.lessons = lessonsData;
+      } else {
+        chapter.lessons = [];
+      }
     }
-  } catch (err) {
-    error.value = err
-  } finally {
-    loading.value = false
+  } else {
+    chapters.value = [];
   }
-}
+};
 
 const selectLesson = (lesson) => {
   selectedLesson.value = lesson

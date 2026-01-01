@@ -26,22 +26,15 @@
                     <h4 class="m-0">Editor</h4>
                 </template>
                 <template #content>
-                  <div class="relative" style="height:575px; border:1px solid #ddd; margin-bottom:1rem">
-                    <div v-if="!isEditorReady"
-                        class="w-full h-full flex flex-column align-items-center justify-content-center"
-                        style="background-color: #1e1e1e;">
-
-                        <ProgressSpinner
-                            style="width: 50px; height: 50px"
-                            strokeWidth="4"
-                            animationDuration=".5s"
-                            aria-label="Loading" />
-                    </div>
-                    <div ref="editorContainer" class="w-full h-full"></div>
-                  </div>
+                  <MonacoCodeEditor
+                    v-model="editorCode"
+                    :language="problem?.language || 'PYTHON'"
+                    :height="575"
+                    class="mb-3"
+                  />
 
                   <div class="flex gap-2">
-                  <Button label="Submit" icon="pi pi-play" @click="submit" :loading="isSubmitting" :disabled="!isEditorReady"></Button>
+                  <Button label="Submit" icon="pi pi-play" @click="submit" :loading="isSubmitting"></Button>
                   </div>
 
                   <div v-if="submitError" class="mt-3 text-red-600">Error: {{ submitError.message || submitError }}</div>
@@ -54,25 +47,19 @@
 
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, computed } from 'vue';
 import DOMPurify from 'dompurify';
-import loader from '@monaco-editor/loader';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
-import ProgressSpinner from 'primevue/progressspinner';
+import MonacoCodeEditor from './editors/MonacoCodeEditor.vue';
 import { Languages, Difficulties } from '../constants/problems'
 
 const props = defineProps({ problem: Object });
 const emits = defineEmits(['submit', 'back']);
 const editorCode = defineModel('editorCode');
 
-const editorContainer = ref(null);
-let monacoEditor = null;
-let monacoApi = null;
-
 const isSubmitting = ref(false);
 const submitError = ref(null);
-const isEditorReady = ref(false);
 
 const sanitizedDescription = computed(() => {
   return props.problem?.description ? DOMPurify.sanitize(props.problem.description) : '';
@@ -86,50 +73,17 @@ const formattedDifficulty = computed(() =>
   Difficulties.find(l => l.value === props.problem.difficulty).text
 );
 
-async function createEditor() {
-  try {
-    const monaco = await loader.init();
-    monacoApi = monaco;
-    if (editorContainer.value) {
-      monacoEditor = monaco.editor.create(editorContainer.value, {
-        value: (editorCode.value || ""),
-        language: (props.problem?.language || 'PYTHON').toLowerCase(),
-        automaticLayout: true,
-        theme: 'vs-dark',
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false
-      });
-      monacoEditor.onDidChangeModelContent(() => {
-        editorCode.value = monacoEditor.getValue();
-      });
-      isEditorReady.value = true;
-    }
-  } catch (err) {
-    console.error('Monaco init failed', err);
-  }
-}
-
 async function submit() {
-  if (!monacoEditor) return;
   isSubmitting.value = true;
   submitError.value = null;
   try {
-    const code = monacoEditor.getValue();
-    emits('submit', { solution: code });
+    emits('submit', { solution: editorCode.value });
   } catch (err) {
     submitError.value = err;
   } finally {
     isSubmitting.value = false;
   }
 }
-
-onMounted(() => {
-  createEditor();
-});
-
-onBeforeUnmount(() => {
-  if (monacoEditor) monacoEditor.dispose();
-});
 </script>
 
 <style scoped>

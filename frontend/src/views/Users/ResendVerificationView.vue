@@ -36,34 +36,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '../../store/auth'
+import { ref, computed } from 'vue';
+import { useAuthStore } from '../../store/auth';
+import { getErrorMessage } from '../../utils/errorHandler';
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
-const email = ref('')
-const isLoading = ref(false)
-const error = ref(null)
-const successMessage = ref('')
-
-import parseApiError from '../../utils/parseApiError'
-const getErrorMessage = parseApiError
+const email = ref('');
+const isLoading = computed(() => authStore.isLoading);
+const error = computed(() => authStore.error);
+const successMessage = ref('');
 
 const handleResend = async () => {
-  isLoading.value = true
-  error.value = null
-  successMessage.value = ''
-  try {
-    const resp = await authStore.resendVerification(email.value)
-    if (resp.ok) {
-      successMessage.value = 'If an account with this email exists and is not yet activated, a verification link was sent.'
-    } else {
-      error.value = resp.error
-    }
-  } catch (e) {
-    error.value = e.response?.data || { message: 'An unknown error occurred' }
-  } finally {
-    isLoading.value = false
+  successMessage.value = '';
+  authStore.clearError();
+  const success = await authStore.resendVerification(email.value);
+  if (success) {
+    successMessage.value = 'If an account with this email exists and is not yet activated, a verification link was sent.';
   }
-}
+};
 </script>

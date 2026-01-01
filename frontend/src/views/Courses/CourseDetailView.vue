@@ -52,8 +52,8 @@
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="courseStore.error" severity="error" :closable="true">
-            <strong>Error:</strong> {{ courseStore.error.message }}
+          <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+            <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
           </Message>
         </div>
 
@@ -71,19 +71,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed, onBeforeUnmount } from 'vue';
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
-import { useConfirm } from 'primevue/useconfirm';
+import { ref, onMounted, watch, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
 import { useAuthStore } from '../../store/auth';
 import { MAX_THUMBNAIL_BYTES, MAX_THUMBNAIL_LABEL } from '../../constants/upload';
+import { useUnsavedChanges } from '../../composables/useUnsavedChanges';
+import { useDeleteConfirmation } from '../../composables/useDeleteConfirmation';
 
 const route = useRoute();
 const router = useRouter();
 const courseStore = useCourseStore();
 const toast = useToast();
-const confirm = useConfirm();
 const authStore = useAuthStore();
 
 const courseId = route.params.courseId;
@@ -140,7 +140,7 @@ const handleThumbnailRemoveCompletely = () => {
 
 const handleSave = async () => {
   submitted.value = true;
-  courseStore.error = null;
+  courseStore.clearError();
   if (!title.value || !description.value) return;
 
   let updated = null;
@@ -169,29 +169,26 @@ const handleSave = async () => {
       currentImage.value = placeholder;
       removeThumbnail.value = false;
     }
+  } else if (courseStore.error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to save course',
+      detail: courseStore.error.message || 'An error occurred',
+      life: 4000
+    });
   }
 };
 
 const goChapters = () => router.push({ name: 'course-chapters', params: { courseId } });
 const goMyCourses = () => router.push({ name: 'my-courses' });
 
-const confirmDeleteCourse = () => {
-  confirm.require({
-    header: 'Delete course',
-    message: 'Are you sure you want to delete this course and all its chapters and lessons? This cannot be undone.',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel',
-    acceptClass: 'p-button-danger',
-    accept: async () => {
-      const ok = await courseStore.deleteCourse(courseId);
-      if (ok) {
-        toast.add({ severity: 'success', summary: 'Course deleted', life: 2000 });
-        router.push({ name: 'my-courses' });
-      }
-    }
-  });
-};
+const confirmDeleteCourse = useDeleteConfirmation({
+  header: 'Delete course',
+  message: 'Are you sure you want to delete this course and all its chapters and lessons? This cannot be undone.',
+  onConfirm: () => courseStore.deleteCourse(courseId),
+  successRoute: 'my-courses',
+  successMessage: 'Course deleted'
+});
 
 const hasPreview = computed(() => !!previewUrl.value);
 const canRemove = computed(() => !!originalImageUrl.value || !!previewUrl.value);
@@ -203,29 +200,7 @@ const isDirty = computed(() => {
   return titleChanged || descChanged || !!newThumbnail.value || removeThumbnail.value;
 });
 
-onBeforeRouteLeave((to, from, next) => {
-  if (!isDirty.value) return next();
-  confirm.require({
-    header: 'Unsaved changes',
-    message: 'You have unsaved changes. Leave without saving?',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Leave',
-    rejectLabel: 'Stay',
-    acceptClass: 'p-button-danger',
-    accept: () => next(),
-    reject: () => next(false)
-  });
-});
-
-const beforeUnload = (e) => {
-  if (isDirty.value) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
-};
-
-window.addEventListener('beforeunload', beforeUnload);
-onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload));
+useUnsavedChanges(isDirty);
 </script>
 
 <style scoped>

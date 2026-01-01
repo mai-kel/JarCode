@@ -46,23 +46,21 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, computed } from 'vue'
-import { useAuthStore } from '../../store/auth'
-import parseApiError from '../../utils/parseApiError'
-import { useToast } from 'primevue/usetoast'
+import { ref, watchEffect, computed } from 'vue';
+import { useAuthStore } from '../../store/auth';
+import { getErrorMessage } from '../../utils/errorHandler';
+import { useToast } from 'primevue/usetoast';
 
-const authStore = useAuthStore()
-const toast = useToast()
+const authStore = useAuthStore();
+const toast = useToast();
 
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const isLoading = ref(false)
-const isSendingReset = ref(false)
-const error = ref(null)
-const sendSuccessMessage = ref('')
-
-const getErrorMessage = parseApiError
+const firstName = ref('');
+const lastName = ref('');
+const email = ref('');
+const isLoading = computed(() => authStore.isLoading);
+const isSendingReset = computed(() => authStore.isLoading);
+const error = computed(() => authStore.error);
+const sendSuccessMessage = ref('');
 
 watchEffect(() => {
   const u = authStore.user
@@ -78,39 +76,21 @@ const isDirty = computed(() => {
 })
 
 const handleSave = async () => {
-  if (!isDirty.value) return
-  isLoading.value = true
-  error.value = null
-  try {
-    const resp = await authStore.updateProfile({ first_name: firstName.value, last_name: lastName.value })
-    if (resp.ok) {
-      toast.add({ severity: 'success', summary: 'Profile updated', life: 2500 })
-    } else {
-      error.value = resp.error
-    }
-  } catch (e) {
-    error.value = e.response?.data || { message: 'An unknown error occurred' }
-  } finally {
-    isLoading.value = false
+  if (!isDirty.value) return;
+  authStore.clearError();
+  const success = await authStore.updateProfile({ first_name: firstName.value, last_name: lastName.value });
+  if (success) {
+    toast.add({ severity: 'success', summary: 'Profile updated', life: 2500 });
   }
-}
+};
 
 const handleSend = async () => {
-  if (!email.value) return
-  isSendingReset.value = true
-  error.value = null
-  sendSuccessMessage.value = ''
-  try {
-    const resp = await authStore.sendPasswordReset(email.value)
-    if (resp.ok) {
-      sendSuccessMessage.value = 'Email with a password reset link will be sent to you shortly.'
-    } else {
-      error.value = resp.error
-    }
-  } catch (e) {
-    error.value = e.response?.data || { message: 'An unknown error occurred' }
-  } finally {
-    isSendingReset.value = false
+  if (!email.value) return;
+  sendSuccessMessage.value = '';
+  authStore.clearError();
+  const success = await authStore.sendPasswordReset(email.value);
+  if (success) {
+    sendSuccessMessage.value = 'Email with a password reset link will be sent to you shortly.';
   }
-}
+};
 </script>

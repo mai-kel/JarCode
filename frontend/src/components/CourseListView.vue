@@ -15,7 +15,7 @@
           />
         </div>
 
-        <div v-if="showCreate || hasCreateSlot" class="flex align-items-center justify-content-between mb-3">
+        <div v-if="showCreate" class="flex align-items-center justify-content-between mb-3">
           <div>
             <slot name="create">
               <Button v-if="showCreate" label="Create Course" icon="pi pi-plus" @click="$emit('create')" />
@@ -62,11 +62,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
-import Card from 'primevue/card'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import ProgressSpinner from 'primevue/progressspinner'
+import { ref, computed } from 'vue';
+import Card from 'primevue/card';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import ProgressSpinner from 'primevue/progressspinner';
+import { useCursorPagination } from '../composables/useCursorPagination';
+import { useInfiniteScroll } from '../composables/useInfiniteScroll';
+import { useDebounce } from '../composables/useDebounce';
 
 const props = defineProps({
   title: { type: String, default: 'Courses' },
@@ -77,113 +80,43 @@ const props = defineProps({
   placeholder: { type: String, default: 'Search courses by title...' },
   emptyMessage: { type: String, default: 'No courses found.' },
   showCreate: { type: Boolean, default: false }
-})
+});
 
-const emit = defineEmits(['create'])
+const emit = defineEmits(['create']);
 
-const courses = ref([])
-const searchQuery = ref('')
-const loading = ref(true)
-const loadingMore = ref(false)
-const nextCursor = ref(null)
-const autoLoading = ref(false)
-let debounceTimer = null
+const searchQuery = ref('');
 
-const hasCreateSlot = !!(false)
+const pagination = useCursorPagination(
+  (cursor) => props.fetcher(searchQuery.value, cursor),
+  { initialLoad: true }
+);
 
-const normalizePage = (res) => {
-  if (!res) return { results: [], next: null }
-  if (Array.isArray(res)) return { results: res, next: null }
-  if (res.results !== undefined) return { results: res.results || [], next: extractCursor(res.next) }
-  if (res.data !== undefined) {
-    if (Array.isArray(res.data)) return { results: res.data, next: null }
-    if (res.data.results !== undefined) return { results: res.data.results || [], next: extractCursor(res.data.next) }
-  }
-  return { results: [], next: null }
-}
+const courses = computed(() => pagination.items.value);
+const loading = computed(() => pagination.loading.value);
+const loadingMore = computed(() => pagination.loadingMore.value);
 
-const extractCursor = (nextUrl) => {
-  if (!nextUrl) return null
-  try {
-    const u = new URL(nextUrl)
-    return u.searchParams.get('cursor')
-  } catch (e) {
-    const m = nextUrl.match(/[?&]cursor=([^&]+)/)
-    return m ? decodeURIComponent(m[1]) : null
-  }
-}
-
-const fetchPage = async (cursor = null, append = false) => {
-  if (append) loadingMore.value = true
-  else loading.value = true
-  try {
-    const res = await props.fetcher(searchQuery.value, cursor)
-    const page = normalizePage(res)
-    nextCursor.value = page.next
-    if (append) courses.value = courses.value.concat(page.results || [])
-    else courses.value = page.results || []
-  } catch (e) {
-    if (!append) courses.value = []
-  } finally {
-    loadingMore.value = false
-    loading.value = false
-  }
-}
-
-const fillIfNoScroll = async () => {
-  if (autoLoading.value) return
-  if (!nextCursor.value) return
-  autoLoading.value = true
-  try {
-    while (nextCursor.value) {
-      await nextTick()
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-      const winH = window.innerHeight || document.documentElement.clientHeight
-      const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
-      if (docH - (scrollTop + winH) >= 200) break
-      await fetchPage(nextCursor.value, true)
-    }
-  } finally {
-    autoLoading.value = false
-  }
-}
+const { debouncedFunction: debouncedSearch } = useDebounce(async () => {
+  await pagination.refresh();
+  infiniteScroll.fillIfNoScroll();
+}, 300);
 
 const onSearchInput = () => {
-  if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(async () => {
-    nextCursor.value = null
-    courses.value = []
-    await fetchPage(null, false)
-    await fillIfNoScroll()
-    debounceTimer = null
-  }, 300)
-}
+  debouncedSearch();
+};
 
-onBeforeUnmount(() => {
-  if (debounceTimer) clearTimeout(debounceTimer)
-})
+const infiniteScroll = useInfiniteScroll({
+  hasNext: pagination.hasNext,
+  loading: pagination.loading,
+  loadingMore: pagination.loadingMore,
+  onLoadMore: pagination.loadMore,
+  threshold: 200,
+  autoFill: true
+});
 
 const courseImage = (course) => {
-  if (course.thumbnail) return course.thumbnail
-  return '/img/course-placeholder.svg'
-}
-
-const onScroll = async () => {
-  if (!nextCursor.value) return
-  if (loadingMore.value || loading.value) return
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-  const winH = window.innerHeight || document.documentElement.clientHeight
-  const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
-  if (docH - (scrollTop + winH) < 200) {
-    await fetchPage(nextCursor.value, true)
-  }
-}
-
-onMounted(async () => {
-  await fetchPage()
-  await fillIfNoScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-})
+  if (course.thumbnail) return course.thumbnail;
+  return '/img/course-placeholder.svg';
+};
 </script>
 
 <style scoped>

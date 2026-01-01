@@ -53,8 +53,8 @@
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="error" severity="error" :closable="true">
-            <strong>Error:</strong> {{ error.message || error }}
+          <Message v-if="error" severity="error" :closable="true" @close="problemStore.clearError()">
+            <strong>Error:</strong> {{ error?.message || 'An error occurred' }}
           </Message>
         </div>
       </form>
@@ -63,9 +63,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onBeforeUnmount } from 'vue';
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
-import { useConfirm } from 'primevue/useconfirm';
+import { ref, onMounted, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
@@ -75,12 +74,15 @@ import Message from 'primevue/message';
 
 import ProblemEditor from '../../components/ProblemEditor.vue';
 import { Languages, Difficulties } from '../../constants/problems';
-import { getProblem, updateProblem, deleteProblem } from '../../services/problemService';
+import { useProblemStore } from '../../store/problem';
+import { getErrorMessage } from '../../utils/errorHandler';
+import { useUnsavedChanges } from '../../composables/useUnsavedChanges';
+import { useDeleteConfirmation } from '../../composables/useDeleteConfirmation';
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
-const confirm = useConfirm();
+const problemStore = useProblemStore();
 
 const problemId = route.params.problemId;
 
@@ -99,16 +101,17 @@ const originalLanguage = ref('');
 const originalDifficulty = ref('');
 
 const submitted = ref(false);
-const isLoading = ref(false);
-const error = ref(null);
+
+const isLoading = computed(() => problemStore.isLoading);
+const error = computed(() => problemStore.error);
 
 const languageOptions = Languages;
 const difficultyOptions = Difficulties;
 
 onMounted(async () => {
-  isLoading.value = true;
-  try {
-    const data = await getProblem(problemId);
+  problemStore.clearError();
+  const data = await problemStore.getProblem(problemId);
+  if (data) {
     title.value = data.title;
     description.value = data.description;
     startingCode.value = data.starting_code;
@@ -121,72 +124,78 @@ onMounted(async () => {
     originalTestCode.value = testCode.value;
     originalLanguage.value = language.value;
     originalDifficulty.value = difficulty.value;
-  } catch (err) {
-    error.value = err.response?.data || err.message || err;
-  } finally {
-    isLoading.value = false;
+  } else if (problemStore.error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to load problem',
+      detail: problemStore.error.message || 'An error occurred',
+      life: 4000
+    });
   }
 });
 
 const handleUpdate = async () => {
   submitted.value = true;
-  error.value = null;
+  problemStore.clearError();
 
   if (!title.value || !description.value || !startingCode.value || !testCode.value || !language.value || !difficulty.value) {
-    error.value = { message: 'All fields are required.' };
+    toast.add({
+      severity: 'error',
+      summary: 'Validation error',
+      detail: 'All fields are required.',
+      life: 4000
+    });
     return;
   }
 
-  isLoading.value = true;
-  try {
-    const payload = {
-      title: title.value,
-      description: description.value,
-      language: language.value,
-      starting_code: startingCode.value,
-      test_code: testCode.value,
-      difficulty: difficulty.value
-    };
+  const payload = {
+    title: title.value,
+    description: description.value,
+    language: language.value,
+    starting_code: startingCode.value,
+    test_code: testCode.value,
+    difficulty: difficulty.value
+  };
 
-  const updated = await updateProblem(problemId, payload);
-  toast.add({ severity: 'success', summary: 'Problem updated', life: 2500 });
-  originalTitle.value = title.value;
-  originalDescription.value = description.value;
-  originalStartingCode.value = startingCode.value;
-  originalTestCode.value = testCode.value;
-  originalLanguage.value = language.value;
-  originalDifficulty.value = difficulty.value;
-  } catch (err) {
-    error.value = err.response?.data || err.message || err;
-  } finally {
-    isLoading.value = false;
+  const updated = await problemStore.updateProblem(problemId, payload);
+  if (updated) {
+    toast.add({ severity: 'success', summary: 'Problem updated', life: 2500 });
+    originalTitle.value = title.value;
+    originalDescription.value = description.value;
+    originalStartingCode.value = startingCode.value;
+    originalTestCode.value = testCode.value;
+    originalLanguage.value = language.value;
+    originalDifficulty.value = difficulty.value;
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to update problem',
+      detail: problemStore.error?.message || 'An error occurred',
+      life: 4000
+    });
   }
 };
 
 const goBack = () => router.push({ name: 'my-problems' });
 
-const confirmDeleteProblem = () => {
-  confirm.require({
-    header: 'Delete problem',
-    message: 'Are you sure you want to delete this problem? This cannot be undone.',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel',
-    acceptClass: 'p-button-danger',
-    accept: async () => {
-      isLoading.value = true;
-      try {
-        await deleteProblem(problemId);
-        toast.add({ severity: 'success', summary: 'Problem deleted', life: 2000 });
-        router.push({ name: 'my-problems' });
-      } catch (err) {
-        toast.add({ severity: 'error', summary: 'Failed to delete problem', detail: err.response?.data || err.message || err, life: 4000 });
-      } finally {
-        isLoading.value = false;
-      }
+const confirmDeleteProblem = useDeleteConfirmation({
+  header: 'Delete problem',
+  message: 'Are you sure you want to delete this problem? This cannot be undone.',
+  onConfirm: () => problemStore.deleteProblem(problemId),
+  successRoute: 'my-problems',
+  successMessage: 'Problem deleted',
+  errorMessage: 'Failed to delete problem',
+  onError: () => {
+    if (problemStore.error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Failed to delete problem',
+        detail: problemStore.error?.message || 'An error occurred',
+        life: 4000
+      });
     }
-  });
-};
+  }
+});
 
 const isDirty = computed(() => {
   return (
@@ -199,29 +208,7 @@ const isDirty = computed(() => {
   );
 });
 
-onBeforeRouteLeave((to, from, next) => {
-  if (!isDirty.value) return next();
-  confirm.require({
-    header: 'Unsaved changes',
-    message: 'You have unsaved changes. Leave without saving?',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Leave',
-    rejectLabel: 'Stay',
-    acceptClass: 'p-button-danger',
-    accept: () => next(),
-    reject: () => next(false)
-  });
-});
-
-const beforeUnload = (e) => {
-  if (isDirty.value) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
-};
-
-window.addEventListener('beforeunload', beforeUnload);
-onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload));
+useUnsavedChanges(isDirty);
 </script>
 
 <style scoped>

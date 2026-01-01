@@ -70,11 +70,9 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../../store/auth';
-import { useToast } from 'primevue/usetoast';
-import { parseApiErrorFields } from '../../utils/parseApiError'
+import { parseApiErrorFields } from '../../utils/parseApiError';
 
 const authStore = useAuthStore();
-const toast = useToast();
 
 const formData = ref({
   first_name: '',
@@ -83,16 +81,17 @@ const formData = ref({
   password: '',
   password2: ''
 });
-const registered = ref(false)
-const fieldErrors = ref({})
+const registered = ref(false);
+const fieldErrors = ref({});
 
 const handleRegister = async () => {
   const success = await authStore.register(formData.value);
   if (success) {
-    registered.value = true
+    registered.value = true;
     formData.value = { first_name: '', last_name: '', email: '', password: '', password2: '' };
-    fieldErrors.value = {}
+    fieldErrors.value = {};
+  } else {
+    fieldErrors.value = authStore.error?.fields || parseApiErrorFields(authStore.error?.details || authStore.error);
   }
-    fieldErrors.value = parseApiErrorFields(authStore.error)
 };
 </script>

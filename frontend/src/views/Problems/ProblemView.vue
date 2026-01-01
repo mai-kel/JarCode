@@ -31,7 +31,7 @@
             :hasNext="!!nextCursor"
             :selected="selectedSubmission"
             :problem="problem"
-            @select="selectSubmission"
+            @select="(s) => selectSubmission(s)"
             @load-more="loadMoreSubmissions"
           ></ProblemSubmissionsPanel>
       </div>
@@ -40,88 +40,93 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
-
+import { useProblemStore } from '../../store/problem';
+import { useSubmissionStore } from '../../store/submission';
 import ProblemEditorPanel from '../../components/ProblemEditorPanel.vue';
 import ProblemSubmissionsPanel from '../../components/ProblemSubmissionsPanel.vue';
-
-import { getProblem } from '../../services/problemService';
-import submissionService from '../../services/submissionService';
 import { useToast } from 'primevue/usetoast';
+import { getErrorMessage } from '../../utils/errorHandler';
+import { useCursorPagination } from '../../composables/useCursorPagination';
 
 const route = useRoute();
 const router = useRouter();
 const problemId = route.params.problemId;
 
-const problem = ref(null);
-const editorTab = ref(true);
-const editorCode = ref("")
-
-const submissions = ref([]);
-const loadingSubmissions = ref(false);
-const loadingMore = ref(false);
-const nextCursor = ref(null);
-const selectedSubmission = ref(null);
-const ws = ref(null);
+const problemStore = useProblemStore();
+const submissionStore = useSubmissionStore();
 const toast = useToast();
+
+const editorTab = ref(true);
+const editorCode = ref('');
+const ws = ref(null);
+
+const problem = computed(() => problemStore.currentProblem);
+
+const pagination = useCursorPagination(
+  (cursor) => submissionStore.listSubmissions(problemId, cursor),
+  { initialLoad: false }
+);
+
+const submissions = computed(() => pagination.items.value);
+const loadingSubmissions = computed(() => pagination.loading.value);
+const loadingMore = computed(() => pagination.loadingMore.value);
+const nextCursor = computed(() => pagination.nextCursor.value);
+const selectedSubmission = computed({
+  get: () => submissionStore.currentSubmission,
+  set: (value) => submissionStore.setCurrentSubmission(value)
+});
 
 const goBack = () => router.push({ name: 'browse-problems' });
 
 async function fetchProblem() {
-  try {
-    const data = await getProblem(problemId);
-    problem.value = data;
-    editorCode.value = data.starting_code;
-  }
-  catch (err) { console.error(err); }
-}
-
-function parseCursorFromUrl(url) {
-  try {
-    if (!url) return null;
-    const u = url.includes('://') ? new URL(url) : new URL(url, location.origin);
-    return u.searchParams.get('cursor');
-  } catch (e) {
-    try {
-      const m = url.match(/[?&]cursor=([^&]+)/);
-      return m ? decodeURIComponent(m[1]) : null;
-    } catch (e2) { return null; }
+  const data = await problemStore.getProblem(problemId);
+  if (data) {
+    editorCode.value = data.starting_code || '';
+  } else if (problemStore.error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Failed to load problem',
+      detail: problemStore.error.message || 'An error occurred',
+      life: 4000
+    });
   }
 }
 
-async function fetchSubmissions(cursor = null, append = false) {
-  if (append) loadingMore.value = true; else loadingSubmissions.value = true;
-  try {
-    const data = await submissionService.listSubmissions(problemId, cursor);
-    if (append) submissions.value.push(...(data.results || []));
-    else submissions.value = data.results || [];
-    nextCursor.value = parseCursorFromUrl(data.next);
-    if (submissions.value.length && !selectedSubmission.value) selectedSubmission.value = submissions.value[0];
-  } catch (err) { console.error('Error loading submissions', err); }
-  finally { loadingMore.value = false; loadingSubmissions.value = false; }
+function selectSubmission(s) {
+  submissionStore.setCurrentSubmission(s);
 }
-
-function selectSubmission(s) { selectedSubmission.value = s; }
 
 async function handleSubmitFromPanel(payload) {
-  try {
-    const created = await submissionService.createSubmission(problemId, payload);
-    submissions.value.unshift(created);
-    selectedSubmission.value = created;
+  const created = await submissionStore.createSubmission(problemId, payload);
+  if (created) {
+    pagination.items.value.unshift(created);
+    submissionStore.setCurrentSubmission(created);
     editorTab.value = false;
-  } catch (err) {
-    if (err && err.response && err.response.status === 429) {
-      const retryAfter = err.response.headers && err.response.headers['retry-after'];
-      const detail = retryAfter ? `You're sending submissions too quickly - please wait ${retryAfter} seconds before trying again.`
-                                : "You're sending submissions too quickly - please wait a few moments before trying again.";
+    toast.add({
+      severity: 'success',
+      summary: 'Submission created',
+      life: 2500
+    });
+  } else {
+    const error = submissionStore.error;
+    if (error?.status === 429) {
+      const retryAfter = error.details?.retry_after || error.originalError?.response?.headers?.['retry-after'];
+      const detail = retryAfter
+        ? `You're sending submissions too quickly - please wait ${retryAfter} seconds before trying again.`
+        : "You're sending submissions too quickly - please wait a few moments before trying again.";
       toast.add({ severity: 'warn', summary: 'Too many submissions', detail, life: 6000 });
     } else {
-      console.error('submit error', err);
-      toast.add({ severity: 'error', summary: 'Submission failed', detail: 'An error occurred while submitting. Please try again later.', life: 4000 });
+      toast.add({
+        severity: 'error',
+        summary: 'Submission failed',
+        detail: error?.message || 'An error occurred while submitting. Please try again later.',
+        life: 4000
+      });
     }
   }
 }
@@ -129,13 +134,26 @@ async function handleSubmitFromPanel(payload) {
 function switchToSubmissions() {
   if (editorTab.value) {
     editorTab.value = false;
-    fetchSubmissions();
+    if (submissions.value.length === 0) {
+      pagination.fetchPage(null, false);
+    }
   }
 }
 
-async function loadMoreSubmissions() {
-  if (!nextCursor.value || loadingMore.value) return;
-  await fetchSubmissions(nextCursor.value, true);
+function loadMoreSubmissions() {
+  pagination.loadMore();
+}
+
+function updateSubmissionRealtime(submission) {
+  const index = pagination.items.value.findIndex(s => s.id === submission.id);
+  if (index !== -1) {
+    pagination.items.value[index] = { ...pagination.items.value[index], ...submission };
+  } else {
+    pagination.items.value.unshift(submission);
+  }
+  if (submissionStore.currentSubmission && submissionStore.currentSubmission.id === submission.id) {
+    submissionStore.setCurrentSubmission({ ...submissionStore.currentSubmission, ...submission });
+  }
 }
 
 function setupWebsocket() {
@@ -146,26 +164,51 @@ function setupWebsocket() {
     try {
       const socket = new WebSocket(url);
       let opened = false;
-      const openTimeout = setTimeout(() => { if (!opened) { try { socket.close(); } catch (e) {} } }, 2500);
-      socket.onopen = () => { opened = true; clearTimeout(openTimeout); };
+      const openTimeout = setTimeout(() => {
+        if (!opened) {
+          try {
+            socket.close();
+          } catch (e) {
+            // Ignore close errors
+          }
+        }
+      }, 2500);
+      socket.onopen = () => {
+        opened = true;
+        clearTimeout(openTimeout);
+      };
       socket.onmessage = (evt) => {
         try {
           const data = JSON.parse(evt.data);
-          const idx = submissions.value.findIndex(s => s.id === data.id);
-          if (idx !== -1) submissions.value[idx] = { ...submissions.value[idx], ...data };
-          else submissions.value.unshift(data);
-          if (selectedSubmission.value && selectedSubmission.value.id === data.id) selectedSubmission.value = { ...selectedSubmission.value, ...data };
-        } catch (e) { console.error('invalid ws message', e); }
+          updateSubmissionRealtime(data);
+        } catch (e) {
+          console.error('invalid ws message', e);
+        }
       };
-      socket.onclose = () => { setTimeout(() => connect(url), 5000); };
-      socket.onerror = (err) => { console.warn('ws error', err, url); };
+      socket.onclose = () => {
+        setTimeout(() => connect(url), 5000);
+      };
+      socket.onerror = (err) => {
+        console.warn('ws error', err, url);
+      };
       ws.value = socket;
-    } catch (e) { console.error('could not open websocket', e, url); }
+    } catch (e) {
+      console.error('could not open websocket', e, url);
+    }
   };
 
   connect(url);
 }
 
-onMounted(async () => { await fetchProblem(); await fetchSubmissions(); setupWebsocket(); });
-onBeforeUnmount(() => { if (ws.value) ws.value.close(); });
+onMounted(async () => {
+  await fetchProblem();
+  await pagination.fetchPage(null, false);
+  setupWebsocket();
+});
+
+onBeforeUnmount(() => {
+  if (ws.value) {
+    ws.value.close();
+  }
+});
 </script>
