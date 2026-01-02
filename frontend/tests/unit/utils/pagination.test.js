@@ -45,14 +45,14 @@ describe('pagination', () => {
       const result = normalizePage(response);
       expect(result).toEqual({
         results: [{ id: 1 }, { id: 2 }],
-        next: null
+        next: null,
       });
     });
 
     it('should normalize object with results property', () => {
       const response = {
         results: [{ id: 1 }, { id: 2 }],
-        next: '/api/courses/?cursor=abc123'
+        next: '/api/courses/?cursor=abc123',
       };
       const result = normalizePage(response);
       expect(result.results).toEqual([{ id: 1 }, { id: 2 }]);
@@ -63,8 +63,8 @@ describe('pagination', () => {
       const response = {
         data: {
           results: [{ id: 1 }],
-          next: '/api/courses/?cursor=xyz789'
-        }
+          next: '/api/courses/?cursor=xyz789',
+        },
       };
       const result = normalizePage(response);
       expect(result.results).toEqual([{ id: 1 }]);
@@ -73,12 +73,12 @@ describe('pagination', () => {
 
     it('should normalize object with data as array', () => {
       const response = {
-        data: [{ id: 1 }, { id: 2 }]
+        data: [{ id: 1 }, { id: 2 }],
       };
       const result = normalizePage(response);
       expect(result).toEqual({
         results: [{ id: 1 }, { id: 2 }],
-        next: null
+        next: null,
       });
     });
 
@@ -90,7 +90,7 @@ describe('pagination', () => {
     it('should handle empty results', () => {
       const response = {
         results: [],
-        next: null
+        next: null,
       };
       const result = normalizePage(response);
       expect(result).toEqual({ results: [], next: null });
@@ -98,7 +98,7 @@ describe('pagination', () => {
 
     it('should handle response without next cursor', () => {
       const response = {
-        results: [{ id: 1 }]
+        results: [{ id: 1 }],
       };
       const result = normalizePage(response);
       expect(result.next).toBeNull();
@@ -111,4 +111,3 @@ describe('pagination', () => {
     });
   });
 });
-

@@ -7,23 +7,23 @@ vi.mock('../../src/composables/useCursorPagination', () => {
     items: { value: [] },
     loading: { value: false },
     loadingMore: { value: false },
-    refresh: vi.fn()
+    refresh: vi.fn(),
   }));
   return {
-    useCursorPagination: mockUseCursorPagination
+    useCursorPagination: mockUseCursorPagination,
   };
 });
 
 vi.mock('../../src/composables/useInfiniteScroll', () => ({
   useInfiniteScroll: vi.fn(() => ({
-    fillIfNoScroll: vi.fn()
-  }))
+    fillIfNoScroll: vi.fn(),
+  })),
 }));
 
 vi.mock('../../src/composables/useDebounce', () => ({
   useDebounce: vi.fn(() => ({
-    debouncedFunction: vi.fn()
-  }))
+    debouncedFunction: vi.fn(),
+  })),
 }));
 
 describe('CourseListView', () => {
@@ -35,16 +35,16 @@ describe('CourseListView', () => {
       props: {
         title: 'Test Courses',
         fetcher: mockFetcher,
-        ...props
+        ...props,
       },
       global: {
         stubs: {
           Card: true,
           InputText: true,
           Button: true,
-          ProgressSpinner: true
-        }
-      }
+          ProgressSpinner: true,
+        },
+      },
     });
   };
 
@@ -78,7 +78,7 @@ describe('CourseListView', () => {
       items: { value: [] },
       loading: { value: true },
       loadingMore: { value: false },
-      refresh: vi.fn()
+      refresh: vi.fn(),
     });
 
     wrapper = createWrapper();
@@ -91,11 +91,10 @@ describe('CourseListView', () => {
       items: { value: [] },
       loading: { value: false },
       loadingMore: { value: false },
-      refresh: vi.fn()
+      refresh: vi.fn(),
     });
 
     wrapper = createWrapper();
     expect(wrapper.exists()).toBe(true);
   });
 });
-

@@ -9,9 +9,7 @@ import { normalizePage } from '../utils/pagination.js';
  * @returns {Object} Pagination state and methods
  */
 export function useCursorPagination(fetcher, options = {}) {
-  const {
-    initialLoad = true
-  } = options;
+  const { initialLoad = true } = options;
 
   const items = ref([]);
   const loading = ref(initialLoad); // Set initial loading state
@@ -102,7 +100,6 @@ export function useCursorPagination(fetcher, options = {}) {
     fetchPage,
     loadMore,
     reset,
-    refresh
+    refresh,
   };
 }
-

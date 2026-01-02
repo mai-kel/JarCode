@@ -4,7 +4,7 @@ export const mockSubmission = {
   code: 'def solution():\n    return True',
   status: 'ACCEPTED',
   test_results: [],
-  created_at: '2024-01-01T00:00:00Z'
+  created_at: '2024-01-01T00:00:00Z',
 };
 
 export const mockSubmissions = [
@@ -15,7 +15,7 @@ export const mockSubmissions = [
     code: 'def solution():\n    return False',
     status: 'REJECTED',
     test_results: [],
-    created_at: '2024-01-02T00:00:00Z'
+    created_at: '2024-01-02T00:00:00Z',
   },
   {
     id: 3,
@@ -23,7 +23,6 @@ export const mockSubmissions = [
     code: 'public class Solution {}',
     status: 'PENDING',
     test_results: [],
-    created_at: '2024-01-03T00:00:00Z'
-  }
+    created_at: '2024-01-03T00:00:00Z',
+  },
 ];
-

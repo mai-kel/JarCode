@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { useCursorPagination } from '../../src/composables/useCursorPagination';
 
 describe('Pagination Flow Integration', () => {
@@ -16,7 +16,7 @@ describe('Pagination Flow Integration', () => {
         const pagination = useCursorPagination(mockFetcher, { initialLoad: false });
         return { ...pagination };
       },
-      template: '<div></div>'
+      template: '<div></div>',
     });
   };
 
@@ -24,15 +24,15 @@ describe('Pagination Flow Integration', () => {
     mockFetcher
       .mockResolvedValueOnce({
         results: [{ id: 1 }, { id: 2 }],
-        next: '/api/test/?cursor=abc123'
+        next: '/api/test/?cursor=abc123',
       })
       .mockResolvedValueOnce({
         results: [{ id: 3 }, { id: 4 }],
-        next: null
+        next: null,
       })
       .mockResolvedValueOnce({
         results: [{ id: 5 }, { id: 6 }],
-        next: '/api/test/?cursor=xyz789'
+        next: '/api/test/?cursor=xyz789',
       });
 
     const wrapper = mount(createTestComponent());
@@ -65,4 +65,3 @@ describe('Pagination Flow Integration', () => {
     expect(wrapper.vm.items).toEqual([]);
   });
 });
-

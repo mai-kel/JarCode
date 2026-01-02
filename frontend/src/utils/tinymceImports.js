@@ -18,4 +18,3 @@ import 'tinymce/plugins/table';
 import 'tinymce/plugins/codesample';
 import 'tinymce/plugins/help';
 import 'tinymce/plugins/wordcount';
-

@@ -21,7 +21,7 @@ describe('parseApiError', () => {
     it('should parse object with field errors', () => {
       const error = {
         email: ['Invalid email'],
-        password: ['Too short']
+        password: ['Too short'],
       };
       const result = parseApiErrorFields(error);
       expect(result.email).toEqual(['Invalid email']);
@@ -30,7 +30,7 @@ describe('parseApiError', () => {
 
     it('should parse non_field_errors', () => {
       const error = {
-        non_field_errors: ['General error']
+        non_field_errors: ['General error'],
       };
       const result = parseApiErrorFields(error);
       expect(result._non_field).toEqual(['General error']);
@@ -38,7 +38,7 @@ describe('parseApiError', () => {
 
     it('should parse detail as _non_field', () => {
       const error = {
-        detail: 'Detail error'
+        detail: 'Detail error',
       };
       const result = parseApiErrorFields(error);
       expect(result._non_field).toEqual(['Detail error']);
@@ -46,7 +46,7 @@ describe('parseApiError', () => {
 
     it('should parse stringified list arrays', () => {
       const error = {
-        field: ["['Error 1', 'Error 2']"]
+        field: ["['Error 1', 'Error 2']"],
       };
       const result = parseApiErrorFields(error);
       expect(result.field).toEqual(['Error 1', 'Error 2']);
@@ -54,7 +54,7 @@ describe('parseApiError', () => {
 
     it('should parse stringified list strings', () => {
       const error = {
-        field: "['Error 1', 'Error 2']"
+        field: "['Error 1', 'Error 2']",
       };
       const result = parseApiErrorFields(error);
       expect(result.field).toEqual(['Error 1', 'Error 2']);
@@ -62,7 +62,7 @@ describe('parseApiError', () => {
 
     it('should handle mixed array and string values', () => {
       const error = {
-        field: ['Error 1', "['Error 2', 'Error 3']", 'Error 4']
+        field: ['Error 1', "['Error 2', 'Error 3']", 'Error 4'],
       };
       const result = parseApiErrorFields(error);
       expect(result.field).toContain('Error 1');
@@ -73,7 +73,7 @@ describe('parseApiError', () => {
 
     it('should convert non-string values to strings', () => {
       const error = {
-        field: [123, true, null]
+        field: [123, true, null],
       };
       const result = parseApiErrorFields(error);
       expect(result.field).toEqual(['123', 'true', 'null']);
@@ -81,11 +81,10 @@ describe('parseApiError', () => {
 
     it('should handle empty arrays', () => {
       const error = {
-        field: []
+        field: [],
       };
       const result = parseApiErrorFields(error);
       expect(result.field).toEqual([]);
     });
   });
 });
-

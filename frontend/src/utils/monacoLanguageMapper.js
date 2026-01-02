@@ -43,17 +43,16 @@ export function mapFromMonacoLanguage(monacoLang) {
   if (!monacoLang) return 'PYTHON';
 
   const mapping = {
-    'java': 'JAVA',
-    'python': 'PYTHON',
-    'cpp': 'CPP',
-    'c': 'C',
-    'csharp': 'CSHARP',
-    'javascript': 'JAVASCRIPT',
-    'typescript': 'TYPESCRIPT',
-    'rust': 'RUST',
-    'go': 'GO'
+    java: 'JAVA',
+    python: 'PYTHON',
+    cpp: 'CPP',
+    c: 'C',
+    csharp: 'CSHARP',
+    javascript: 'JAVASCRIPT',
+    typescript: 'TYPESCRIPT',
+    rust: 'RUST',
+    go: 'GO',
   };
 
   return mapping[monacoLang.toLowerCase()] || 'PYTHON';
 }
-

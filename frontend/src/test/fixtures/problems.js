@@ -6,7 +6,7 @@ export const mockProblem = {
   language: 'PYTHON',
   starting_code: 'def solution():\n    pass',
   test_code: 'assert solution() == True',
-  author: 1
+  author: 1,
 };
 
 export const mockProblems = [
@@ -19,7 +19,7 @@ export const mockProblems = [
     language: 'JAVA',
     starting_code: 'public class Solution {}',
     test_code: 'assert true',
-    author: 1
+    author: 1,
   },
   {
     id: 3,
@@ -29,7 +29,6 @@ export const mockProblems = [
     language: 'PYTHON',
     starting_code: 'def solution():',
     test_code: 'assert solution()',
-    author: 2
-  }
+    author: 2,
+  },
 ];
-

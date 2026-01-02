@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { mapToMonacoLanguage, mapFromMonacoLanguage } from '../../../src/utils/monacoLanguageMapper';
+import {
+  mapToMonacoLanguage,
+  mapFromMonacoLanguage,
+} from '../../../src/utils/monacoLanguageMapper';
 
 describe('monacoLanguageMapper', () => {
   describe('mapToMonacoLanguage', () => {
@@ -106,4 +109,3 @@ describe('monacoLanguageMapper', () => {
     });
   });
 });
-

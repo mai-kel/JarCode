@@ -24,7 +24,7 @@ export const useSubmissionStore = defineStore('submission', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return { results: [], next: null };
     } finally {
@@ -48,7 +48,7 @@ export const useSubmissionStore = defineStore('submission', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -78,7 +78,6 @@ export const useSubmissionStore = defineStore('submission', () => {
     listSubmissions,
     createSubmission,
     setCurrentSubmission,
-    clearError
+    clearError,
   };
 });
-

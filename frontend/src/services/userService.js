@@ -122,6 +122,5 @@ export default {
   verifyAccount,
   resendVerification,
   sendPasswordReset,
-  changePassword
+  changePassword,
 };
-

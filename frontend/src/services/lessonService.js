@@ -19,7 +19,7 @@ export async function uploadLessonImage(lessonId, imageBlob, filename, onProgres
       if (e.lengthComputable && onProgress) {
         onProgress((e.loaded / e.total) * 100);
       }
-    }
+    },
   });
 
   if (response?.data?.location) {
@@ -30,6 +30,5 @@ export async function uploadLessonImage(lessonId, imageBlob, filename, onProgres
 }
 
 export default {
-  uploadLessonImage
+  uploadLessonImage,
 };
-

@@ -3,7 +3,7 @@
     title="Browse Problems"
     :fetcher="fetcher"
     :placeholder="'Search problems by title...'"
-    :showCreate="false"
+    :show-create="false"
     @view="onView"
     @item-click="onView"
   />

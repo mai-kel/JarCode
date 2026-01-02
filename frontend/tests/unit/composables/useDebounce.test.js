@@ -18,7 +18,7 @@ describe('useDebounce', () => {
         const { debouncedFunction, cancel } = useDebounce(callback, delay);
         return { debouncedFunction, cancel };
       },
-      template: '<div></div>'
+      template: '<div></div>',
     });
   };
 
@@ -97,4 +97,3 @@ describe('useDebounce', () => {
     expect(callback).not.toHaveBeenCalled();
   });
 });
-

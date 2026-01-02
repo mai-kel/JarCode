@@ -7,19 +7,21 @@ vi.mock('../../src/utils/tinymceImports', () => ({}));
 vi.mock('../../src/components/editors/MonacoCodeEditor.vue', () => ({
   default: {
     name: 'MonacoCodeEditor',
-    template: '<div class="monaco-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
+    template:
+      '<div class="monaco-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
     props: ['modelValue', 'language', 'height'],
-    emits: ['update:modelValue']
-  }
+    emits: ['update:modelValue'],
+  },
 }));
 
 vi.mock('@tinymce/tinymce-vue', () => ({
   default: {
     name: 'Editor',
-    template: '<div class="tinymce-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
+    template:
+      '<div class="tinymce-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
     props: ['id', 'modelValue', 'init'],
-    emits: ['update:modelValue']
-  }
+    emits: ['update:modelValue'],
+  },
 }));
 
 describe('ProblemEditor', () => {
@@ -32,8 +34,8 @@ describe('ProblemEditor', () => {
         startingCode: '',
         testCode: '',
         language: 'PYTHON',
-        ...props
-      }
+        ...props,
+      },
     });
   };
 
@@ -66,7 +68,7 @@ describe('ProblemEditor', () => {
     wrapper = createWrapper({
       description: 'Test description',
       startingCode: 'def solution():',
-      testCode: 'assert solution()'
+      testCode: 'assert solution()',
     });
 
     const editor = wrapper.findComponent({ name: 'Editor' });
@@ -81,7 +83,7 @@ describe('ProblemEditor', () => {
     wrapper = createWrapper({ language: 'JAVA' });
     const monacoEditors = wrapper.findAllComponents({ name: 'MonacoCodeEditor' });
 
-    monacoEditors.forEach(editor => {
+    monacoEditors.forEach((editor) => {
       expect(editor.props('language')).toBe('JAVA');
     });
   });
@@ -148,9 +150,8 @@ describe('ProblemEditor', () => {
     wrapper = createWrapper();
     const monacoEditors = wrapper.findAllComponents({ name: 'MonacoCodeEditor' });
 
-    monacoEditors.forEach(editor => {
+    monacoEditors.forEach((editor) => {
       expect(editor.props('height')).toBe(600);
     });
   });
 });
-

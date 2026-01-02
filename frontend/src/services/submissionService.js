@@ -27,5 +27,5 @@ export async function createSubmission(problemId, payload) {
 
 export default {
   listSubmissions,
-  createSubmission
+  createSubmission,
 };

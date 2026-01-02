@@ -23,13 +23,15 @@ export function transformApiError(error) {
   let message = 'An unknown error occurred';
 
   if (responseData.detail) {
-    message = typeof responseData.detail === 'string'
-      ? responseData.detail
-      : JSON.stringify(responseData.detail);
+    message =
+      typeof responseData.detail === 'string'
+        ? responseData.detail
+        : JSON.stringify(responseData.detail);
   } else if (responseData.message) {
-    message = typeof responseData.message === 'string'
-      ? responseData.message
-      : JSON.stringify(responseData.message);
+    message =
+      typeof responseData.message === 'string'
+        ? responseData.message
+        : JSON.stringify(responseData.message);
   } else if (responseData.non_field_errors && Array.isArray(responseData.non_field_errors)) {
     message = responseData.non_field_errors.join(' ');
   } else if (fields._non_field && fields._non_field.length > 0) {
@@ -59,7 +61,7 @@ export function transformApiError(error) {
     details: responseData,
     status,
     fields,
-    originalError: error
+    originalError: error,
   };
 }
 
@@ -75,7 +77,7 @@ export function createError(message, status = 0) {
     details: { message },
     status,
     fields: {},
-    originalError: null
+    originalError: null,
   };
 }
 
@@ -125,4 +127,3 @@ export function isNetworkError(error) {
 export function isTimeoutError(error) {
   return error.code === 'ECONNABORTED' || error.message?.includes('timeout');
 }
-

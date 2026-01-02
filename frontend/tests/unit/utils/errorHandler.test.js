@@ -4,7 +4,7 @@ import {
   getErrorMessage,
   createError,
   isNetworkError,
-  isTimeoutError
+  isTimeoutError,
 } from '../../../src/utils/errorHandler';
 
 describe('errorHandler', () => {
@@ -14,9 +14,9 @@ describe('errorHandler', () => {
         response: {
           status: 400,
           data: {
-            detail: 'Invalid input'
-          }
-        }
+            detail: 'Invalid input',
+          },
+        },
       };
 
       const result = transformApiError(error);
@@ -24,7 +24,7 @@ describe('errorHandler', () => {
       expect(result).toMatchObject({
         message: 'Invalid input',
         status: 400,
-        details: { detail: 'Invalid input' }
+        details: { detail: 'Invalid input' },
       });
       expect(result.fields).toBeDefined();
     });
@@ -34,9 +34,9 @@ describe('errorHandler', () => {
         response: {
           status: 400,
           data: {
-            message: 'Validation error'
-          }
-        }
+            message: 'Validation error',
+          },
+        },
       };
 
       const result = transformApiError(error);
@@ -50,9 +50,9 @@ describe('errorHandler', () => {
         response: {
           status: 400,
           data: {
-            non_field_errors: ['Error 1', 'Error 2']
-          }
-        }
+            non_field_errors: ['Error 1', 'Error 2'],
+          },
+        },
       };
 
       const result = transformApiError(error);
@@ -64,8 +64,8 @@ describe('errorHandler', () => {
       const error = {
         response: {
           status: 401,
-          data: {}
-        }
+          data: {},
+        },
       };
 
       const result = transformApiError(error);
@@ -77,8 +77,8 @@ describe('errorHandler', () => {
       const error = {
         response: {
           status: 403,
-          data: {}
-        }
+          data: {},
+        },
       };
 
       const result = transformApiError(error);
@@ -90,8 +90,8 @@ describe('errorHandler', () => {
       const error = {
         response: {
           status: 404,
-          data: {}
-        }
+          data: {},
+        },
       };
 
       const result = transformApiError(error);
@@ -104,10 +104,10 @@ describe('errorHandler', () => {
         response: {
           status: 429,
           headers: {
-            'retry-after': '60'
+            'retry-after': '60',
           },
-          data: {}
-        }
+          data: {},
+        },
       };
 
       const result = transformApiError(error);
@@ -119,8 +119,8 @@ describe('errorHandler', () => {
       const error = {
         response: {
           status: 500,
-          data: {}
-        }
+          data: {},
+        },
       };
 
       const result = transformApiError(error);
@@ -130,7 +130,7 @@ describe('errorHandler', () => {
 
     it('should handle error without response', () => {
       const error = {
-        message: 'Network error'
+        message: 'Network error',
       };
 
       const result = transformApiError(error);
@@ -145,9 +145,9 @@ describe('errorHandler', () => {
           status: 400,
           data: {
             email: ['Invalid email'],
-            password: ['Too short']
-          }
-        }
+            password: ['Too short'],
+          },
+        },
       };
 
       const result = transformApiError(error);
@@ -196,7 +196,7 @@ describe('errorHandler', () => {
         message: 'Test error',
         status: 400,
         details: { message: 'Test error' },
-        fields: {}
+        fields: {},
       });
     });
 
@@ -211,7 +211,7 @@ describe('errorHandler', () => {
     it('should return true for network error', () => {
       const error = {
         request: {},
-        response: undefined
+        response: undefined,
       };
 
       const result = isNetworkError(error);
@@ -222,7 +222,7 @@ describe('errorHandler', () => {
     it('should return false for error with response', () => {
       const error = {
         request: {},
-        response: { status: 400 }
+        response: { status: 400 },
       };
 
       const result = isNetworkError(error);
@@ -234,7 +234,7 @@ describe('errorHandler', () => {
       const error = {
         message: 'Some error',
         response: undefined,
-        request: undefined
+        request: undefined,
       };
 
       const result = isNetworkError(error);
@@ -260,4 +260,3 @@ describe('errorHandler', () => {
     });
   });
 });
-

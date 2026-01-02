@@ -10,20 +10,20 @@ vi.mock('../../src/components/editors/MonacoCodeEditor.vue', () => ({
     name: 'MonacoCodeEditor',
     template: '<div class="monaco-editor-mock"><pre>{{ modelValue }}</pre></div>',
     props: ['modelValue', 'language', 'readOnly', 'height'],
-    emits: ['update:modelValue']
-  }
+    emits: ['update:modelValue'],
+  },
 }));
 
 vi.mock('dompurify', () => ({
   default: {
-    sanitize: vi.fn((html) => html)
-  }
+    sanitize: vi.fn((html) => html),
+  },
 }));
 
 vi.mock('marked', () => ({
   marked: {
-    parse: vi.fn((markdown) => `<p>${markdown}</p>`)
-  }
+    parse: vi.fn((markdown) => `<p>${markdown}</p>`),
+  },
 }));
 
 describe('ProblemSubmissionsPanel', () => {
@@ -36,15 +36,31 @@ describe('ProblemSubmissionsPanel', () => {
     mockIntersectionObserver = {
       observe: vi.fn(),
       disconnect: vi.fn(),
-      unobserve: vi.fn()
+      unobserve: vi.fn(),
     };
 
     global.IntersectionObserver = vi.fn().mockImplementation(() => mockIntersectionObserver);
 
-    Object.defineProperty(window, 'innerHeight', { value: 2000, writable: true, configurable: true });
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 2000, writable: true, configurable: true });
-    Object.defineProperty(document.body, 'scrollHeight', { value: 2000, writable: true, configurable: true });
-    Object.defineProperty(document.documentElement, 'clientHeight', { value: 2000, writable: true, configurable: true });
+    Object.defineProperty(window, 'innerHeight', {
+      value: 2000,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 2000,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(document.body, 'scrollHeight', {
+      value: 2000,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(document.documentElement, 'clientHeight', {
+      value: 2000,
+      writable: true,
+      configurable: true,
+    });
   });
 
   afterEach(() => {
@@ -64,7 +80,7 @@ describe('ProblemSubmissionsPanel', () => {
       problem: mockProblem,
       hasNext: false,
       loadingMore: false,
-      ...props
+      ...props,
     };
 
     const wrapper = mount(ProblemSubmissionsPanel, {
@@ -72,13 +88,13 @@ describe('ProblemSubmissionsPanel', () => {
       global: {
         stubs: {
           Card: {
-            template: '<div class="card"><slot name="title" /><slot name="content" /></div>'
+            template: '<div class="card"><slot name="title" /><slot name="content" /></div>',
           },
           ProgressSpinner: {
-            template: '<div class="spinner">Loading...</div>'
-          }
-        }
-      }
+            template: '<div class="spinner">Loading...</div>',
+          },
+        },
+      },
     });
 
     return wrapper;
@@ -128,7 +144,7 @@ describe('ProblemSubmissionsPanel', () => {
   it('should highlight selected submission', () => {
     wrapper = createWrapper({
       submissions: mockSubmissions,
-      selected: mockSubmissions[0]
+      selected: mockSubmissions[0],
     });
 
     const firstItem = wrapper.find('li');
@@ -138,7 +154,7 @@ describe('ProblemSubmissionsPanel', () => {
   it('should show progress spinner for non-evaluated submissions', () => {
     const evaluatingSubmission = {
       ...mockSubmissions[0],
-      status: 'EVALUATING'
+      status: 'EVALUATING',
     };
     wrapper = createWrapper({ submissions: [evaluatingSubmission] });
 
@@ -150,8 +166,8 @@ describe('ProblemSubmissionsPanel', () => {
       ...mockSubmissions[0],
       status: 'EVALUATED',
       result: {
-        outcome: 'PASSED'
-      }
+        outcome: 'PASSED',
+      },
     };
     wrapper = createWrapper({ submissions: [evaluatedSubmission] });
 
@@ -164,8 +180,8 @@ describe('ProblemSubmissionsPanel', () => {
       ...mockSubmissions[0],
       status: 'EVALUATED',
       result: {
-        outcome: 'FAILED'
-      }
+        outcome: 'FAILED',
+      },
     };
     wrapper = createWrapper({ submissions: [failedSubmission] });
 
@@ -177,11 +193,11 @@ describe('ProblemSubmissionsPanel', () => {
     const selectedSubmission = {
       ...mockSubmissions[0],
       solution: 'def solution():\n    return True',
-      id: mockSubmissions[0].id
+      id: mockSubmissions[0].id,
     };
     wrapper = createWrapper({
       submissions: mockSubmissions,
-      selected: selectedSubmission
+      selected: selectedSubmission,
     });
 
     const editor = wrapper.findComponent({ name: 'MonacoCodeEditor' });
@@ -196,12 +212,12 @@ describe('ProblemSubmissionsPanel', () => {
       ...mockSubmissions[0],
       id: mockSubmissions[0].id,
       result: {
-        ai_evaluation: 'This solution is correct'
-      }
+        ai_evaluation: 'This solution is correct',
+      },
     };
     wrapper = createWrapper({
       submissions: mockSubmissions,
-      selected: selectedSubmission
+      selected: selectedSubmission,
     });
 
     await nextTick();
@@ -213,12 +229,12 @@ describe('ProblemSubmissionsPanel', () => {
       ...mockSubmissions[0],
       id: mockSubmissions[0].id,
       result: {
-        output: 'Test output'
-      }
+        output: 'Test output',
+      },
     };
     wrapper = createWrapper({
       submissions: mockSubmissions,
-      selected: selectedSubmission
+      selected: selectedSubmission,
     });
 
     expect(wrapper.text()).toContain('Output');
@@ -228,7 +244,7 @@ describe('ProblemSubmissionsPanel', () => {
   it('should show loading more spinner when loading more', () => {
     wrapper = createWrapper({
       submissions: mockSubmissions,
-      loadingMore: true
+      loadingMore: true,
     });
 
     const spinners = wrapper.findAll('.spinner');
@@ -240,7 +256,7 @@ describe('ProblemSubmissionsPanel', () => {
       submissions: mockSubmissions.slice(0, 1),
       hasNext: true,
       loading: false,
-      loadingMore: false
+      loadingMore: false,
     });
 
     await nextTick();
@@ -249,7 +265,7 @@ describe('ProblemSubmissionsPanel', () => {
       const observerCallback = global.IntersectionObserver.mock.calls[0][0];
       const mockEntry = {
         isIntersecting: true,
-        target: {}
+        target: {},
       };
 
       observerCallback([mockEntry]);
@@ -267,7 +283,7 @@ describe('ProblemSubmissionsPanel', () => {
       submissions: mockSubmissions.slice(0, 1),
       hasNext: true,
       loading: true,
-      loadingMore: false
+      loadingMore: false,
     });
 
     await nextTick();
@@ -276,7 +292,7 @@ describe('ProblemSubmissionsPanel', () => {
       const observerCallback = global.IntersectionObserver.mock.calls[0][0];
       const mockEntry = {
         isIntersecting: true,
-        target: {}
+        target: {},
       };
 
       observerCallback([mockEntry]);
@@ -294,7 +310,7 @@ describe('ProblemSubmissionsPanel', () => {
       submissions: mockSubmissions.slice(0, 1),
       hasNext: false,
       loading: false,
-      loadingMore: false
+      loadingMore: false,
     });
 
     await nextTick();
@@ -304,7 +320,7 @@ describe('ProblemSubmissionsPanel', () => {
       const observerCallback = global.IntersectionObserver.mock.calls[0][0];
       const mockEntry = {
         isIntersecting: true,
-        target: {}
+        target: {},
       };
 
       observerCallback([mockEntry]);
@@ -324,12 +340,12 @@ describe('ProblemSubmissionsPanel', () => {
       ...mockSubmissions[0],
       id: mockSubmissions[0].id,
       result: {
-        ai_evaluation: '**Bold text**'
-      }
+        ai_evaluation: '**Bold text**',
+      },
     };
     wrapper = createWrapper({
       submissions: mockSubmissions,
-      selected: selectedSubmission
+      selected: selectedSubmission,
     });
 
     await nextTick();
@@ -341,7 +357,7 @@ describe('ProblemSubmissionsPanel', () => {
   it('should handle date formatting errors gracefully', () => {
     const invalidDateSubmission = {
       ...mockSubmissions[0],
-      created_at: 'invalid-date'
+      created_at: 'invalid-date',
     };
     wrapper = createWrapper({ submissions: [invalidDateSubmission] });
 
@@ -353,12 +369,12 @@ describe('ProblemSubmissionsPanel', () => {
     const selectedSubmission = {
       ...mockSubmissions[0],
       solution: 'public class Solution {}',
-      id: mockSubmissions[0].id
+      id: mockSubmissions[0].id,
     };
     wrapper = createWrapper({
       submissions: mockSubmissions,
       selected: selectedSubmission,
-      problem: javaProblem
+      problem: javaProblem,
     });
 
     const editor = wrapper.findComponent({ name: 'MonacoCodeEditor' });
@@ -368,7 +384,7 @@ describe('ProblemSubmissionsPanel', () => {
   it('should cleanup intersection observer on unmount', async () => {
     wrapper = createWrapper({
       submissions: mockSubmissions.slice(0, 1),
-      hasNext: false
+      hasNext: false,
     });
 
     await nextTick();

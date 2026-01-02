@@ -53,7 +53,14 @@ export async function deleteProblem(id) {
  * @param {boolean} filters.is_solved - Filter by solved status
  * @returns {Promise<Object>} Response with problems data
  */
-export async function listProblems({ search = '', language = null, difficulty = null, author = null, cursor = null, is_solved = null } = {}) {
+export async function listProblems({
+  search = '',
+  language = null,
+  difficulty = null,
+  author = null,
+  cursor = null,
+  is_solved = null,
+} = {}) {
   const params = {};
   if (search) params.title = search;
   if (language) params.language = language;
@@ -70,5 +77,5 @@ export default {
   getProblem,
   updateProblem,
   deleteProblem,
-  listProblems
+  listProblems,
 };

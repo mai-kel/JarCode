@@ -18,7 +18,7 @@ describe('course store', () => {
       const store = useCourseStore();
       const mockResponse = {
         results: [{ id: 1 }, { id: 2 }],
-        next: 'cursor123'
+        next: 'cursor123',
       };
       courseService.getAllCourses.mockResolvedValue(mockResponse);
 
@@ -199,9 +199,7 @@ describe('course store', () => {
       const error = { message: 'Upload failed', status: 400 };
       lessonService.uploadLessonImage.mockRejectedValue(error);
 
-      await expect(
-        store.uploadLessonImage(1, new Blob(), 'test.png')
-      ).rejects.toThrow();
+      await expect(store.uploadLessonImage(1, new Blob(), 'test.png')).rejects.toThrow();
 
       expect(store.error).toBeDefined();
     });
@@ -361,7 +359,7 @@ describe('course store', () => {
       const store = useCourseStore();
       const mockResponse = {
         results: [{ id: 1 }],
-        next: null
+        next: null,
       };
       courseService.getAllCourses.mockResolvedValue(mockResponse);
 
@@ -438,4 +436,3 @@ describe('course store', () => {
     });
   });
 });
-

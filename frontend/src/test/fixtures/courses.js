@@ -2,7 +2,7 @@ export const mockCourse = {
   id: 1,
   title: 'Test Course',
   description: 'Test Description',
-  owner: 1
+  owner: 1,
 };
 
 export const mockCourses = [
@@ -11,20 +11,20 @@ export const mockCourses = [
     id: 2,
     title: 'Another Course',
     description: 'Another Description',
-    owner: 1
+    owner: 1,
   },
   {
     id: 3,
     title: 'Third Course',
     description: 'Third Description',
-    owner: 2
-  }
+    owner: 2,
+  },
 ];
 
 export const mockChapter = {
   id: 1,
   title: 'Test Chapter',
-  course: 1
+  course: 1,
 };
 
 export const mockChapters = [
@@ -32,15 +32,15 @@ export const mockChapters = [
   {
     id: 2,
     title: 'Another Chapter',
-    course: 1
-  }
+    course: 1,
+  },
 ];
 
 export const mockLesson = {
   id: 1,
   title: 'Test Lesson',
   content: 'Test Content',
-  chapter: 1
+  chapter: 1,
 };
 
 export const mockLessons = [
@@ -49,7 +49,6 @@ export const mockLessons = [
     id: 2,
     title: 'Another Lesson',
     content: 'Another Content',
-    chapter: 1
-  }
+    chapter: 1,
+  },
 ];
-

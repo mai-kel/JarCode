@@ -12,7 +12,7 @@ vi.mock('vue-router', async () => {
   const actual = await vi.importActual('vue-router');
   return {
     ...actual,
-    useRouter: () => createMockRouter()
+    useRouter: () => createMockRouter(),
   };
 });
 
@@ -29,8 +29,8 @@ describe('Error Handling Flow Integration', () => {
       status: 400,
       details: {
         title: ['This field is required'],
-        difficulty: ['Invalid choice']
-      }
+        difficulty: ['Invalid choice'],
+      },
     };
 
     problemService.createProblem.mockRejectedValue(apiError);
@@ -49,7 +49,7 @@ describe('Error Handling Flow Integration', () => {
     const networkError = {
       message: 'Network error',
       request: {},
-      response: undefined
+      response: undefined,
     };
 
     userService.initializeCSRF.mockResolvedValue(undefined);
@@ -57,7 +57,7 @@ describe('Error Handling Flow Integration', () => {
 
     const result = await store.login({
       email: 'test@example.com',
-      password: 'pass'
+      password: 'pass',
     });
 
     expect(result).toBe(false);
@@ -81,4 +81,3 @@ describe('Error Handling Flow Integration', () => {
     expect(store.currentProblem).toEqual(mockProblem);
   });
 });
-

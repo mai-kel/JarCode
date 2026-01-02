@@ -2,9 +2,9 @@
   <CourseListView
     title="Browse Courses"
     :fetcher="fetcher"
-    :itemAction="viewCourse"
-    itemActionLabel="View Course"
-    emptyMessage="No courses found."
+    :item-action="viewCourse"
+    item-action-label="View Course"
+    empty-message="No courses found."
   />
 </template>
 

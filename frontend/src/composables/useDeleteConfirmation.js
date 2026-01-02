@@ -24,7 +24,7 @@ export function useDeleteConfirmation(options) {
     onError,
     successRoute,
     successMessage,
-    errorMessage
+    errorMessage,
   } = options;
 
   const confirm = useConfirm();
@@ -70,10 +70,9 @@ export function useDeleteConfirmation(options) {
             onError(err);
           }
         }
-      }
+      },
     });
   };
 
   return confirmDelete;
 }
-

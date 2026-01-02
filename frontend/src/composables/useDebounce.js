@@ -1,4 +1,4 @@
-import { ref, onBeforeUnmount } from 'vue';
+import { onBeforeUnmount } from 'vue';
 
 /**
  * Composable for debouncing function calls
@@ -32,7 +32,6 @@ export function useDebounce(callback, delay = 300) {
 
   return {
     debouncedFunction,
-    cancel
+    cancel,
   };
 }
-

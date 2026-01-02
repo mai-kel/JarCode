@@ -19,7 +19,7 @@
         :loading="isLoading"
         :disabled="!isDirty"
         :class="saveButtonClass"
-        style="width: 100%;"
+        style="width: 100%"
         @click="$emit('save')"
       />
     </div>
@@ -32,30 +32,29 @@ import Button from 'primevue/button';
 defineProps({
   isDirty: {
     type: Boolean,
-    default: false
+    default: false,
   },
   isLoading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   saveLabel: {
     type: String,
-    default: 'Save'
+    default: 'Save',
   },
   deleteLabel: {
     type: String,
-    default: 'Delete'
+    default: 'Delete',
   },
   showDelete: {
     type: Boolean,
-    default: false
+    default: false,
   },
   saveButtonClass: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 });
 
 defineEmits(['save', 'delete']);
 </script>
-

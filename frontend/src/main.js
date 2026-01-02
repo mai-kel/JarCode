@@ -1,10 +1,10 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
-import { createPinia } from 'pinia'
+import { createPinia } from 'pinia';
 
 // PrimeVue Components
 import Button from 'primevue/button';
@@ -24,7 +24,7 @@ import Panel from 'primevue/panel';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 // Global CSS
-import './assets/main.css'
+import './assets/main.css';
 
 // Global Prism.js Imports for TinyMCE
 import 'prismjs/components/prism-core';
@@ -44,10 +44,10 @@ import 'prismjs/components/prism-csharp';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-bash';
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(createPinia())
-app.use(router)
+app.use(createPinia());
+app.use(router);
 app.use(PrimeVue);
 app.use(ToastService);
 app.use(ConfirmationService);
@@ -69,4 +69,4 @@ app.component('AccordionTab', AccordionTab);
 app.component('Panel', Panel);
 app.component('ConfirmDialog', ConfirmDialog);
 
-app.mount('#app')
+app.mount('#app');

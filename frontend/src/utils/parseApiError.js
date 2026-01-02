@@ -1,6 +1,9 @@
 function cleanStringifiedList(s) {
   const inner = s.slice(1, -1);
-  const parts = inner.split(/',\s*'|",\s*"|',\s*"|",\s*'/).map(x => x.replace(/^['\"]|['\"]$/g, '').trim()).filter(Boolean);
+  const parts = inner
+    .split(/',\s*'|",\s*"|',\s*"|",\s*'/)
+    .map((x) => x.replace(/^['"]|['"]$/g, '').trim())
+    .filter(Boolean);
   return parts;
 }
 
@@ -14,7 +17,7 @@ export function parseApiErrorFields(err) {
   }
 
   if (Array.isArray(err)) {
-    out._non_field = err.map(e => (typeof e === 'string' ? e : String(e)));
+    out._non_field = err.map((e) => (typeof e === 'string' ? e : String(e)));
     return out;
   }
 
@@ -34,9 +37,12 @@ export function parseApiErrorFields(err) {
         val.forEach((v) => {
           if (typeof v === 'string') {
             const s = v.trim();
-            if ((s.startsWith("['") && s.endsWith("']")) || (s.startsWith('["') && s.endsWith('"]'))) {
+            if (
+              (s.startsWith("['") && s.endsWith("']")) ||
+              (s.startsWith('["') && s.endsWith('"]'))
+            ) {
               const parsed = cleanStringifiedList(s);
-              parsed.forEach(p => out[outKey].push(p));
+              parsed.forEach((p) => out[outKey].push(p));
             } else {
               out[outKey].push(s);
             }
@@ -48,7 +54,7 @@ export function parseApiErrorFields(err) {
         const s = val.trim();
         if ((s.startsWith("['") && s.endsWith("']")) || (s.startsWith('["') && s.endsWith('"]'))) {
           const parsed = cleanStringifiedList(s);
-          parsed.forEach(p => out[outKey].push(p));
+          parsed.forEach((p) => out[outKey].push(p));
         } else {
           out[outKey].push(s);
         }

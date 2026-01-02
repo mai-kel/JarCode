@@ -3,12 +3,12 @@
     <div
       v-if="!isEditorReady"
       class="w-full h-full flex flex-column align-items-center justify-content-center"
-      style="background-color: #1e1e1e;"
+      style="background-color: #1e1e1e"
     >
       <ProgressSpinner
         style="width: 50px; height: 50px"
-        strokeWidth="4"
-        animationDuration=".5s"
+        stroke-width="4"
+        animation-duration=".5s"
         aria-label="Loading"
       />
     </div>
@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import loader from '@monaco-editor/loader';
 import ProgressSpinner from 'primevue/progressspinner';
 import { mapToMonacoLanguage } from '../../utils/monacoLanguageMapper';
@@ -25,28 +25,28 @@ import { mapToMonacoLanguage } from '../../utils/monacoLanguageMapper';
 const props = defineProps({
   modelValue: {
     type: String,
-    default: ''
+    default: '',
   },
   language: {
     type: String,
-    default: 'PYTHON'
+    default: 'PYTHON',
   },
   readOnly: {
     type: Boolean,
-    default: false
+    default: false,
   },
   height: {
     type: Number,
-    default: 600
+    default: 600,
   },
   theme: {
     type: String,
-    default: 'vs-dark'
+    default: 'vs-dark',
   },
   minimap: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -72,7 +72,7 @@ async function createEditor() {
       theme: props.theme,
       minimap: { enabled: props.minimap },
       readOnly: props.readOnly,
-      scrollBeyondLastLine: false
+      scrollBeyondLastLine: false,
     });
 
     monacoEditor.onDidChangeModelContent(() => {
@@ -87,25 +87,34 @@ async function createEditor() {
   }
 }
 
-watch(() => props.modelValue, (newVal) => {
-  if (monacoEditor && monacoEditor.getValue() !== newVal) {
-    monacoEditor.setValue(newVal || '');
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (monacoEditor && monacoEditor.getValue() !== newVal) {
+      monacoEditor.setValue(newVal || '');
+    }
   }
-});
+);
 
-watch(() => props.language, (newLang) => {
-  if (!monacoApi || !monacoEditor) return;
-  const monacoLang = mapToMonacoLanguage(newLang);
-  if (monacoEditor.getModel()) {
-    monacoApi.editor.setModelLanguage(monacoEditor.getModel(), monacoLang);
+watch(
+  () => props.language,
+  (newLang) => {
+    if (!monacoApi || !monacoEditor) return;
+    const monacoLang = mapToMonacoLanguage(newLang);
+    if (monacoEditor.getModel()) {
+      monacoApi.editor.setModelLanguage(monacoEditor.getModel(), monacoLang);
+    }
   }
-});
+);
 
-watch(() => props.readOnly, (newVal) => {
-  if (monacoEditor) {
-    monacoEditor.updateOptions({ readOnly: newVal });
+watch(
+  () => props.readOnly,
+  (newVal) => {
+    if (monacoEditor) {
+      monacoEditor.updateOptions({ readOnly: newVal });
+    }
   }
-});
+);
 
 onMounted(() => {
   nextTick(() => {
@@ -126,4 +135,3 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 </style>
-

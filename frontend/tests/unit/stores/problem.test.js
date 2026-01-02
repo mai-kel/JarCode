@@ -137,7 +137,7 @@ describe('problem store', () => {
       const store = useProblemStore();
       const mockResponse = {
         results: [{ id: 1 }, { id: 2 }],
-        next: 'cursor123'
+        next: 'cursor123',
       };
       problemService.listProblems.mockResolvedValue(mockResponse);
 
@@ -181,4 +181,3 @@ describe('problem store', () => {
     });
   });
 });
-

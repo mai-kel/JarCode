@@ -3,11 +3,16 @@
     <template #title>
       <div class="flex align-items-center justify-content-between w-full">
         <h2 class="m-0">Edit Course</h2>
-        <Button class="p-button-text" label="Go back to my courses" icon="pi pi-angle-left" @click="goMyCourses" />
+        <Button
+          class="p-button-text"
+          label="Go back to my courses"
+          icon="pi pi-angle-left"
+          @click="goMyCourses"
+        />
       </div>
     </template>
     <template #content>
-      <form @submit.prevent="handleSave" class="p-fluid grid">
+      <form class="p-fluid grid" @submit.prevent="handleSave">
         <div class="field col-12">
           <label for="courseTitle">Course Title</label>
           <InputText id="courseTitle" v-model="title" :invalid="submitted && !title" />
@@ -21,49 +26,96 @@
             name="thumbnail"
             mode="advanced"
             accept="image/*"
-            :maxFileSize="MAX_THUMBNAIL_BYTES"
+            :max-file-size="MAX_THUMBNAIL_BYTES"
             :auto="true"
-            :customUpload="true"
+            :custom-upload="true"
             @uploader="handleThumbnailUpload"
             @remove="handleThumbnailClear"
           >
             <template #header="{ chooseCallback }">
               <div class="flex align-items-center gap-2 p-2 w-full">
                 <Button label="Upload" icon="pi pi-upload" @click="chooseCallback()" />
-                <Button label="Clear" icon="pi pi-times" class="p-button-text" @click="handleThumbnailClear" :disabled="!hasPreview" />
-                <Button label="Remove" icon="pi pi-trash" class="p-button-danger p-button-text" @click="handleThumbnailRemoveCompletely" :disabled="!canRemove" />
+                <Button
+                  label="Clear"
+                  icon="pi pi-times"
+                  class="p-button-text"
+                  :disabled="!hasPreview"
+                  @click="handleThumbnailClear"
+                />
+                <Button
+                  label="Remove"
+                  icon="pi pi-trash"
+                  class="p-button-danger p-button-text"
+                  :disabled="!canRemove"
+                  @click="handleThumbnailRemoveCompletely"
+                />
               </div>
             </template>
             <template #empty>
               <p>Drag and drop image file here.</p>
             </template>
           </FileUpload>
-          <small class="p-muted">Leave empty to keep current thumbnail. Max size: {{ MAX_THUMBNAIL_LABEL }}.</small>
+          <small class="p-muted"
+            >Leave empty to keep current thumbnail. Max size: {{ MAX_THUMBNAIL_LABEL }}.</small
+          >
 
           <div class="mt-3">
-            <img :src="currentImageToShow" alt="Thumbnail" style="max-height:180px;object-fit:cover" />
+            <img
+              :src="currentImageToShow"
+              alt="Thumbnail"
+              style="max-height: 180px; object-fit: cover"
+            />
           </div>
         </div>
 
         <div class="field col-12">
           <label for="courseDescription">Description</label>
-          <Textarea id="courseDescription" v-model="description" rows="5" autoResize :invalid="submitted && !description"/>
+          <Textarea
+            id="courseDescription"
+            v-model="description"
+            rows="5"
+            auto-resize
+            :invalid="submitted && !description"
+          />
           <small v-if="submitted && !description" class="p-error">Description is required.</small>
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+          <Message
+            v-if="courseStore.error"
+            severity="error"
+            :closable="true"
+            @close="courseStore.clearError()"
+          >
             <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
           </Message>
         </div>
 
         <div class="col-12 mt-3 flex justify-content-between align-items-center">
-          <Button type="button" label="Delete Course" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteCourse" />
-          <Button class="p-button-text" label="Go to Chapters" icon="pi pi-angle-right" @click="goChapters" />
+          <Button
+            type="button"
+            label="Delete Course"
+            icon="pi pi-trash"
+            class="p-button-danger"
+            @click="confirmDeleteCourse"
+          />
+          <Button
+            class="p-button-text"
+            label="Go to Chapters"
+            icon="pi pi-angle-right"
+            @click="goChapters"
+          />
         </div>
 
         <div class="col-12 mt-2">
-          <Button type="submit" label="Save" icon="pi pi-save" :loading="courseStore.isLoading" :disabled="!isDirty" class="p-button-success" />
+          <Button
+            type="submit"
+            label="Save"
+            icon="pi pi-save"
+            :loading="courseStore.isLoading"
+            :disabled="!isDirty"
+            class="p-button-success"
+          />
         </div>
       </form>
     </template>
@@ -75,7 +127,6 @@ import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCourseStore } from '../../store/course';
 import { useToast } from 'primevue/usetoast';
-import { useAuthStore } from '../../store/auth';
 import { MAX_THUMBNAIL_BYTES, MAX_THUMBNAIL_LABEL } from '../../constants/upload';
 import { useUnsavedChanges } from '../../composables/useUnsavedChanges';
 import { useDeleteConfirmation } from '../../composables/useDeleteConfirmation';
@@ -84,7 +135,6 @@ const route = useRoute();
 const router = useRouter();
 const courseStore = useCourseStore();
 const toast = useToast();
-const authStore = useAuthStore();
 
 const courseId = route.params.courseId;
 
@@ -115,7 +165,7 @@ onMounted(async () => {
 watch(newThumbnail, (file) => {
   if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
   previewUrl.value = file ? URL.createObjectURL(file) : '';
-  currentImage.value = previewUrl.value || (originalImageUrl.value || placeholder);
+  currentImage.value = previewUrl.value || originalImageUrl.value || placeholder;
   if (file) removeThumbnail.value = false;
 });
 
@@ -174,7 +224,7 @@ const handleSave = async () => {
       severity: 'error',
       summary: 'Failed to save course',
       detail: courseStore.error.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 };
@@ -184,10 +234,11 @@ const goMyCourses = () => router.push({ name: 'my-courses' });
 
 const confirmDeleteCourse = useDeleteConfirmation({
   header: 'Delete course',
-  message: 'Are you sure you want to delete this course and all its chapters and lessons? This cannot be undone.',
+  message:
+    'Are you sure you want to delete this course and all its chapters and lessons? This cannot be undone.',
   onConfirm: () => courseStore.deleteCourse(courseId),
   successRoute: 'my-courses',
-  successMessage: 'Course deleted'
+  successMessage: 'Course deleted',
 });
 
 const hasPreview = computed(() => !!previewUrl.value);
@@ -203,5 +254,4 @@ const isDirty = computed(() => {
 useUnsavedChanges(isDirty);
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

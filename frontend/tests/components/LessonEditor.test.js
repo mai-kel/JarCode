@@ -5,7 +5,7 @@ import LessonEditor from '../../src/components/editors/LessonEditor.vue';
 import { useCourseStore } from '../../src/store/course';
 
 vi.mock('../../src/store/course', () => ({
-  useCourseStore: vi.fn()
+  useCourseStore: vi.fn(),
 }));
 
 vi.mock('../../src/utils/tinymceImports', () => ({}));
@@ -15,10 +15,11 @@ vi.mock('tinymce/plugins/media', () => ({}));
 vi.mock('@tinymce/tinymce-vue', () => ({
   default: {
     name: 'Editor',
-    template: '<div class="tinymce-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
+    template:
+      '<div class="tinymce-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
     props: ['id', 'modelValue', 'init'],
-    emits: ['update:modelValue']
-  }
+    emits: ['update:modelValue'],
+  },
 }));
 
 describe('LessonEditor', () => {
@@ -27,7 +28,7 @@ describe('LessonEditor', () => {
 
   beforeEach(() => {
     mockCourseStore = {
-      uploadLessonImage: vi.fn()
+      uploadLessonImage: vi.fn(),
     };
     useCourseStore.mockReturnValue(mockCourseStore);
     vi.clearAllMocks();
@@ -40,8 +41,8 @@ describe('LessonEditor', () => {
         lessonId: null,
         height: 700,
         editorId: 'lessonContent',
-        ...props
-      }
+        ...props,
+      },
     });
   };
 
@@ -133,7 +134,7 @@ describe('LessonEditor', () => {
 
     const mockBlobInfo = {
       blob: () => new Blob(['test'], { type: 'image/png' }),
-      filename: () => 'test.png'
+      filename: () => 'test.png',
     };
 
     await imageUploadHandler(mockBlobInfo, vi.fn(), vi.fn(), vi.fn());
@@ -155,7 +156,7 @@ describe('LessonEditor', () => {
     const success = vi.fn();
     const mockBlobInfo = {
       blob: () => new Blob(['test'], { type: 'image/png' }),
-      filename: () => 'test.png'
+      filename: () => 'test.png',
     };
 
     await imageUploadHandler(mockBlobInfo, success, vi.fn(), vi.fn());
@@ -172,7 +173,7 @@ describe('LessonEditor', () => {
     const failure = vi.fn();
     const mockBlobInfo = {
       blob: () => new Blob(['test'], { type: 'image/png' }),
-      filename: () => 'test.png'
+      filename: () => 'test.png',
     };
 
     await imageUploadHandler(mockBlobInfo, vi.fn(), failure, vi.fn());
@@ -192,7 +193,7 @@ describe('LessonEditor', () => {
     const progress = vi.fn();
     const mockBlobInfo = {
       blob: () => new Blob(['test'], { type: 'image/png' }),
-      filename: () => 'test.png'
+      filename: () => 'test.png',
     };
 
     await imageUploadHandler(mockBlobInfo, vi.fn(), vi.fn(), progress);
@@ -200,4 +201,3 @@ describe('LessonEditor', () => {
     expect(progress).toHaveBeenCalledWith(50);
   });
 });
-

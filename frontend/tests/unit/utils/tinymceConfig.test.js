@@ -3,7 +3,7 @@ import {
   createTinyMCEConfig,
   STANDARD_PLUGINS,
   STANDARD_TOOLBAR,
-  CODESAMPLE_LANGUAGES
+  CODESAMPLE_LANGUAGES,
 } from '../../../src/utils/tinymceConfig';
 
 describe('tinymceConfig', () => {
@@ -27,7 +27,7 @@ describe('tinymceConfig', () => {
       const imageUploadHandler = vi.fn();
       const config = createTinyMCEConfig({
         enableImageUpload: true,
-        imageUploadHandler
+        imageUploadHandler,
       });
 
       expect(config.plugins).toContain('image');
@@ -38,7 +38,7 @@ describe('tinymceConfig', () => {
     it('should add image to toolbar when image upload is enabled', () => {
       const config = createTinyMCEConfig({
         enableImageUpload: true,
-        imageUploadHandler: vi.fn()
+        imageUploadHandler: vi.fn(),
       });
 
       expect(config.toolbar).toContain('image');
@@ -59,7 +59,7 @@ describe('tinymceConfig', () => {
     it('should accept custom codesample languages', () => {
       const customLanguages = [
         { text: 'Python', value: 'python' },
-        { text: 'JavaScript', value: 'javascript' }
+        { text: 'JavaScript', value: 'javascript' },
       ];
       const config = createTinyMCEConfig({ codesampleLanguages: customLanguages });
       expect(config.codesample_languages).toEqual(customLanguages);
@@ -91,4 +91,3 @@ describe('tinymceConfig', () => {
     });
   });
 });
-

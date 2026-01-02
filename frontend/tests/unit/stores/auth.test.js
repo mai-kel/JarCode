@@ -9,7 +9,7 @@ vi.mock('vue-router', async () => {
   const actual = await vi.importActual('vue-router');
   return {
     ...actual,
-    useRouter: () => createMockRouter()
+    useRouter: () => createMockRouter(),
   };
 });
 
@@ -69,7 +69,7 @@ describe('auth store', () => {
         email: 'test@example.com',
         password: 'pass',
         first_name: 'Test',
-        last_name: 'User'
+        last_name: 'User',
       });
 
       expect(result).toBe(true);
@@ -179,7 +179,7 @@ describe('auth store', () => {
         user_uuid: 'uuid',
         token: 'token',
         password: 'newpass',
-        password2: 'newpass'
+        password2: 'newpass',
       });
 
       expect(result).toBe(true);
@@ -268,4 +268,3 @@ describe('auth store', () => {
     });
   });
 });
-

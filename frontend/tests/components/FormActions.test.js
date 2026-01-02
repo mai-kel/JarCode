@@ -10,8 +10,8 @@ describe('FormActions', () => {
       props: {
         isDirty: false,
         isLoading: false,
-        ...props
-      }
+        ...props,
+      },
     });
   };
 
@@ -74,10 +74,9 @@ describe('FormActions', () => {
     wrapper = createWrapper({
       saveLabel: 'Update',
       deleteLabel: 'Remove',
-      showDelete: true
+      showDelete: true,
     });
     expect(wrapper.find('button[type="submit"]').text()).toBe('Update');
     expect(wrapper.find('button.p-button-danger').text()).toBe('Remove');
   });
 });
-

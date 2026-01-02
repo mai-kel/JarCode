@@ -15,20 +15,20 @@ import { getErrorMessage } from '../../utils/errorHandler';
 const props = defineProps({
   modelValue: {
     type: String,
-    default: ''
+    default: '',
   },
   lessonId: {
     type: [String, Number],
-    default: null
+    default: null,
   },
   height: {
     type: Number,
-    default: 700
+    default: 700,
   },
   editorId: {
     type: String,
-    default: 'lessonContent'
-  }
+    default: 'lessonContent',
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -42,34 +42,38 @@ const editorConfig = computed(() => {
   return createTinyMCEConfig({
     height: props.height,
     enableImageUpload: hasImageUpload,
-    imageUploadHandler: hasImageUpload ? async (blobInfo, success, failure, progress) => {
-      try {
-        const location = await courseStore.uploadLessonImage(
-          props.lessonId,
-          blobInfo.blob(),
-          blobInfo.filename(),
-          (percent) => {
-            if (progress) {
-              progress(percent);
-            }
+    imageUploadHandler: hasImageUpload
+      ? async (blobInfo, success, failure, progress) => {
+          try {
+            const location = await courseStore.uploadLessonImage(
+              props.lessonId,
+              blobInfo.blob(),
+              blobInfo.filename(),
+              (percent) => {
+                if (progress) {
+                  progress(percent);
+                }
+              }
+            );
+            success(location);
+          } catch (err) {
+            failure(getErrorMessage(err) || 'Failed to upload image');
           }
-        );
-        success(location);
-      } catch (err) {
-        failure(getErrorMessage(err) || 'Failed to upload image');
-      }
-    } : null
+        }
+      : null,
   });
 });
 
-watch(() => props.modelValue, (newVal) => {
-  if (newVal !== localValue.value) {
-    localValue.value = newVal;
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal !== localValue.value) {
+      localValue.value = newVal;
+    }
   }
-});
+);
 
 watch(localValue, (newVal) => {
   emit('update:modelValue', newVal);
 });
 </script>
-

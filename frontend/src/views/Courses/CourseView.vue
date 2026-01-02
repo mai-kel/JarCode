@@ -3,13 +3,16 @@
     <template #title>
       <div class="flex justify-content-between align-items-center">
         <h2>{{ course ? course.title : 'Course' }}</h2>
-        <Button label="Go back to courses" icon="pi pi-arrow-left" class="p-button-text" @click="goBackToCourses" />
+        <Button
+          label="Go back to courses"
+          icon="pi pi-arrow-left"
+          class="p-button-text"
+          @click="goBackToCourses"
+        />
       </div>
     </template>
     <template #subtitle>
-      <div>
-        Author: {{ course?.owner.first_name }} {{ course?.owner.last_name }}
-      </div>
+      <div>Author: {{ course?.owner.first_name }} {{ course?.owner.last_name }}</div>
     </template>
     <template #content>
       <div class="p-fluid grid">
@@ -21,22 +24,36 @@
             </template>
             <template #content>
               <div v-if="loading" class="flex justify-content-center py-4">
-                <ProgressSpinner style="width:50px;height:50px" strokeWidth="6"/>
+                <ProgressSpinner style="width: 50px; height: 50px" stroke-width="6" />
               </div>
-              <div v-else-if="error" class="text-center text-red-500">Error: {{ error?.message || 'An error occurred' }}</div>
-              <div v-else-if="!course || chapters.length === 0" class="text-color-secondary p-3">No chapters or lessons available.</div>
+              <div v-else-if="error" class="text-center text-red-500">
+                Error: {{ error?.message || 'An error occurred' }}
+              </div>
+              <div v-else-if="!course || chapters.length === 0" class="text-color-secondary p-3">
+                No chapters or lessons available.
+              </div>
               <div v-else>
-                <Accordion :activeIndex="0">
-                  <AccordionTab v-for="(chapter, chapterIndex) in chapters" :key="chapter.id" :header="`${chapterIndex + 1}. ${chapter.title}`">
+                <Accordion :active-index="0">
+                  <AccordionTab
+                    v-for="(chapter, chapterIndex) in chapters"
+                    :key="chapter.id"
+                    :header="`${chapterIndex + 1}. ${chapter.title}`"
+                  >
                     <ul class="list-none p-0 m-0">
-                      <li v-for="(lesson, lessonIndex) in chapter.lessons" :key="lesson.id" class="mb-2">
+                      <li
+                        v-for="(lesson, lessonIndex) in chapter.lessons"
+                        :key="lesson.id"
+                        class="mb-2"
+                      >
                         <a
                           href="#"
-                          @click.prevent="selectLesson(lesson)"
                           :class="{
-                            'text-primary font-medium': selectedLesson && selectedLesson.id === lesson.id,
-                            'text-color-secondary hover:text-primary': !selectedLesson || selectedLesson.id !== lesson.id
+                            'text-primary font-medium':
+                              selectedLesson && selectedLesson.id === lesson.id,
+                            'text-color-secondary hover:text-primary':
+                              !selectedLesson || selectedLesson.id !== lesson.id,
                           }"
+                          @click.prevent="selectLesson(lesson)"
                         >
                           {{ chapterIndex + 1 }}.{{ lessonIndex + 1 }}. {{ lesson.title }}
                         </a>
@@ -53,7 +70,9 @@
         <div class="col-12 lg:col-9">
           <Card class="h-full">
             <template #title>
-              <h3>{{ selectedLesson ? selectedLesson.title : (course ? course.title : 'Loading...') }}</h3>
+              <h3>
+                {{ selectedLesson ? selectedLesson.title : course ? course.title : 'Loading...' }}
+              </h3>
             </template>
             <template #content>
               <div v-if="selectedLesson">
@@ -68,7 +87,7 @@
                 <p class="text-color-secondary">{{ course.description }}</p>
               </div>
               <div v-else class="flex justify-content-center py-4">
-                <ProgressSpinner style="width:50px;height:50px" strokeWidth="6"/>
+                <ProgressSpinner style="width: 50px; height: 50px" stroke-width="6" />
               </div>
             </template>
           </Card>
@@ -124,53 +143,53 @@ const fetchCourseDetails = async () => {
 };
 
 const selectLesson = (lesson) => {
-  selectedLesson.value = lesson
+  selectedLesson.value = lesson;
   nextTick(() => {
     if (window.Prism) {
-      window.Prism.highlightAll()
+      window.Prism.highlightAll();
     }
-  })
-}
+  });
+};
 
 const sanitizedLessonContent = computed(() => {
   if (selectedLesson.value && selectedLesson.value.content) {
-    return DOMPurify.sanitize(selectedLesson.value.content)
+    return DOMPurify.sanitize(selectedLesson.value.content);
   }
-  return ''
-})
+  return '';
+});
 
 const courseImage = (course) => {
   if (course.thumbnail) {
-    return course.thumbnail
+    return course.thumbnail;
   }
-  return '/img/course-placeholder.svg'
-}
+  return '/img/course-placeholder.svg';
+};
 
 const goBackToCourses = () => {
-  router.push({ name: 'browse-courses' })
-}
+  router.push({ name: 'browse-courses' });
+};
 
 onMounted(() => {
-  fetchCourseDetails()
-})
+  fetchCourseDetails();
+});
 
 watch(selectedLesson, () => {
   nextTick(() => {
     if (window.Prism) {
-      window.Prism.highlightAll()
+      window.Prism.highlightAll();
     }
-  })
-})
+  });
+});
 </script>
 
 <style scoped>
 .course-thumbnail {
-width: 100%;
-max-width: 640px;
-height: auto;
-max-height: 360px;
-display: block;
-margin-bottom: 1rem;
-background-color: #f5f5f5;
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  max-height: 360px;
+  display: block;
+  margin-bottom: 1rem;
+  background-color: #f5f5f5;
 }
 </style>

@@ -7,23 +7,23 @@ vi.mock('../../src/composables/useCursorPagination', () => {
     items: { value: [] },
     loading: { value: false },
     loadingMore: { value: false },
-    refresh: vi.fn()
+    refresh: vi.fn(),
   }));
   return {
-    useCursorPagination: mockUseCursorPagination
+    useCursorPagination: mockUseCursorPagination,
   };
 });
 
 vi.mock('../../src/composables/useInfiniteScroll', () => ({
   useInfiniteScroll: vi.fn(() => ({
-    fillIfNoScroll: vi.fn()
-  }))
+    fillIfNoScroll: vi.fn(),
+  })),
 }));
 
 vi.mock('../../src/composables/useDebounce', () => ({
   useDebounce: vi.fn(() => ({
-    debouncedFunction: vi.fn()
-  }))
+    debouncedFunction: vi.fn(),
+  })),
 }));
 
 describe('ProblemListView', () => {
@@ -35,7 +35,7 @@ describe('ProblemListView', () => {
       props: {
         title: 'Test Problems',
         fetcher: mockFetcher,
-        ...props
+        ...props,
       },
       global: {
         stubs: {
@@ -43,9 +43,9 @@ describe('ProblemListView', () => {
           InputText: true,
           Dropdown: true,
           Button: true,
-          ProgressSpinner: true
-        }
-      }
+          ProgressSpinner: true,
+        },
+      },
     });
   };
 
@@ -66,7 +66,7 @@ describe('ProblemListView', () => {
   it('should emit create event when create button is clicked', async () => {
     wrapper = createWrapper({ showCreate: true });
     const buttons = wrapper.findAll('button');
-    const createButton = buttons.find(b => b.text().includes('Create'));
+    const createButton = buttons.find((b) => b.text().includes('Create'));
     if (createButton) {
       await createButton.trigger('click');
       expect(wrapper.emitted('create')).toBeTruthy();
@@ -79,7 +79,7 @@ describe('ProblemListView', () => {
       items: { value: [] },
       loading: { value: true },
       loadingMore: { value: false },
-      refresh: vi.fn()
+      refresh: vi.fn(),
     });
 
     wrapper = createWrapper();
@@ -92,11 +92,10 @@ describe('ProblemListView', () => {
       items: { value: [] },
       loading: { value: false },
       loadingMore: { value: false },
-      refresh: vi.fn()
+      refresh: vi.fn(),
     });
 
     wrapper = createWrapper();
     expect(wrapper.exists()).toBe(true);
   });
 });
-

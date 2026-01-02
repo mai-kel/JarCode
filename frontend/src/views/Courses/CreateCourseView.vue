@@ -3,7 +3,12 @@
     <template #title>
       <div class="flex align-items-center justify-content-between w-full">
         <h2 class="m-0">Create a New Course</h2>
-        <Button class="p-button-text" label="Back to My Courses" icon="pi pi-angle-left" @click="goBackToMyCourses" />
+        <Button
+          class="p-button-text"
+          label="Back to My Courses"
+          icon="pi pi-angle-left"
+          @click="goBackToMyCourses"
+        />
       </div>
     </template>
     <template #content>
@@ -22,43 +27,71 @@
               name="thumbnail"
               mode="advanced"
               accept="image/*"
-              :maxFileSize="MAX_THUMBNAIL_BYTES"
+              :max-file-size="MAX_THUMBNAIL_BYTES"
               :auto="true"
-              :customUpload="true"
+              :custom-upload="true"
               @uploader="handleThumbnailUpload"
               @remove="handleThumbnailRemove"
             >
               <template #header="{ chooseCallback }">
                 <div class="flex align-items-center gap-2 p-2 w-full">
                   <Button label="Upload" icon="pi pi-upload" @click="chooseCallback()" />
-                  <Button label="Clear" icon="pi pi-times" class="p-button-text" @click="handleThumbnailRemove" :disabled="!previewUrl" />
+                  <Button
+                    label="Clear"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    :disabled="!previewUrl"
+                    @click="handleThumbnailRemove"
+                  />
                 </div>
               </template>
               <template #empty>
                 <p>Drag and drop image file here.</p>
               </template>
             </FileUpload>
-            <small class="p-muted">Thumbnail is optional. Max size: {{ MAX_THUMBNAIL_LABEL }}.</small>
+            <small class="p-muted"
+              >Thumbnail is optional. Max size: {{ MAX_THUMBNAIL_LABEL }}.</small
+            >
 
             <div v-if="previewUrl" class="mt-3">
-              <img :src="previewUrl" alt="Thumbnail preview" style="max-height:180px;object-fit:cover" />
+              <img
+                :src="previewUrl"
+                alt="Thumbnail preview"
+                style="max-height: 180px; object-fit: cover"
+              />
             </div>
           </div>
 
           <div class="field col-12">
             <label for="courseDescription">Description</label>
-            <Textarea id="courseDescription" v-model="description" rows="5" autoResize :invalid="submitted && !description"/>
+            <Textarea
+              id="courseDescription"
+              v-model="description"
+              rows="5"
+              auto-resize
+              :invalid="submitted && !description"
+            />
             <small v-if="submitted && !description" class="p-error">Description is required.</small>
           </div>
 
           <div class="col-12 mt-3">
-            <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+            <Message
+              v-if="courseStore.error"
+              severity="error"
+              :closable="true"
+              @close="courseStore.clearError()"
+            >
               <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
             </Message>
           </div>
 
           <div class="col-12 flex align-items-center">
-            <Button type="submit" label="Create Course" icon="pi pi-save" :loading="courseStore.isLoading" />
+            <Button
+              type="submit"
+              label="Create Course"
+              icon="pi pi-save"
+              :loading="courseStore.isLoading"
+            />
           </div>
         </div>
       </form>
@@ -121,7 +154,7 @@ const handleCreateCourse = async () => {
       severity: 'error',
       summary: 'Failed to create course',
       detail: courseStore.error.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 };
@@ -139,10 +172,9 @@ const goBackToMyCourses = () => {
     acceptLabel: 'Leave',
     rejectLabel: 'Stay',
     acceptClass: 'p-button-danger',
-    accept: () => router.push({ name: 'my-courses' })
+    accept: () => router.push({ name: 'my-courses' }),
   });
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

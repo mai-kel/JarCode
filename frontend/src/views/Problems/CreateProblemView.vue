@@ -7,28 +7,45 @@
       </div>
     </template>
     <template #content>
-      <form @submit.prevent="handleCreate" class="p-fluid grid">
+      <form class="p-fluid grid" @submit.prevent="handleCreate">
         <div class="field col-12">
           <label for="title">Title</label>
-          <InputText id="title" v-model="title" :invalid="submitted && !title" placeholder="Enter problem title" />
+          <InputText
+            id="title"
+            v-model="title"
+            :invalid="submitted && !title"
+            placeholder="Enter problem title"
+          />
           <small v-if="submitted && !title" class="p-error">Title is required.</small>
         </div>
 
         <div class="field col-12 md:col-6">
           <label for="language">Language</label>
-          <Dropdown id="language" :options="languageOptions" optionLabel="text" optionValue="value" v-model="language" />
+          <Dropdown
+            id="language"
+            v-model="language"
+            :options="languageOptions"
+            option-label="text"
+            option-value="value"
+          />
         </div>
 
         <div class="field col-12 md:col-6">
           <label for="difficulty">Difficulty</label>
-          <Dropdown id="difficulty" :options="difficultyOptions" optionLabel="text" optionValue="value" v-model="difficulty" />
+          <Dropdown
+            id="difficulty"
+            v-model="difficulty"
+            :options="difficultyOptions"
+            option-label="text"
+            option-value="value"
+          />
         </div>
 
         <div class="col-12">
           <ProblemEditor
             v-model:description="description"
-            v-model:startingCode="startingCode"
-            v-model:testCode="testCode"
+            v-model:starting-code="startingCode"
+            v-model:test-code="testCode"
             :language="language"
           />
         </div>
@@ -38,7 +55,12 @@
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="error" severity="error" :closable="true" @close="problemStore.clearError()">
+          <Message
+            v-if="error"
+            severity="error"
+            :closable="true"
+            @close="problemStore.clearError()"
+          >
             <strong>Error:</strong> {{ error?.message || 'An error occurred' }}
           </Message>
         </div>
@@ -60,7 +82,6 @@ import Message from 'primevue/message';
 import ProblemEditor from '../../components/ProblemEditor.vue';
 import { Languages, Difficulties } from '../../constants/problems';
 import { useProblemStore } from '../../store/problem';
-import { getErrorMessage } from '../../utils/errorHandler';
 
 const router = useRouter();
 const toast = useToast();
@@ -85,12 +106,19 @@ const handleCreate = async () => {
   submitted.value = true;
   problemStore.clearError();
 
-  if (!title.value || !description.value || !startingCode.value || !testCode.value || !language.value || !difficulty.value) {
+  if (
+    !title.value ||
+    !description.value ||
+    !startingCode.value ||
+    !testCode.value ||
+    !language.value ||
+    !difficulty.value
+  ) {
     toast.add({
       severity: 'error',
       summary: 'Validation error',
       detail: 'All fields are required.',
-      life: 4000
+      life: 4000,
     });
     return;
   }
@@ -101,7 +129,7 @@ const handleCreate = async () => {
     language: language.value,
     starting_code: startingCode.value,
     test_code: testCode.value,
-    difficulty: difficulty.value
+    difficulty: difficulty.value,
   };
 
   const created = await problemStore.createProblem(payload);
@@ -113,14 +141,12 @@ const handleCreate = async () => {
       severity: 'error',
       summary: 'Failed to create problem',
       detail: problemStore.error?.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 };
 
 const goHome = () => router.push({ name: 'home' });
-
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

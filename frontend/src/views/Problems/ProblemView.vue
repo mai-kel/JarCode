@@ -1,6 +1,10 @@
 <template>
-  <div v-if="!problem" class="w-full flex align-items-center justify-content-center" style="min-height:320px;">
-    <ProgressSpinner style="width:3.5rem;height:3.5rem"></ProgressSpinner>
+  <div
+    v-if="!problem"
+    class="w-full flex align-items-center justify-content-center"
+    style="min-height: 320px"
+  >
+    <ProgressSpinner style="width: 3.5rem; height: 3.5rem"></ProgressSpinner>
   </div>
   <Card v-else class="py-3">
     <template #title>
@@ -11,29 +15,42 @@
     </template>
 
     <template #subtitle>
-      <div>
-        Author: {{ problem?.author.first_name }} {{ problem?.author.last_name }}
-      </div>
+      <div>Author: {{ problem?.author.first_name }} {{ problem?.author.last_name }}</div>
       <div class="mt-3">
-        <Button class="mr-2" :class="editorTab ? '' : 'p-button-outlined'" label="Editor" @click="() => (editorTab = true)"></Button>
-        <Button :class="!editorTab ? '' : 'p-button-outlined'" label="Submissions" @click="switchToSubmissions"></Button>
+        <Button
+          class="mr-2"
+          :class="editorTab ? '' : 'p-button-outlined'"
+          label="Editor"
+          @click="() => (editorTab = true)"
+        ></Button>
+        <Button
+          :class="!editorTab ? '' : 'p-button-outlined'"
+          label="Submissions"
+          @click="switchToSubmissions"
+        ></Button>
       </div>
     </template>
 
     <template #content>
       <div class="p-fluid grid">
-          <ProblemEditorPanel v-if="editorTab" :problem="problem" v-model:editorCode="editorCode" @submit="handleSubmitFromPanel" @back="goBack"></ProblemEditorPanel>
-          <ProblemSubmissionsPanel
-            v-else
-            :submissions="submissions"
-            :loading="loadingSubmissions"
-            :loadingMore="loadingMore"
-            :hasNext="!!nextCursor"
-            :selected="selectedSubmission"
-            :problem="problem"
-            @select="(s) => selectSubmission(s)"
-            @load-more="loadMoreSubmissions"
-          ></ProblemSubmissionsPanel>
+        <ProblemEditorPanel
+          v-if="editorTab"
+          v-model:editor-code="editorCode"
+          :problem="problem"
+          @submit="handleSubmitFromPanel"
+          @back="goBack"
+        ></ProblemEditorPanel>
+        <ProblemSubmissionsPanel
+          v-else
+          :submissions="submissions"
+          :loading="loadingSubmissions"
+          :loading-more="loadingMore"
+          :has-next="!!nextCursor"
+          :selected="selectedSubmission"
+          :problem="problem"
+          @select="(s) => selectSubmission(s)"
+          @load-more="loadMoreSubmissions"
+        ></ProblemSubmissionsPanel>
       </div>
     </template>
   </Card>
@@ -50,7 +67,6 @@ import { useSubmissionStore } from '../../store/submission';
 import ProblemEditorPanel from '../../components/ProblemEditorPanel.vue';
 import ProblemSubmissionsPanel from '../../components/ProblemSubmissionsPanel.vue';
 import { useToast } from 'primevue/usetoast';
-import { getErrorMessage } from '../../utils/errorHandler';
 import { useCursorPagination } from '../../composables/useCursorPagination';
 
 const route = useRoute();
@@ -78,7 +94,7 @@ const loadingMore = computed(() => pagination.loadingMore.value);
 const nextCursor = computed(() => pagination.nextCursor.value);
 const selectedSubmission = computed({
   get: () => submissionStore.currentSubmission,
-  set: (value) => submissionStore.setCurrentSubmission(value)
+  set: (value) => submissionStore.setCurrentSubmission(value),
 });
 
 const goBack = () => router.push({ name: 'browse-problems' });
@@ -92,7 +108,7 @@ async function fetchProblem() {
       severity: 'error',
       summary: 'Failed to load problem',
       detail: problemStore.error.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 }
@@ -110,12 +126,13 @@ async function handleSubmitFromPanel(payload) {
     toast.add({
       severity: 'success',
       summary: 'Submission created',
-      life: 2500
+      life: 2500,
     });
   } else {
     const error = submissionStore.error;
     if (error?.status === 429) {
-      const retryAfter = error.details?.retry_after || error.originalError?.response?.headers?.['retry-after'];
+      const retryAfter =
+        error.details?.retry_after || error.originalError?.response?.headers?.['retry-after'];
       const detail = retryAfter
         ? `You're sending submissions too quickly - please wait ${retryAfter} seconds before trying again.`
         : "You're sending submissions too quickly - please wait a few moments before trying again.";
@@ -125,7 +142,7 @@ async function handleSubmitFromPanel(payload) {
         severity: 'error',
         summary: 'Submission failed',
         detail: error?.message || 'An error occurred while submitting. Please try again later.',
-        life: 4000
+        life: 4000,
       });
     }
   }
@@ -145,7 +162,7 @@ function loadMoreSubmissions() {
 }
 
 function updateSubmissionRealtime(submission) {
-  const index = pagination.items.value.findIndex(s => s.id === submission.id);
+  const index = pagination.items.value.findIndex((s) => s.id === submission.id);
   if (index !== -1) {
     pagination.items.value[index] = { ...pagination.items.value[index], ...submission };
   } else {
@@ -168,7 +185,7 @@ function setupWebsocket() {
         if (!opened) {
           try {
             socket.close();
-          } catch (e) {
+          } catch (_e) {
             // Ignore close errors
           }
         }

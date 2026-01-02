@@ -14,7 +14,7 @@ export function useUnsavedChanges(isDirty, options = {}) {
   const {
     confirmHeader = 'Unsaved changes',
     confirmMessage = 'You have unsaved changes. Leave without saving?',
-    enableBeforeUnload = true
+    enableBeforeUnload = true,
   } = options;
 
   const confirm = useConfirm();
@@ -34,7 +34,7 @@ export function useUnsavedChanges(isDirty, options = {}) {
       rejectLabel: 'Stay',
       acceptClass: 'p-button-danger',
       accept: () => next(),
-      reject: () => next(false)
+      reject: () => next(false),
     });
   });
 
@@ -55,4 +55,3 @@ export function useUnsavedChanges(isDirty, options = {}) {
     });
   }
 }
-

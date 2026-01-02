@@ -9,7 +9,7 @@ vi.mock('vue-router', async () => {
   const actual = await vi.importActual('vue-router');
   return {
     ...actual,
-    useRouter: () => createMockRouter()
+    useRouter: () => createMockRouter(),
   };
 });
 
@@ -26,7 +26,7 @@ describe('Authentication Flow Integration', () => {
       email: 'test@example.com',
       first_name: 'Test',
       last_name: 'User',
-      is_content_creator: true
+      is_content_creator: true,
     };
 
     userService.initializeCSRF.mockResolvedValue(undefined);
@@ -34,7 +34,7 @@ describe('Authentication Flow Integration', () => {
 
     const loginResult = await store.login({
       email: 'test@example.com',
-      password: 'password123'
+      password: 'password123',
     });
 
     expect(loginResult).toBe(true);
@@ -51,7 +51,7 @@ describe('Authentication Flow Integration', () => {
     const error = {
       message: 'Invalid credentials',
       status: 401,
-      details: {}
+      details: {},
     };
 
     userService.initializeCSRF.mockResolvedValue(undefined);
@@ -59,7 +59,7 @@ describe('Authentication Flow Integration', () => {
 
     const loginResult = await store.login({
       email: 'test@example.com',
-      password: 'wrong'
+      password: 'wrong',
     });
 
     expect(loginResult).toBe(false);
@@ -73,7 +73,7 @@ describe('Authentication Flow Integration', () => {
     const store = useAuthStore();
     store.user = {
       id: 1,
-      email: 'test@example.com'
+      email: 'test@example.com',
     };
 
     userService.initializeCSRF.mockResolvedValue(undefined);
@@ -85,4 +85,3 @@ describe('Authentication Flow Integration', () => {
     expect(store.isAuthenticated).toBe(false);
   });
 });
-

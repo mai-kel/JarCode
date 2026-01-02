@@ -17,23 +17,23 @@ export const handlers = [
         email: 'test@example.com',
         first_name: 'Test',
         last_name: 'User',
-        is_content_creator: true
+        is_content_creator: true,
       });
     }
-    return HttpResponse.json(
-      { detail: 'Invalid credentials' },
-      { status: 401 }
-    );
+    return HttpResponse.json({ detail: 'Invalid credentials' }, { status: 401 });
   }),
 
   http.post(`${API_URL}/users/register/`, async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({
-      id: 1,
-      email: body.email,
-      first_name: body.first_name,
-      last_name: body.last_name
-    }, { status: 201 });
+    return HttpResponse.json(
+      {
+        id: 1,
+        email: body.email,
+        first_name: body.first_name,
+        last_name: body.last_name,
+      },
+      { status: 201 }
+    );
   }),
 
   http.post(`${API_URL}/users/logout/`, () => {
@@ -48,7 +48,7 @@ export const handlers = [
         email: 'test@example.com',
         first_name: 'Test',
         last_name: 'User',
-        is_content_creator: true
+        is_content_creator: true,
       });
     }
     return HttpResponse.json(
@@ -64,7 +64,7 @@ export const handlers = [
       email: 'test@example.com',
       first_name: body.first_name,
       last_name: body.last_name,
-      is_content_creator: true
+      is_content_creator: true,
     });
   }),
 
@@ -94,29 +94,29 @@ export const handlers = [
     const courses = [
       { id: 1, title: 'Course 1', description: 'Description 1', owner: 1 },
       { id: 2, title: 'Course 2', description: 'Description 2', owner: 1 },
-      { id: 3, title: 'Course 3', description: 'Description 3', owner: 2 }
+      { id: 3, title: 'Course 3', description: 'Description 3', owner: 2 },
     ];
 
     let filtered = courses;
     if (owner) {
-      filtered = filtered.filter(c => c.owner === Number(owner));
+      filtered = filtered.filter((c) => c.owner === Number(owner));
     }
     if (search) {
-      filtered = filtered.filter(c => c.title.toLowerCase().includes(search.toLowerCase()));
+      filtered = filtered.filter((c) => c.title.toLowerCase().includes(search.toLowerCase()));
     }
 
     if (cursor) {
       return HttpResponse.json({
         results: filtered.slice(1),
         next: null,
-        previous: null
+        previous: null,
       });
     }
 
     return HttpResponse.json({
       results: filtered.slice(0, 2),
       next: 'cursor123',
-      previous: null
+      previous: null,
     });
   }),
 
@@ -125,17 +125,20 @@ export const handlers = [
       id: Number(params.id),
       title: `Course ${params.id}`,
       description: `Description ${params.id}`,
-      owner: 1
+      owner: 1,
     });
   }),
 
   http.post(`${API_URL}/courses/`, async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({
-      id: 1,
-      ...body,
-      owner: 1
-    }, { status: 201 });
+    return HttpResponse.json(
+      {
+        id: 1,
+        ...body,
+        owner: 1,
+      },
+      { status: 201 }
+    );
   }),
 
   http.put(`${API_URL}/courses/:id/`, async ({ params, request }) => {
@@ -143,7 +146,7 @@ export const handlers = [
     return HttpResponse.json({
       id: Number(params.id),
       ...body,
-      owner: 1
+      owner: 1,
     });
   }),
 
@@ -156,20 +159,23 @@ export const handlers = [
     return HttpResponse.json({
       results: [
         { id: 1, title: 'Chapter 1', course: 1 },
-        { id: 2, title: 'Chapter 2', course: 1 }
+        { id: 2, title: 'Chapter 2', course: 1 },
       ],
       next: null,
-      previous: null
+      previous: null,
     });
   }),
 
   http.post(`${API_URL}/courses/:courseId/chapters/`, async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({
-      id: 1,
-      ...body,
-      course: Number(request.url.split('/')[5])
-    }, { status: 201 });
+    return HttpResponse.json(
+      {
+        id: 1,
+        ...body,
+        course: Number(request.url.split('/')[5]),
+      },
+      { status: 201 }
+    );
   }),
 
   // Lessons
@@ -177,17 +183,17 @@ export const handlers = [
     return HttpResponse.json({
       results: [
         { id: 1, title: 'Lesson 1', chapter: 1 },
-        { id: 2, title: 'Lesson 2', chapter: 1 }
+        { id: 2, title: 'Lesson 2', chapter: 1 },
       ],
       next: null,
-      previous: null
+      previous: null,
     });
   }),
 
   http.post(`${API_URL}/lessons/upload-image/`, async ({ request }) => {
-    const formData = await request.formData();
+    await request.formData();
     return HttpResponse.json({
-      url: 'https://example.com/image.jpg'
+      url: 'https://example.com/image.jpg',
     });
   }),
 
@@ -203,35 +209,35 @@ export const handlers = [
     const problems = [
       { id: 1, title: 'Problem 1', difficulty: 'EASY', language: 'PYTHON', author: 1 },
       { id: 2, title: 'Problem 2', difficulty: 'MEDIUM', language: 'JAVA', author: 1 },
-      { id: 3, title: 'Problem 3', difficulty: 'HARD', language: 'PYTHON', author: 2 }
+      { id: 3, title: 'Problem 3', difficulty: 'HARD', language: 'PYTHON', author: 2 },
     ];
 
     let filtered = problems;
     if (owner) {
-      filtered = filtered.filter(p => p.author === Number(owner));
+      filtered = filtered.filter((p) => p.author === Number(owner));
     }
     if (difficulty) {
-      filtered = filtered.filter(p => p.difficulty === difficulty);
+      filtered = filtered.filter((p) => p.difficulty === difficulty);
     }
     if (language) {
-      filtered = filtered.filter(p => p.language === language);
+      filtered = filtered.filter((p) => p.language === language);
     }
     if (search) {
-      filtered = filtered.filter(p => p.title.toLowerCase().includes(search.toLowerCase()));
+      filtered = filtered.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
     }
 
     if (cursor) {
       return HttpResponse.json({
         results: filtered.slice(1),
         next: null,
-        previous: null
+        previous: null,
       });
     }
 
     return HttpResponse.json({
       results: filtered.slice(0, 2),
       next: 'cursor123',
-      previous: null
+      previous: null,
     });
   }),
 
@@ -244,17 +250,20 @@ export const handlers = [
       language: 'PYTHON',
       starting_code: 'def solution():',
       test_code: 'assert solution() == True',
-      author: 1
+      author: 1,
     });
   }),
 
   http.post(`${API_URL}/problems/`, async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({
-      id: 1,
-      ...body,
-      author: 1
-    }, { status: 201 });
+    return HttpResponse.json(
+      {
+        id: 1,
+        ...body,
+        author: 1,
+      },
+      { status: 201 }
+    );
   }),
 
   http.put(`${API_URL}/problems/:id/`, async ({ params, request }) => {
@@ -262,7 +271,7 @@ export const handlers = [
     return HttpResponse.json({
       id: Number(params.id),
       ...body,
-      author: 1
+      author: 1,
     });
   }),
 
@@ -279,26 +288,26 @@ export const handlers = [
     const submissions = [
       { id: 1, problem: 1, code: 'def solution(): pass', status: 'PENDING' },
       { id: 2, problem: 1, code: 'def solution(): return True', status: 'ACCEPTED' },
-      { id: 3, problem: 2, code: 'public class Solution {}', status: 'REJECTED' }
+      { id: 3, problem: 2, code: 'public class Solution {}', status: 'REJECTED' },
     ];
 
     let filtered = submissions;
     if (problem) {
-      filtered = filtered.filter(s => s.problem === Number(problem));
+      filtered = filtered.filter((s) => s.problem === Number(problem));
     }
 
     if (cursor) {
       return HttpResponse.json({
         results: filtered.slice(1),
         next: null,
-        previous: null
+        previous: null,
       });
     }
 
     return HttpResponse.json({
       results: filtered.slice(0, 2),
       next: 'cursor123',
-      previous: null
+      previous: null,
     });
   }),
 
@@ -308,17 +317,19 @@ export const handlers = [
       problem: 1,
       code: 'def solution(): return True',
       status: 'ACCEPTED',
-      test_results: []
+      test_results: [],
     });
   }),
 
   http.post(`${API_URL}/submissions/`, async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({
-      id: 1,
-      ...body,
-      status: 'PENDING'
-    }, { status: 201 });
-  })
+    return HttpResponse.json(
+      {
+        id: 1,
+        ...body,
+        status: 'PENDING',
+      },
+      { status: 201 }
+    );
+  }),
 ];
-

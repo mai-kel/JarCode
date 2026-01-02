@@ -7,17 +7,19 @@
       </div>
     </template>
     <template #end>
-      <Button v-if="authStore.isReady && authStore.isAuthenticated"
-              label="Logout"
-              icon="pi pi-sign-out"
-              @click="handleLogout"
-              class="p-button-text" />
+      <Button
+        v-if="authStore.isReady && authStore.isAuthenticated"
+        label="Logout"
+        icon="pi pi-sign-out"
+        class="p-button-text"
+        @click="handleLogout"
+      />
     </template>
   </Menubar>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../store/auth';
 
@@ -32,50 +34,52 @@ const items = computed(() => [
   {
     label: 'Home',
     icon: 'pi pi-home',
-    command: () => router.push({ name: 'home' })
+    command: () => router.push({ name: 'home' }),
   },
   {
     label: 'Browse Courses',
     icon: 'pi pi-search',
     command: () => router.push({ name: 'browse-courses' }),
-    visible: () => authStore.isReady && authStore.isAuthenticated
+    visible: () => authStore.isReady && authStore.isAuthenticated,
   },
   {
     label: 'Browse Problems',
     icon: 'pi pi-list',
     command: () => router.push({ name: 'browse-problems' }),
-    visible: () => authStore.isReady && authStore.isAuthenticated
+    visible: () => authStore.isReady && authStore.isAuthenticated,
   },
   {
     label: 'My Courses',
     icon: 'pi pi-book',
     command: () => router.push({ name: 'my-courses' }),
-    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
+    visible: () =>
+      authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator,
   },
   {
     label: 'My Problems',
     icon: 'pi pi-question-circle',
     command: () => router.push({ name: 'my-problems' }),
-    visible: () => authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator
+    visible: () =>
+      authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator,
   },
   {
     label: 'Profile',
     icon: 'pi pi-user',
     command: () => router.push({ name: 'profile' }),
-    visible: () => authStore.isReady && authStore.isAuthenticated
+    visible: () => authStore.isReady && authStore.isAuthenticated,
   },
   {
     label: 'Login',
     icon: 'pi pi-sign-in',
     command: () => router.push({ name: 'login' }),
-    visible: () => authStore.isReady && !authStore.isAuthenticated
+    visible: () => authStore.isReady && !authStore.isAuthenticated,
   },
   {
     label: 'Register',
     icon: 'pi pi-user-plus',
     command: () => router.push({ name: 'register' }),
-    visible: () => authStore.isReady && !authStore.isAuthenticated
-  }
+    visible: () => authStore.isReady && !authStore.isAuthenticated,
+  },
 ]);
 </script>
 

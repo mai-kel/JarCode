@@ -16,9 +16,9 @@ export function createMockRouter() {
         path: '/',
         params: {},
         query: {},
-        meta: {}
-      }
-    }
+        meta: {},
+      },
+    },
   };
 }
 
@@ -32,7 +32,7 @@ export function createMockRoute(overrides = {}) {
     params: {},
     query: {},
     meta: {},
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -40,14 +40,14 @@ export function createMockRoute(overrides = {}) {
  * Waits for next tick
  */
 export function waitForNextTick() {
-  return new Promise(resolve => setTimeout(resolve, 0));
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 /**
  * Creates a delay for testing async operations
  */
 export function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -63,4 +63,3 @@ export function mockConfirm(returnValue = true) {
 export function mockAlert() {
   return vi.spyOn(window, 'alert').mockImplementation(() => {});
 }
-

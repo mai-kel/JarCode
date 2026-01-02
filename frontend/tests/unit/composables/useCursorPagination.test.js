@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { useCursorPagination } from '../../../src/composables/useCursorPagination';
 
 describe('useCursorPagination', () => {
@@ -24,10 +24,10 @@ describe('useCursorPagination', () => {
           fetchPage: pagination.fetchPage,
           loadMore: pagination.loadMore,
           reset: pagination.reset,
-          refresh: pagination.refresh
+          refresh: pagination.refresh,
         };
       },
-      template: '<div></div>'
+      template: '<div></div>',
     });
   };
 
@@ -41,12 +41,12 @@ describe('useCursorPagination', () => {
   it('should set loading to true on initial load', async () => {
     mockFetcher.mockResolvedValue({
       results: [{ id: 1 }],
-      next: '/api/test/?cursor=abc123'
+      next: '/api/test/?cursor=abc123',
     });
 
-    const wrapper = mount(createTestComponent({ initialLoad: true }));
+    mount(createTestComponent({ initialLoad: true }));
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockFetcher).toHaveBeenCalledWith(null);
   });
@@ -54,7 +54,7 @@ describe('useCursorPagination', () => {
   it('should fetch page and update items', async () => {
     mockFetcher.mockResolvedValue({
       results: [{ id: 1 }, { id: 2 }],
-      next: '/api/test/?cursor=abc123'
+      next: '/api/test/?cursor=abc123',
     });
 
     const wrapper = mount(createTestComponent({ initialLoad: false }));
@@ -70,11 +70,11 @@ describe('useCursorPagination', () => {
     mockFetcher
       .mockResolvedValueOnce({
         results: [{ id: 1 }],
-        next: '/api/test/?cursor=abc123'
+        next: '/api/test/?cursor=abc123',
       })
       .mockResolvedValueOnce({
         results: [{ id: 2 }],
-        next: null
+        next: null,
       });
 
     const wrapper = mount(createTestComponent({ initialLoad: false }));
@@ -103,7 +103,7 @@ describe('useCursorPagination', () => {
     mockFetcher
       .mockResolvedValueOnce({
         results: [{ id: 1 }],
-        next: '/api/test/?cursor=abc123'
+        next: '/api/test/?cursor=abc123',
       })
       .mockRejectedValueOnce(new Error('Failed'));
 
@@ -119,7 +119,7 @@ describe('useCursorPagination', () => {
   it('should reset pagination state', async () => {
     mockFetcher.mockResolvedValue({
       results: [{ id: 1 }],
-      next: '/api/test/?cursor=abc123'
+      next: '/api/test/?cursor=abc123',
     });
 
     const wrapper = mount(createTestComponent({ initialLoad: false }));
@@ -137,7 +137,7 @@ describe('useCursorPagination', () => {
   it('should refresh pagination', async () => {
     mockFetcher.mockResolvedValue({
       results: [{ id: 1 }],
-      next: null
+      next: null,
     });
 
     const wrapper = mount(createTestComponent({ initialLoad: false }));
@@ -153,7 +153,9 @@ describe('useCursorPagination', () => {
 
   it('should not load more when already loading', async () => {
     let resolveFirst;
-    const firstPromise = new Promise(resolve => { resolveFirst = resolve; });
+    const firstPromise = new Promise((resolve) => {
+      resolveFirst = resolve;
+    });
 
     mockFetcher
       .mockResolvedValueOnce({ results: [{ id: 1 }], next: '/api/test/?cursor=cursor123' })
@@ -192,8 +194,8 @@ describe('useCursorPagination', () => {
     mockFetcher.mockResolvedValue({
       data: {
         results: [{ id: 1 }],
-        next: '/api/test/?cursor=xyz789'
-      }
+        next: '/api/test/?cursor=xyz789',
+      },
     });
 
     const wrapper = mount(createTestComponent({ initialLoad: false }));
@@ -204,4 +206,3 @@ describe('useCursorPagination', () => {
     expect(wrapper.vm.nextCursor).toBe('xyz789');
   });
 });
-

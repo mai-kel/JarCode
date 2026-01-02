@@ -35,7 +35,7 @@ export async function getCourseDetail(courseId) {
  */
 export async function createCourse(formData) {
   const response = await apiClient.post(BASE, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
 }
@@ -48,7 +48,7 @@ export async function createCourse(formData) {
  */
 export async function updateCourse(courseId, formData) {
   const response = await apiClient.put(`${BASE}${courseId}/`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
 }
@@ -135,7 +135,10 @@ export async function getLessonsForChapter(courseId, chapterId) {
  * @returns {Promise<Object>} Created lesson data
  */
 export async function createLesson(courseId, chapterId, payload) {
-  const response = await apiClient.post(`${BASE}${courseId}/chapters/${chapterId}/lessons/`, payload);
+  const response = await apiClient.post(
+    `${BASE}${courseId}/chapters/${chapterId}/lessons/`,
+    payload
+  );
   return response.data;
 }
 
@@ -147,7 +150,9 @@ export async function createLesson(courseId, chapterId, payload) {
  * @returns {Promise<Object>} Lesson data
  */
 export async function getLesson(courseId, chapterId, lessonId) {
-  const response = await apiClient.get(`${BASE}${courseId}/chapters/${chapterId}/lessons/${lessonId}/`);
+  const response = await apiClient.get(
+    `${BASE}${courseId}/chapters/${chapterId}/lessons/${lessonId}/`
+  );
   return response.data;
 }
 
@@ -160,7 +165,10 @@ export async function getLesson(courseId, chapterId, lessonId) {
  * @returns {Promise<Object>} Updated lesson data
  */
 export async function updateLesson(courseId, chapterId, lessonId, payload) {
-  const response = await apiClient.patch(`${BASE}${courseId}/chapters/${chapterId}/lessons/${lessonId}/`, payload);
+  const response = await apiClient.patch(
+    `${BASE}${courseId}/chapters/${chapterId}/lessons/${lessonId}/`,
+    payload
+  );
   return response.data;
 }
 
@@ -190,5 +198,5 @@ export default {
   createLesson,
   getLesson,
   updateLesson,
-  deleteLesson
+  deleteLesson,
 };

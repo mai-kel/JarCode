@@ -6,8 +6,8 @@ vi.mock('../../../src/utils/errorHandler', () => ({
   transformApiError: vi.fn((error) => ({
     message: error.message || 'Error',
     status: error.response?.status || 0,
-    details: error.response?.data || error
-  }))
+    details: error.response?.data || error,
+  })),
 }));
 
 describe('api', () => {
@@ -102,9 +102,9 @@ describe('api', () => {
       const error = {
         response: {
           status: 404,
-          data: { message: 'Not found' }
+          data: { message: 'Not found' },
         },
-        message: 'Request failed'
+        message: 'Request failed',
       };
       const interceptor = apiClient.interceptors.response.handlers[0].rejected;
 
@@ -121,15 +121,15 @@ describe('api', () => {
       const error = {
         response: {
           status: 500,
-          data: { message: 'Server error' }
+          data: { message: 'Server error' },
         },
-        message: 'Request failed'
+        message: 'Request failed',
       };
       const interceptor = apiClient.interceptors.response.handlers[0].rejected;
 
       try {
         await interceptor(error);
-      } catch (e) {
+      } catch (_e) {
         expect(consoleErrorSpy).toHaveBeenCalled();
       }
 
@@ -148,7 +148,7 @@ describe('api', () => {
 
     it('should handle CSRF initialization error', async () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      const axiosGet = vi.spyOn(apiClient, 'get').mockRejectedValue(new Error('CSRF init failed'));
+      vi.spyOn(apiClient, 'get').mockRejectedValue(new Error('CSRF init failed'));
 
       await initCSRF();
 
@@ -172,4 +172,3 @@ describe('api', () => {
     });
   });
 });
-

@@ -16,7 +16,7 @@ describe('submission store', () => {
       const store = useSubmissionStore();
       const mockResponse = {
         results: [{ id: 1 }, { id: 2 }],
-        next: 'cursor123'
+        next: 'cursor123',
       };
       submissionService.listSubmissions.mockResolvedValue(mockResponse);
 
@@ -54,7 +54,7 @@ describe('submission store', () => {
       const mockSubmission = {
         id: 1,
         code: 'def solution(): return True',
-        status: 'PENDING'
+        status: 'PENDING',
       };
       submissionService.createSubmission.mockResolvedValue(mockSubmission);
 
@@ -96,4 +96,3 @@ describe('submission store', () => {
     });
   });
 });
-

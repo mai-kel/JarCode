@@ -18,7 +18,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -36,7 +36,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -54,7 +54,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -72,7 +72,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -90,7 +90,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -108,7 +108,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -126,7 +126,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -144,7 +144,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -162,7 +162,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -180,7 +180,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return [];
     } finally {
@@ -198,7 +198,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return [];
     } finally {
@@ -216,7 +216,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return { results: [], next: null, previous: null };
     } finally {
@@ -234,7 +234,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return { results: [], next: null, previous: null };
     } finally {
@@ -252,7 +252,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -270,7 +270,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -288,7 +288,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -313,7 +313,7 @@ export const useCourseStore = defineStore('course', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       throw err;
     } finally {
@@ -348,6 +348,6 @@ export const useCourseStore = defineStore('course', () => {
     deleteChapter,
     deleteLesson,
     uploadLessonImage,
-    clearError
+    clearError,
   };
 });

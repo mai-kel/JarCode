@@ -1,6 +1,6 @@
 <template>
   <div v-if="!authStore.isReady" class="app-splash">
-    <ProgressSpinner style="width:64px;height:64px" strokeWidth="6"/>
+    <ProgressSpinner style="width: 64px; height: 64px" stroke-width="6" />
   </div>
   <div v-else>
     <header>
@@ -13,7 +13,6 @@
       <router-view />
     </main>
   </div>
-
 </template>
 
 <script setup>

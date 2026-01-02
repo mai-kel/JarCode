@@ -9,15 +9,15 @@ vi.mock('vue-router', async () => {
     ...actual,
     onBeforeRouteLeave: vi.fn((callback) => {
       window.__routeLeaveCallback = callback;
-    })
+    }),
   };
 });
 const mockConfirm = {
-  require: vi.fn()
+  require: vi.fn(),
 };
 
 vi.mock('primevue/useconfirm', () => ({
-  useConfirm: () => mockConfirm
+  useConfirm: () => mockConfirm,
 }));
 
 describe('useUnsavedChanges', () => {
@@ -36,7 +36,7 @@ describe('useUnsavedChanges', () => {
         useUnsavedChanges(isDirty, options);
         return {};
       },
-      template: '<div></div>'
+      template: '<div></div>',
     });
   };
 
@@ -68,10 +68,12 @@ describe('useUnsavedChanges', () => {
 
   it('should use custom header and message', () => {
     const isDirty = ref(true);
-    mount(createTestComponent(isDirty, {
-      confirmHeader: 'Custom Header',
-      confirmMessage: 'Custom Message'
-    }));
+    mount(
+      createTestComponent(isDirty, {
+        confirmHeader: 'Custom Header',
+        confirmMessage: 'Custom Message',
+      })
+    );
 
     const callback = window.__routeLeaveCallback;
     const next = vi.fn();
@@ -80,7 +82,7 @@ describe('useUnsavedChanges', () => {
     expect(mockConfirm.require).toHaveBeenCalledWith(
       expect.objectContaining({
         header: 'Custom Header',
-        message: 'Custom Message'
+        message: 'Custom Message',
       })
     );
   });
@@ -146,8 +148,9 @@ describe('useUnsavedChanges', () => {
     const isDirty = ref(true);
     mount(createTestComponent(isDirty, { enableBeforeUnload: true }));
 
-    const beforeUnloadHandler = window.addEventListener.mock.calls
-      .find(call => call[0] === 'beforeunload')?.[1];
+    const beforeUnloadHandler = window.addEventListener.mock.calls.find(
+      (call) => call[0] === 'beforeunload'
+    )?.[1];
 
     expect(beforeUnloadHandler).toBeDefined();
 
@@ -162,8 +165,9 @@ describe('useUnsavedChanges', () => {
     const isDirty = ref(false);
     mount(createTestComponent(isDirty, { enableBeforeUnload: true }));
 
-    const beforeUnloadHandler = window.addEventListener.mock.calls
-      .find(call => call[0] === 'beforeunload')?.[1];
+    const beforeUnloadHandler = window.addEventListener.mock.calls.find(
+      (call) => call[0] === 'beforeunload'
+    )?.[1];
 
     const event = { preventDefault: vi.fn(), returnValue: '' };
     beforeUnloadHandler(event);
@@ -171,4 +175,3 @@ describe('useUnsavedChanges', () => {
     expect(event.preventDefault).not.toHaveBeenCalled();
   });
 });
-

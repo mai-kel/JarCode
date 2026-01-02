@@ -3,8 +3,8 @@
     title="My Problems"
     :fetcher="fetcher"
     :placeholder="'Search your problems...'"
-    :showCreate="true"
-    :showItemButtons="true"
+    :show-create="true"
+    :show-item-buttons="true"
     @create="onCreate"
     @edit="onEdit"
     @view="onView"
@@ -31,5 +31,4 @@ const onEdit = (p) => router.push({ name: 'edit-problem', params: { problemId: p
 const onView = (p) => router.push({ name: 'problem', params: { problemId: p.id } });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

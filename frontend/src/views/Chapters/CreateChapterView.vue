@@ -3,23 +3,44 @@
     <template #title>
       <div class="flex align-items-center justify-content-between w-full">
         <h2 class="m-0">Create Chapter</h2>
-        <Button class="p-button-text" label="Back to Chapters" icon="pi pi-angle-left" @click="goChapters" />
+        <Button
+          class="p-button-text"
+          label="Back to Chapters"
+          icon="pi pi-angle-left"
+          @click="goChapters"
+        />
       </div>
     </template>
     <template #content>
-      <form @submit.prevent="handleCreateChapter" class="p-fluid grid">
+      <form class="p-fluid grid" @submit.prevent="handleCreateChapter">
         <div class="field col-12 md:col-8">
           <label for="chapterTitle">Chapter Title</label>
-          <InputText id="chapterTitle" v-model="title" :invalid="submitted && !title" placeholder="Enter chapter title"/>
+          <InputText
+            id="chapterTitle"
+            v-model="title"
+            :invalid="submitted && !title"
+            placeholder="Enter chapter title"
+          />
           <small v-if="submitted && !title" class="p-error">Title is required.</small>
         </div>
 
         <div class="col-12 flex align-items-center">
-          <Button type="submit" label="Create Chapter" icon="pi pi-plus" :loading="courseStore.isLoading" :disabled="!isDirty"/>
+          <Button
+            type="submit"
+            label="Create Chapter"
+            icon="pi pi-plus"
+            :loading="courseStore.isLoading"
+            :disabled="!isDirty"
+          />
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="courseStore.error" severity="error" :closable="true" @close="courseStore.clearError()">
+          <Message
+            v-if="courseStore.error"
+            severity="error"
+            :closable="true"
+            @close="courseStore.clearError()"
+          >
             <strong>Error:</strong> {{ courseStore.error?.message || 'An error occurred' }}
           </Message>
         </div>
@@ -60,7 +81,7 @@ const handleCreateChapter = async () => {
       severity: 'error',
       summary: 'Failed to create chapter',
       detail: courseStore.error.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 };
@@ -77,10 +98,9 @@ const goChapters = () => {
     acceptLabel: 'Leave',
     rejectLabel: 'Stay',
     acceptClass: 'p-button-danger',
-    accept: () => router.push({ name: 'course-chapters', params: { courseId } })
+    accept: () => router.push({ name: 'course-chapters', params: { courseId } }),
   });
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

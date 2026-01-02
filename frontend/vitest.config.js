@@ -11,8 +11,8 @@ export default defineConfig({
     pool: 'forks',
     poolOptions: {
       forks: {
-        singleFork: true
-      }
+        singleFork: true,
+      },
     },
     maxWorkers: 1,
     minWorkers: 1,
@@ -20,19 +20,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        '**/*.config.js',
-        '**/*.d.ts',
-        '**/main.js'
-      ]
-    }
+      exclude: ['node_modules/', 'src/test/', '**/*.config.js', '**/*.d.ts', '**/main.js'],
+    },
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
 });
-

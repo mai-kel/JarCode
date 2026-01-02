@@ -24,7 +24,7 @@ export const useProblemStore = defineStore('problem', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -48,7 +48,7 @@ export const useProblemStore = defineStore('problem', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -75,7 +75,7 @@ export const useProblemStore = defineStore('problem', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return null;
     } finally {
@@ -101,7 +101,7 @@ export const useProblemStore = defineStore('problem', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -124,7 +124,7 @@ export const useProblemStore = defineStore('problem', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return { results: [], next: null, previous: null };
     } finally {
@@ -157,7 +157,6 @@ export const useProblemStore = defineStore('problem', () => {
     deleteProblem,
     listProblems,
     clearProblem,
-    clearError
+    clearError,
   };
 });
-

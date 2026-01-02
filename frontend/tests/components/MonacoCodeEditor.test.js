@@ -12,20 +12,20 @@ const mockMonacoEditor = {
   onDidChangeModelContent: vi.fn((callback) => {
     mockMonacoEditor._onChangeCallback = callback;
     return { dispose: vi.fn() };
-  })
+  }),
 };
 
 const mockMonacoApi = {
   editor: {
     create: vi.fn(() => mockMonacoEditor),
-    setModelLanguage: vi.fn()
-  }
+    setModelLanguage: vi.fn(),
+  },
 };
 
 vi.mock('@monaco-editor/loader', () => ({
   default: {
-    init: vi.fn(() => Promise.resolve(mockMonacoApi))
-  }
+    init: vi.fn(() => Promise.resolve(mockMonacoApi)),
+  },
 }));
 
 describe('MonacoCodeEditor', () => {
@@ -51,15 +51,15 @@ describe('MonacoCodeEditor', () => {
         height: 600,
         theme: 'vs-dark',
         minimap: false,
-        ...props
+        ...props,
       },
       global: {
         stubs: {
           ProgressSpinner: {
-            template: '<div class="spinner">Loading...</div>'
-          }
-        }
-      }
+            template: '<div class="spinner">Loading...</div>',
+          },
+        },
+      },
     });
   };
 
@@ -71,7 +71,7 @@ describe('MonacoCodeEditor', () => {
   it('should initialize Monaco editor on mount', async () => {
     wrapper = createWrapper();
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const loader = await import('@monaco-editor/loader');
     expect(loader.default.init).toHaveBeenCalled();
@@ -80,12 +80,12 @@ describe('MonacoCodeEditor', () => {
   it('should set initial value', async () => {
     wrapper = createWrapper({ modelValue: 'initial code' });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockMonacoApi.editor.create).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        value: 'initial code'
+        value: 'initial code',
       })
     );
   });
@@ -93,12 +93,12 @@ describe('MonacoCodeEditor', () => {
   it('should use correct language', async () => {
     wrapper = createWrapper({ language: 'JAVA' });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockMonacoApi.editor.create).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        language: 'java'
+        language: 'java',
       })
     );
   });
@@ -106,12 +106,12 @@ describe('MonacoCodeEditor', () => {
   it('should set readOnly option', async () => {
     wrapper = createWrapper({ readOnly: true });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockMonacoApi.editor.create).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        readOnly: true
+        readOnly: true,
       })
     );
   });
@@ -119,12 +119,12 @@ describe('MonacoCodeEditor', () => {
   it('should set theme', async () => {
     wrapper = createWrapper({ theme: 'vs-light' });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockMonacoApi.editor.create).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        theme: 'vs-light'
+        theme: 'vs-light',
       })
     );
   });
@@ -132,12 +132,12 @@ describe('MonacoCodeEditor', () => {
   it('should set minimap', async () => {
     wrapper = createWrapper({ minimap: true });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockMonacoApi.editor.create).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        minimap: { enabled: true }
+        minimap: { enabled: true },
       })
     );
   });
@@ -145,7 +145,7 @@ describe('MonacoCodeEditor', () => {
   it('should emit update:modelValue when content changes', async () => {
     wrapper = createWrapper();
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     mockMonacoEditor.getValue.mockReturnValue('new code');
     if (mockMonacoEditor._onChangeCallback) {
@@ -160,7 +160,7 @@ describe('MonacoCodeEditor', () => {
   it('should not emit update:modelValue when readOnly', async () => {
     wrapper = createWrapper({ readOnly: true });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     mockMonacoEditor.getValue.mockReturnValue('new code');
     if (mockMonacoEditor._onChangeCallback) {
@@ -174,7 +174,7 @@ describe('MonacoCodeEditor', () => {
   it('should update editor value when prop changes', async () => {
     wrapper = createWrapper({ modelValue: 'initial' });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     mockMonacoEditor.getValue.mockReturnValue('initial');
     await wrapper.setProps({ modelValue: 'updated' });
@@ -186,7 +186,7 @@ describe('MonacoCodeEditor', () => {
   it('should not update if value matches current editor value', async () => {
     wrapper = createWrapper({ modelValue: 'test' });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     mockMonacoEditor.getValue.mockReturnValue('test');
     const setValueCalls = mockMonacoEditor.setValue.mock.calls.length;
@@ -199,34 +199,31 @@ describe('MonacoCodeEditor', () => {
   it('should update language when prop changes', async () => {
     wrapper = createWrapper({ language: 'PYTHON' });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     await wrapper.setProps({ language: 'JAVA' });
     await nextTick();
 
-    expect(mockMonacoApi.editor.setModelLanguage).toHaveBeenCalledWith(
-      expect.anything(),
-      'java'
-    );
+    expect(mockMonacoApi.editor.setModelLanguage).toHaveBeenCalledWith(expect.anything(), 'java');
   });
 
   it('should update readOnly when prop changes', async () => {
     wrapper = createWrapper({ readOnly: false });
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     await wrapper.setProps({ readOnly: true });
     await nextTick();
 
     expect(mockMonacoEditor.updateOptions).toHaveBeenCalledWith({
-      readOnly: true
+      readOnly: true,
     });
   });
 
   it('should dispose editor on unmount', async () => {
     wrapper = createWrapper();
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     wrapper.unmount();
     await nextTick();
@@ -241,7 +238,7 @@ describe('MonacoCodeEditor', () => {
 
     wrapper = createWrapper();
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
@@ -257,4 +254,3 @@ describe('MonacoCodeEditor', () => {
     expect(wrapper.vm.$el.style.height).toBe('800px');
   });
 });
-

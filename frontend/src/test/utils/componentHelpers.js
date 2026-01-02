@@ -14,7 +14,7 @@ export function createTestApp() {
   const pinia = createPinia();
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: []
+    routes: [],
   });
 
   app.use(pinia);
@@ -39,12 +39,11 @@ export function createComponentWrapper(component, options = {}) {
     mount: (componentOptions = {}) => {
       return config.plugins.VueWrapper.extend({
         global: {
-          plugins: [pinia, router, PrimeVue, ToastService, ConfirmationService]
+          plugins: [pinia, router, PrimeVue, ToastService, ConfirmationService],
         },
         ...options,
-        ...componentOptions
+        ...componentOptions,
       });
-    }
+    },
   };
 }
-

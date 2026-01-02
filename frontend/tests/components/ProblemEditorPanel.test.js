@@ -7,16 +7,17 @@ import { mockProblem } from '../../src/test/fixtures/problems.js';
 vi.mock('../../src/components/editors/MonacoCodeEditor.vue', () => ({
   default: {
     name: 'MonacoCodeEditor',
-    template: '<div class="monaco-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
+    template:
+      '<div class="monaco-editor-mock"><textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></div>',
     props: ['modelValue', 'language', 'height', 'readOnly'],
-    emits: ['update:modelValue']
-  }
+    emits: ['update:modelValue'],
+  },
 }));
 
 vi.mock('dompurify', () => ({
   default: {
-    sanitize: vi.fn((html) => html)
-  }
+    sanitize: vi.fn((html) => html),
+  },
 }));
 
 describe('ProblemEditorPanel', () => {
@@ -27,22 +28,24 @@ describe('ProblemEditorPanel', () => {
       props: {
         problem: mockProblem,
         editorCode: '',
-        ...props
+        ...props,
       },
       global: {
         stubs: {
           Card: {
-            template: '<div class="card"><slot name="title" /><slot name="subtitle" /><slot name="content" /></div>'
+            template:
+              '<div class="card"><slot name="title" /><slot name="subtitle" /><slot name="content" /></div>',
           },
           Button: {
-            template: '<button :disabled="disabled" :class="{ loading: loading }" @click="$emit(\'click\')"><slot>{{ label }}</slot></button>',
-            props: ['disabled', 'loading', 'label']
+            template:
+              '<button :disabled="disabled" :class="{ loading: loading }" @click="$emit(\'click\')"><slot>{{ label }}</slot></button>',
+            props: ['disabled', 'loading', 'label'],
           },
           ProgressSpinner: {
-            template: '<div class="spinner">Loading...</div>'
-          }
-        }
-      }
+            template: '<div class="spinner">Loading...</div>',
+          },
+        },
+      },
     });
   };
 
@@ -84,7 +87,9 @@ describe('ProblemEditorPanel', () => {
   it('should render submit button', () => {
     wrapper = createWrapper();
     const buttons = wrapper.findAll('button');
-    const submitButton = buttons.find(b => b.attributes('label') === 'Submit' || b.text().includes('Submit'));
+    const submitButton = buttons.find(
+      (b) => b.attributes('label') === 'Submit' || b.text().includes('Submit')
+    );
     expect(submitButton).toBeTruthy();
   });
 
@@ -98,7 +103,7 @@ describe('ProblemEditorPanel', () => {
 
     expect(wrapper.emitted('submit')).toBeTruthy();
     expect(wrapper.emitted('submit')[0][0]).toEqual({
-      solution: 'def solution():\n    return True'
+      solution: 'def solution():\n    return True',
     });
   });
 

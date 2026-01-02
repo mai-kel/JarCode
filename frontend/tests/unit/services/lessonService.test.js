@@ -4,8 +4,8 @@ import apiClient from '../../../src/services/api';
 
 vi.mock('../../../src/services/api', () => ({
   default: {
-    post: vi.fn()
-  }
+    post: vi.fn(),
+  },
 }));
 
 describe('lessonService', () => {
@@ -29,7 +29,7 @@ describe('lessonService', () => {
         expect.any(FormData),
         expect.objectContaining({
           headers: { 'Content-Type': 'multipart/form-data' },
-          onUploadProgress: expect.any(Function)
+          onUploadProgress: expect.any(Function),
         })
       );
       expect(result).toBe('https://example.com/image.jpg');
@@ -46,7 +46,7 @@ describe('lessonService', () => {
           config.onUploadProgress({
             lengthComputable: true,
             loaded: 50,
-            total: 100
+            total: 100,
           });
         }
         return Promise.resolve(mockResponse);
@@ -64,9 +64,9 @@ describe('lessonService', () => {
 
       apiClient.post.mockResolvedValue(mockResponse);
 
-      await expect(
-        lessonService.uploadLessonImage(1, imageBlob, filename)
-      ).rejects.toThrow('No location returned from server');
+      await expect(lessonService.uploadLessonImage(1, imageBlob, filename)).rejects.toThrow(
+        'No location returned from server'
+      );
     });
 
     it('should not call onProgress when not provided', async () => {
@@ -82,4 +82,3 @@ describe('lessonService', () => {
     });
   });
 });
-

@@ -7,20 +7,12 @@
 
     <div class="field mt-3">
       <label>Starting Code</label>
-      <MonacoCodeEditor
-        v-model="localStartingCode"
-        :language="language"
-        :height="600"
-      />
+      <MonacoCodeEditor v-model="localStartingCode" :language="language" :height="600" />
     </div>
 
     <div class="field mt-3">
       <label>Test Code</label>
-      <MonacoCodeEditor
-        v-model="localTestCode"
-        :language="language"
-        :height="600"
-      />
+      <MonacoCodeEditor v-model="localTestCode" :language="language" :height="600" />
     </div>
   </div>
 </template>
@@ -36,7 +28,7 @@ const props = defineProps({
   description: { type: String, default: '' },
   startingCode: { type: String, default: '' },
   testCode: { type: String, default: '' },
-  language: { type: String, default: 'PYTHON' }
+  language: { type: String, default: 'PYTHON' },
 });
 
 const emit = defineEmits(['update:description', 'update:startingCode', 'update:testCode']);
@@ -47,29 +39,35 @@ const localTestCode = ref(props.testCode);
 
 const editorInit = createTinyMCEConfig({
   height: 500,
-  codesampleLanguages: [
-    { text: 'Python', value: 'python' }
-  ]
+  codesampleLanguages: [{ text: 'Python', value: 'python' }],
 });
 
-watch(() => props.description, (v) => {
-  if (v !== localDescription.value) localDescription.value = v;
-});
+watch(
+  () => props.description,
+  (v) => {
+    if (v !== localDescription.value) localDescription.value = v;
+  }
+);
 
 watch(localDescription, (v) => emit('update:description', v));
 
-watch(() => props.startingCode, (v) => {
-  if (v !== localStartingCode.value) localStartingCode.value = v;
-});
+watch(
+  () => props.startingCode,
+  (v) => {
+    if (v !== localStartingCode.value) localStartingCode.value = v;
+  }
+);
 
 watch(localStartingCode, (v) => emit('update:startingCode', v));
 
-watch(() => props.testCode, (v) => {
-  if (v !== localTestCode.value) localTestCode.value = v;
-});
+watch(
+  () => props.testCode,
+  (v) => {
+    if (v !== localTestCode.value) localTestCode.value = v;
+  }
+);
 
 watch(localTestCode, (v) => emit('update:testCode', v));
-
 </script>
 
 <style scoped>

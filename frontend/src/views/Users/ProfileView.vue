@@ -32,11 +32,24 @@
             </Message>
 
             <div>
-              <Button label="Send password reset link" icon="pi pi-envelope" class="p-button-primary"
-                      :loading="isSendingReset" @click="handleSend" :disabled="!!sendSuccessMessage || !email" />
+              <Button
+                label="Send password reset link"
+                icon="pi pi-envelope"
+                class="p-button-primary"
+                :loading="isSendingReset"
+                :disabled="!!sendSuccessMessage || !email"
+                @click="handleSend"
+              />
             </div>
             <div class="mt-3">
-              <Button type="submit" label="Save" icon="pi pi-check" class="p-button-success" :loading="isLoading" :disabled="!isDirty" />
+              <Button
+                type="submit"
+                label="Save"
+                icon="pi pi-check"
+                class="p-button-success"
+                :loading="isLoading"
+                :disabled="!isDirty"
+              />
             </div>
           </div>
         </form>
@@ -63,22 +76,25 @@ const error = computed(() => authStore.error);
 const sendSuccessMessage = ref('');
 
 watchEffect(() => {
-  const u = authStore.user
-  firstName.value = u?.first_name || ''
-  lastName.value = u?.last_name || ''
-  email.value = u?.email || ''
-})
+  const u = authStore.user;
+  firstName.value = u?.first_name || '';
+  lastName.value = u?.last_name || '';
+  email.value = u?.email || '';
+});
 
 const isDirty = computed(() => {
-  const u = authStore.user
-  if (!u) return false
-  return firstName.value !== (u.first_name || '') || lastName.value !== (u.last_name || '')
-})
+  const u = authStore.user;
+  if (!u) return false;
+  return firstName.value !== (u.first_name || '') || lastName.value !== (u.last_name || '');
+});
 
 const handleSave = async () => {
   if (!isDirty.value) return;
   authStore.clearError();
-  const success = await authStore.updateProfile({ first_name: firstName.value, last_name: lastName.value });
+  const success = await authStore.updateProfile({
+    first_name: firstName.value,
+    last_name: lastName.value,
+  });
   if (success) {
     toast.add({ severity: 'success', summary: 'Profile updated', life: 2500 });
   }

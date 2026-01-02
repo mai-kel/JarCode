@@ -25,7 +25,7 @@ export function useInfiniteScroll(options) {
     observerTarget = null,
     autoFill = true,
     autoFillOnce = false,
-    container = null
+    container = null,
   } = options;
 
   const autoLoading = ref(false);
@@ -49,7 +49,8 @@ export function useInfiniteScroll(options) {
 
         const hasNextValue = typeof hasNext === 'function' ? hasNext() : hasNext.value;
         const loadingValue = typeof loading === 'function' ? loading() : loading.value;
-        const loadingMoreValue = typeof loadingMore === 'function' ? loadingMore() : loadingMore.value;
+        const loadingMoreValue =
+          typeof loadingMore === 'function' ? loadingMore() : loadingMore.value;
 
         if (!hasNextValue || loadingValue || loadingMoreValue) {
           return;
@@ -78,7 +79,8 @@ export function useInfiniteScroll(options) {
 
           const hasNextValue = typeof hasNext === 'function' ? hasNext() : hasNext.value;
           const loadingValue = typeof loading === 'function' ? loading() : loading.value;
-          const loadingMoreValue = typeof loadingMore === 'function' ? loadingMore() : loadingMore.value;
+          const loadingMoreValue =
+            typeof loadingMore === 'function' ? loadingMore() : loadingMore.value;
 
           if (!hasNextValue || loadingValue || loadingMoreValue) break;
 
@@ -90,7 +92,10 @@ export function useInfiniteScroll(options) {
           } else {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const winH = window.innerHeight || document.documentElement.clientHeight;
-            const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+            const docH = Math.max(
+              document.documentElement.scrollHeight,
+              document.body.scrollHeight
+            );
             const remainingScroll = docH - (scrollTop + winH);
             needsMore = remainingScroll < threshold || docH <= winH;
           }
@@ -128,11 +133,12 @@ export function useInfiniteScroll(options) {
    * IntersectionObserver callback
    */
   const handleIntersection = (entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const hasNextValue = typeof hasNext === 'function' ? hasNext() : hasNext.value;
         const loadingValue = typeof loading === 'function' ? loading() : loading.value;
-        const loadingMoreValue = typeof loadingMore === 'function' ? loadingMore() : loadingMore.value;
+        const loadingMoreValue =
+          typeof loadingMore === 'function' ? loadingMore() : loadingMore.value;
 
         if (hasNextValue && !loadingValue && !loadingMoreValue) {
           onLoadMore();
@@ -147,7 +153,7 @@ export function useInfiniteScroll(options) {
         if (observerTarget.value) {
           intersectionObserver = new IntersectionObserver(handleIntersection, {
             root: container?.value || null,
-            threshold: 0.1
+            threshold: 0.1,
           });
           intersectionObserver.observe(observerTarget.value);
         }
@@ -190,7 +196,6 @@ export function useInfiniteScroll(options) {
   });
 
   return {
-    fillIfNoScroll
+    fillIfNoScroll,
   };
 }
-

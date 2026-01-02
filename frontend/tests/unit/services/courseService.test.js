@@ -8,8 +8,8 @@ vi.mock('../../../src/services/api', () => ({
     post: vi.fn(),
     put: vi.fn(),
     patch: vi.fn(),
-    delete: vi.fn()
-  }
+    delete: vi.fn(),
+  },
 }));
 
 describe('courseService', () => {
@@ -34,7 +34,7 @@ describe('courseService', () => {
       await courseService.getAllCourses('test query');
 
       expect(apiClient.get).toHaveBeenCalledWith('/courses/', {
-        params: { title: 'test query' }
+        params: { title: 'test query' },
       });
     });
 
@@ -45,7 +45,7 @@ describe('courseService', () => {
       await courseService.getAllCourses('', 'cursor123');
 
       expect(apiClient.get).toHaveBeenCalledWith('/courses/', {
-        params: { cursor: 'cursor123' }
+        params: { cursor: 'cursor123' },
       });
     });
 
@@ -56,7 +56,7 @@ describe('courseService', () => {
       await courseService.getAllCourses('', null, 1);
 
       expect(apiClient.get).toHaveBeenCalledWith('/courses/', {
-        params: { owner: 1 }
+        params: { owner: 1 },
       });
     });
   });
@@ -83,7 +83,7 @@ describe('courseService', () => {
       const result = await courseService.createCourse(formData);
 
       expect(apiClient.post).toHaveBeenCalledWith('/courses/', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -99,7 +99,7 @@ describe('courseService', () => {
       const result = await courseService.updateCourse(1, formData);
 
       expect(apiClient.put).toHaveBeenCalledWith('/courses/1/', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -236,4 +236,3 @@ describe('courseService', () => {
     });
   });
 });
-

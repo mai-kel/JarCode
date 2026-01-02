@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -60,7 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -81,7 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
     } finally {
       isLoading.value = false;
@@ -100,7 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
     } finally {
       isLoading.value = false;
@@ -119,7 +119,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -138,7 +138,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -157,7 +157,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -170,13 +170,19 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null;
     try {
       await ensureCsrf();
-      const success = await userService.changePassword({ user_id, user_uuid, token, password, password2 });
+      const success = await userService.changePassword({
+        user_id,
+        user_uuid,
+        token,
+        password,
+        password2,
+      });
       return success;
     } catch (err) {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -196,7 +202,7 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = {
         message: getErrorMessage(err),
         details: err.details || err,
-        status: err.status || 0
+        status: err.status || 0,
       };
       return false;
     } finally {
@@ -223,6 +229,6 @@ export const useAuthStore = defineStore('auth', () => {
     sendPasswordReset,
     changePassword,
     updateProfile,
-    clearError
+    clearError,
   };
 });

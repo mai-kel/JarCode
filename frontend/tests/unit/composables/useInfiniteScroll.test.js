@@ -13,7 +13,7 @@ describe('useInfiniteScroll', () => {
     vi.useFakeTimers();
     mockOnLoadMore = vi.fn().mockImplementation(async () => {
       if (hasNext.value) {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
         hasNext.value = false;
       }
     });
@@ -35,11 +35,11 @@ describe('useInfiniteScroll', () => {
           loading,
           loadingMore,
           onLoadMore: mockOnLoadMore,
-          ...options
+          ...options,
         });
         return { ...scroll };
       },
-      template: '<div></div>'
+      template: '<div></div>',
     });
   };
 
@@ -54,7 +54,10 @@ describe('useInfiniteScroll', () => {
     loading.value = true;
 
     Object.defineProperty(window, 'innerHeight', { value: 1000, writable: true });
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 2000, writable: true });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 2000,
+      writable: true,
+    });
     Object.defineProperty(document.documentElement, 'scrollTop', { value: 800, writable: true });
 
     const wrapper = mount(createTestComponent({ threshold: 200, autoFill: false }));
@@ -71,7 +74,10 @@ describe('useInfiniteScroll', () => {
     hasNext.value = false;
 
     Object.defineProperty(window, 'innerHeight', { value: 1000, writable: true });
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 2000, writable: true });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 2000,
+      writable: true,
+    });
     Object.defineProperty(document.documentElement, 'scrollTop', { value: 800, writable: true });
 
     const wrapper = mount(createTestComponent({ threshold: 200, autoFill: false }));
@@ -89,18 +95,20 @@ describe('useInfiniteScroll', () => {
     const mockObserve = vi.fn();
     const mockDisconnect = vi.fn();
 
-    global.IntersectionObserver = vi.fn().mockImplementation((callback) => {
+    global.IntersectionObserver = vi.fn().mockImplementation((_callback) => {
       return {
         observe: mockObserve,
-        disconnect: mockDisconnect
+        disconnect: mockDisconnect,
       };
     });
 
-    const wrapper = mount(createTestComponent({
-      useIntersectionObserver: true,
-      observerTarget,
-      autoFill: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        useIntersectionObserver: true,
+        observerTarget,
+        autoFill: false,
+      })
+    );
 
     await nextTick();
     await vi.runAllTimersAsync();
@@ -110,7 +118,9 @@ describe('useInfiniteScroll', () => {
   });
 
   it('should auto-fill viewport when content is short', async () => {
-    const wrapper = mount(createTestComponent({ autoFill: true, autoFillOnce: true, threshold: 200 }));
+    const wrapper = mount(
+      createTestComponent({ autoFill: true, autoFillOnce: true, threshold: 200 })
+    );
     await nextTick();
     await vi.runAllTimersAsync();
     expect(wrapper.exists()).toBe(true);
@@ -147,14 +157,16 @@ describe('useInfiniteScroll', () => {
 
     global.IntersectionObserver = vi.fn().mockImplementation(() => ({
       observe: vi.fn(),
-      disconnect: mockDisconnect
+      disconnect: mockDisconnect,
     }));
 
-    const wrapper = mount(createTestComponent({
-      useIntersectionObserver: true,
-      observerTarget,
-      autoFill: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        useIntersectionObserver: true,
+        observerTarget,
+        autoFill: false,
+      })
+    );
 
     await nextTick();
     await vi.runAllTimersAsync();
@@ -173,14 +185,16 @@ describe('useInfiniteScroll', () => {
   it('should use container for auto-fill detection', async () => {
     const container = ref({
       scrollHeight: 500,
-      clientHeight: 1000
+      clientHeight: 1000,
     });
 
-    const wrapper = mount(createTestComponent({
-      container,
-      autoFill: true,
-      autoFillOnce: true
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        container,
+        autoFill: true,
+        autoFillOnce: true,
+      })
+    );
 
     await nextTick();
     await vi.advanceTimersByTime(200);
@@ -192,14 +206,16 @@ describe('useInfiniteScroll', () => {
   it('should handle container-based scroll detection', async () => {
     const container = ref({
       scrollHeight: 1000,
-      clientHeight: 500
+      clientHeight: 500,
     });
 
-    const wrapper = mount(createTestComponent({
-      container,
-      autoFill: true,
-      autoFillOnce: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        container,
+        autoFill: true,
+        autoFillOnce: false,
+      })
+    );
 
     await nextTick();
     await vi.advanceTimersByTime(200);
@@ -215,15 +231,17 @@ describe('useInfiniteScroll', () => {
       observerCallback = callback;
       return {
         observe: vi.fn(),
-        disconnect: vi.fn()
+        disconnect: vi.fn(),
       };
     });
 
-    const wrapper = mount(createTestComponent({
-      useIntersectionObserver: true,
-      observerTarget,
-      autoFill: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        useIntersectionObserver: true,
+        observerTarget,
+        autoFill: false,
+      })
+    );
 
     await nextTick();
 
@@ -245,15 +263,17 @@ describe('useInfiniteScroll', () => {
       observerCallback = callback;
       return {
         observe: vi.fn(),
-        disconnect: vi.fn()
+        disconnect: vi.fn(),
       };
     });
 
-    const wrapper = mount(createTestComponent({
-      useIntersectionObserver: true,
-      observerTarget,
-      autoFill: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        useIntersectionObserver: true,
+        observerTarget,
+        autoFill: false,
+      })
+    );
 
     await nextTick();
 
@@ -268,10 +288,12 @@ describe('useInfiniteScroll', () => {
   });
 
   it('should watch loading state changes and auto-fill', async () => {
-    const wrapper = mount(createTestComponent({
-      autoFill: true,
-      autoFillOnce: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        autoFill: true,
+        autoFillOnce: false,
+      })
+    );
 
     await nextTick();
     await vi.advanceTimersByTime(200);
@@ -286,10 +308,12 @@ describe('useInfiniteScroll', () => {
   });
 
   it('should watch loadingMore state changes and auto-fill', async () => {
-    const wrapper = mount(createTestComponent({
-      autoFill: true,
-      autoFillOnce: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        autoFill: true,
+        autoFillOnce: false,
+      })
+    );
 
     await nextTick();
     await vi.advanceTimersByTime(200);
@@ -304,10 +328,12 @@ describe('useInfiniteScroll', () => {
   });
 
   it('should handle fillIfNoScroll with onlyOnce flag', async () => {
-    const wrapper = mount(createTestComponent({
-      autoFill: true,
-      autoFillOnce: true
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        autoFill: true,
+        autoFillOnce: true,
+      })
+    );
 
     await nextTick();
     await vi.advanceTimersByTime(200);
@@ -322,9 +348,11 @@ describe('useInfiniteScroll', () => {
 
   it('should handle fillIfNoScroll without onlyOnce flag', async () => {
     hasNext.value = true;
-    const wrapper = mount(createTestComponent({
-      autoFill: false
-    }));
+    const wrapper = mount(
+      createTestComponent({
+        autoFill: false,
+      })
+    );
 
     await nextTick();
 
@@ -344,22 +372,23 @@ describe('useInfiniteScroll', () => {
     const computedLoading = computed(() => false);
     const computedLoadingMore = computed(() => false);
 
-    const wrapper = mount(defineComponent({
-      setup() {
-        return useInfiniteScroll({
-          hasNext: computedHasNext,
-          loading: computedLoading,
-          loadingMore: computedLoadingMore,
-          onLoadMore: mockOnLoadMore,
-          autoFill: false
-        });
-      },
-      template: '<div></div>'
-    }));
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return useInfiniteScroll({
+            hasNext: computedHasNext,
+            loading: computedLoading,
+            loadingMore: computedLoadingMore,
+            onLoadMore: mockOnLoadMore,
+            autoFill: false,
+          });
+        },
+        template: '<div></div>',
+      })
+    );
 
     await nextTick();
     expect(wrapper.exists()).toBe(true);
     wrapper.unmount();
   });
 });
-

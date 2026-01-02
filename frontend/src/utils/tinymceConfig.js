@@ -15,22 +15,36 @@ export const CODESAMPLE_LANGUAGES = [
   { text: 'C++', value: 'cpp' },
   { text: 'C#', value: 'csharp' },
   { text: 'SQL', value: 'sql' },
-  { text: 'Bash/Shell', value: 'bash' }
+  { text: 'Bash/Shell', value: 'bash' },
 ];
 
 /**
  * Standard plugins for TinyMCE editors
  */
 export const STANDARD_PLUGINS = [
-  'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
-  'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-  'insertdatetime', 'table', 'codesample', 'help', 'wordcount'
+  'advlist',
+  'autolink',
+  'lists',
+  'link',
+  'charmap',
+  'preview',
+  'anchor',
+  'searchreplace',
+  'visualblocks',
+  'code',
+  'fullscreen',
+  'insertdatetime',
+  'table',
+  'codesample',
+  'help',
+  'wordcount',
 ];
 
 /**
  * Standard toolbar configuration for TinyMCE
  */
-export const STANDARD_TOOLBAR = 'undo redo | blocks | ' +
+export const STANDARD_TOOLBAR =
+  'undo redo | blocks | ' +
   'bold italic backcolor | alignleft aligncenter ' +
   'alignright alignjustify | bullist numlist outdent indent | ' +
   'removeformat | table | codesample | help';
@@ -52,7 +66,7 @@ export function createTinyMCEConfig({
   imageUploadHandler = null,
   toolbar = STANDARD_TOOLBAR,
   plugins = STANDARD_PLUGINS,
-  codesampleLanguages = CODESAMPLE_LANGUAGES
+  codesampleLanguages = CODESAMPLE_LANGUAGES,
 } = {}) {
   const config = {
     height,
@@ -70,7 +84,7 @@ export function createTinyMCEConfig({
       pre[class*="language-"] .token { background: transparent !important; }
     `,
     codesample_global_prismjs: true,
-    codesample_languages: codesampleLanguages
+    codesample_languages: codesampleLanguages,
   };
 
   if (enableImageUpload && imageUploadHandler) {
@@ -80,4 +94,3 @@ export function createTinyMCEConfig({
 
   return config;
 }
-

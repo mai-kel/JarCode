@@ -1,4 +1,4 @@
-import { expect, afterEach, vi } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/vue';
 import '@testing-library/jest-dom';
 import { config } from '@vue/test-utils';
@@ -8,17 +8,12 @@ import ConfirmationService from 'primevue/confirmationservice';
 import { createPinia } from 'pinia';
 
 // Setup PrimeVue globally
-config.global.plugins = [
-  PrimeVue,
-  ToastService,
-  ConfirmationService,
-  createPinia()
-];
+config.global.plugins = [PrimeVue, ToastService, ConfirmationService, createPinia()];
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -35,7 +30,9 @@ global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
   observe() {}
-  takeRecords() { return []; }
+  takeRecords() {
+    return [];
+  }
   unobserve() {}
 };
 
@@ -52,8 +49,8 @@ window.scrollTo = vi.fn();
 
 // Mock Prism for TinyMCE
 window.Prism = {
-  highlight: vi.fn((code, grammar, language) => code),
-  languages: {}
+  highlight: vi.fn((code, _grammar, _language) => code),
+  languages: {},
 };
 
 // Cleanup after each test
@@ -61,4 +58,3 @@ afterEach(() => {
   cleanup();
   vi.clearAllMocks();
 });
-

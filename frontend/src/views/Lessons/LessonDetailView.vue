@@ -3,14 +3,24 @@
     <template #title>
       <div class="flex align-items-center justify-content-between">
         <h2>Edit Lesson</h2>
-        <Button class="p-button-text" label="Back to Lessons" icon="pi pi-angle-left" @click="goBack" />
+        <Button
+          class="p-button-text"
+          label="Back to Lessons"
+          icon="pi pi-angle-left"
+          @click="goBack"
+        />
       </div>
     </template>
     <template #content>
-      <form @submit.prevent="handleSave" class="p-fluid grid">
+      <form class="p-fluid grid" @submit.prevent="handleSave">
         <div class="field col-12 md:col-8">
           <label for="lessonTitle">Lesson Title</label>
-          <InputText id="lessonTitle" v-model="title" :invalid="submitted && !title" placeholder="Enter lesson title"/>
+          <InputText
+            id="lessonTitle"
+            v-model="title"
+            :invalid="submitted && !title"
+            placeholder="Enter lesson title"
+          />
           <small v-if="submitted && !title" class="p-error">Title is required.</small>
         </div>
 
@@ -34,7 +44,14 @@
             </div>
 
             <div>
-              <Button type="submit" label="Save" icon="pi pi-save" :loading="courseStore.isLoading" :disabled="!isDirty" style="width: 100%;"/>
+              <Button
+                type="submit"
+                label="Save"
+                icon="pi pi-save"
+                :loading="courseStore.isLoading"
+                :disabled="!isDirty"
+                style="width: 100%"
+              />
             </div>
           </div>
         </div>
@@ -56,7 +73,6 @@ const route = useRoute();
 const router = useRouter();
 const courseStore = useCourseStore();
 const toast = useToast();
-const confirm = useConfirm();
 
 const submitted = ref(false);
 const title = ref('');
@@ -83,7 +99,10 @@ const handleSave = async () => {
   courseStore.clearError();
   if (!title.value || !content.value) return;
 
-  const updated = await courseStore.updateLesson(courseId, chapterId, lessonId, { title: title.value, content: content.value });
+  const updated = await courseStore.updateLesson(courseId, chapterId, lessonId, {
+    title: title.value,
+    content: content.value,
+  });
   if (updated?.id) {
     toast.add({ severity: 'success', summary: 'Lesson saved', life: 2500 });
     originalTitle.value = title.value;
@@ -93,14 +112,16 @@ const handleSave = async () => {
       severity: 'error',
       summary: 'Failed to save lesson',
       detail: courseStore.error.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 };
 
 const goBack = () => router.push({ name: 'chapter-lessons', params: { courseId, chapterId } });
 
-const isDirty = computed(() => title.value !== originalTitle.value || content.value !== originalContent.value);
+const isDirty = computed(
+  () => title.value !== originalTitle.value || content.value !== originalContent.value
+);
 
 useUnsavedChanges(isDirty);
 
@@ -110,9 +131,8 @@ const confirmDeleteLesson = useDeleteConfirmation({
   onConfirm: () => courseStore.deleteLesson(courseId, chapterId, lessonId),
   successRoute: { name: 'chapter-lessons', params: { courseId, chapterId } },
   successMessage: 'Lesson deleted',
-  errorMessage: 'Failed to delete lesson'
+  errorMessage: 'Failed to delete lesson',
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -5,8 +5,8 @@ import apiClient from '../../../src/services/api';
 vi.mock('../../../src/services/api', () => ({
   default: {
     get: vi.fn(),
-    post: vi.fn()
-  }
+    post: vi.fn(),
+  },
 }));
 
 describe('submissionService', () => {
@@ -40,7 +40,9 @@ describe('submissionService', () => {
 
       await submissionService.listSubmissions(1, 'cursor with spaces');
 
-      expect(apiClient.get).toHaveBeenCalledWith('/problems/1/submissions/?cursor=cursor%20with%20spaces');
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/problems/1/submissions/?cursor=cursor%20with%20spaces'
+      );
     });
   });
 
@@ -48,7 +50,7 @@ describe('submissionService', () => {
     it('should call create submission endpoint with payload', async () => {
       const payload = {
         code: 'def solution(): return True',
-        language: 'PYTHON'
+        language: 'PYTHON',
       };
       const mockResponse = { data: { id: 1, ...payload, status: 'PENDING' } };
       apiClient.post.mockResolvedValue(mockResponse);
@@ -60,4 +62,3 @@ describe('submissionService', () => {
     });
   });
 });
-

@@ -3,32 +3,54 @@
     <template #title>
       <div class="flex align-items-center justify-content-between w-full">
         <h2 class="m-0">Edit Problem</h2>
-        <Button class="p-button-text" label="Back to my problems" icon="pi pi-angle-left" @click="goBack" />
+        <Button
+          class="p-button-text"
+          label="Back to my problems"
+          icon="pi pi-angle-left"
+          @click="goBack"
+        />
       </div>
     </template>
     <template #content>
-      <form @submit.prevent="handleUpdate" class="p-fluid grid">
+      <form class="p-fluid grid" @submit.prevent="handleUpdate">
         <div class="field col-12">
           <label for="title">Title</label>
-          <InputText id="title" v-model="title" :invalid="submitted && !title" placeholder="Enter problem title" />
+          <InputText
+            id="title"
+            v-model="title"
+            :invalid="submitted && !title"
+            placeholder="Enter problem title"
+          />
           <small v-if="submitted && !title" class="p-error">Title is required.</small>
         </div>
 
         <div class="field col-12 md:col-6">
           <label for="language">Language</label>
-          <Dropdown id="language" :options="languageOptions" optionLabel="text" optionValue="value" v-model="language" />
+          <Dropdown
+            id="language"
+            v-model="language"
+            :options="languageOptions"
+            option-label="text"
+            option-value="value"
+          />
         </div>
 
         <div class="field col-12 md:col-6">
           <label for="difficulty">Difficulty</label>
-          <Dropdown id="difficulty" :options="difficultyOptions" optionLabel="text" optionValue="value" v-model="difficulty" />
+          <Dropdown
+            id="difficulty"
+            v-model="difficulty"
+            :options="difficultyOptions"
+            option-label="text"
+            option-value="value"
+          />
         </div>
 
         <div class="col-12">
           <ProblemEditor
             v-model:description="description"
-            v-model:startingCode="startingCode"
-            v-model:testCode="testCode"
+            v-model:starting-code="startingCode"
+            v-model:test-code="testCode"
             :language="language"
           />
         </div>
@@ -47,13 +69,25 @@
             </div>
 
             <div>
-              <Button type="submit" label="Save" icon="pi pi-save" :loading="isLoading" :disabled="!isDirty" style="width: 100%;" />
+              <Button
+                type="submit"
+                label="Save"
+                icon="pi pi-save"
+                :loading="isLoading"
+                :disabled="!isDirty"
+                style="width: 100%"
+              />
             </div>
           </div>
         </div>
 
         <div class="col-12 mt-3">
-          <Message v-if="error" severity="error" :closable="true" @close="problemStore.clearError()">
+          <Message
+            v-if="error"
+            severity="error"
+            :closable="true"
+            @close="problemStore.clearError()"
+          >
             <strong>Error:</strong> {{ error?.message || 'An error occurred' }}
           </Message>
         </div>
@@ -75,7 +109,6 @@ import Message from 'primevue/message';
 import ProblemEditor from '../../components/ProblemEditor.vue';
 import { Languages, Difficulties } from '../../constants/problems';
 import { useProblemStore } from '../../store/problem';
-import { getErrorMessage } from '../../utils/errorHandler';
 import { useUnsavedChanges } from '../../composables/useUnsavedChanges';
 import { useDeleteConfirmation } from '../../composables/useDeleteConfirmation';
 
@@ -129,7 +162,7 @@ onMounted(async () => {
       severity: 'error',
       summary: 'Failed to load problem',
       detail: problemStore.error.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 });
@@ -138,12 +171,19 @@ const handleUpdate = async () => {
   submitted.value = true;
   problemStore.clearError();
 
-  if (!title.value || !description.value || !startingCode.value || !testCode.value || !language.value || !difficulty.value) {
+  if (
+    !title.value ||
+    !description.value ||
+    !startingCode.value ||
+    !testCode.value ||
+    !language.value ||
+    !difficulty.value
+  ) {
     toast.add({
       severity: 'error',
       summary: 'Validation error',
       detail: 'All fields are required.',
-      life: 4000
+      life: 4000,
     });
     return;
   }
@@ -154,7 +194,7 @@ const handleUpdate = async () => {
     language: language.value,
     starting_code: startingCode.value,
     test_code: testCode.value,
-    difficulty: difficulty.value
+    difficulty: difficulty.value,
   };
 
   const updated = await problemStore.updateProblem(problemId, payload);
@@ -171,7 +211,7 @@ const handleUpdate = async () => {
       severity: 'error',
       summary: 'Failed to update problem',
       detail: problemStore.error?.message || 'An error occurred',
-      life: 4000
+      life: 4000,
     });
   }
 };
@@ -191,10 +231,10 @@ const confirmDeleteProblem = useDeleteConfirmation({
         severity: 'error',
         summary: 'Failed to delete problem',
         detail: problemStore.error?.message || 'An error occurred',
-        life: 4000
+        life: 4000,
       });
     }
-  }
+  },
 });
 
 const isDirty = computed(() => {
@@ -211,5 +251,4 @@ const isDirty = computed(() => {
 useUnsavedChanges(isDirty);
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -21,7 +21,13 @@
               {{ getErrorMessage(error) }}
             </Message>
 
-            <Button type="submit" label="Send link" class="mt-4" :loading="isLoading" :disabled="!!successMessage" />
+            <Button
+              type="submit"
+              label="Send link"
+              class="mt-4"
+              :loading="isLoading"
+              :disabled="!!successMessage"
+            />
           </div>
         </form>
       </template>
@@ -52,7 +58,8 @@ const handleSend = async () => {
   authStore.clearError();
   const success = await authStore.sendPasswordReset(email.value);
   if (success) {
-    successMessage.value = 'If an account with this email exists and is active, a password reset link was sent.';
+    successMessage.value =
+      'If an account with this email exists and is active, a password reset link was sent.';
   }
 };
 </script>

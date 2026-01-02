@@ -7,8 +7,8 @@ vi.mock('../../../src/services/api', () => ({
     get: vi.fn(),
     post: vi.fn(),
     put: vi.fn(),
-    delete: vi.fn()
-  }
+    delete: vi.fn(),
+  },
 }));
 
 describe('problemService', () => {
@@ -22,7 +22,7 @@ describe('problemService', () => {
         title: 'New Problem',
         description: 'Description',
         difficulty: 'EASY',
-        language: 'PYTHON'
+        language: 'PYTHON',
       };
       const mockResponse = { data: { id: 1, ...payload } };
       apiClient.post.mockResolvedValue(mockResponse);
@@ -86,7 +86,7 @@ describe('problemService', () => {
       await problemService.listProblems({ search: 'test' });
 
       expect(apiClient.get).toHaveBeenCalledWith('/problems/', {
-        params: { title: 'test' }
+        params: { title: 'test' },
       });
     });
 
@@ -97,7 +97,7 @@ describe('problemService', () => {
       await problemService.listProblems({ language: 'PYTHON' });
 
       expect(apiClient.get).toHaveBeenCalledWith('/problems/', {
-        params: { language: 'PYTHON' }
+        params: { language: 'PYTHON' },
       });
     });
 
@@ -108,7 +108,7 @@ describe('problemService', () => {
       await problemService.listProblems({ difficulty: 'EASY' });
 
       expect(apiClient.get).toHaveBeenCalledWith('/problems/', {
-        params: { difficulty: 'EASY' }
+        params: { difficulty: 'EASY' },
       });
     });
 
@@ -119,7 +119,7 @@ describe('problemService', () => {
       await problemService.listProblems({ author: 1 });
 
       expect(apiClient.get).toHaveBeenCalledWith('/problems/', {
-        params: { author: 1 }
+        params: { author: 1 },
       });
     });
 
@@ -130,7 +130,7 @@ describe('problemService', () => {
       await problemService.listProblems({ cursor: 'cursor123' });
 
       expect(apiClient.get).toHaveBeenCalledWith('/problems/', {
-        params: { cursor: 'cursor123' }
+        params: { cursor: 'cursor123' },
       });
     });
 
@@ -141,7 +141,7 @@ describe('problemService', () => {
       await problemService.listProblems({ is_solved: true });
 
       expect(apiClient.get).toHaveBeenCalledWith('/problems/', {
-        params: { is_solved: true }
+        params: { is_solved: true },
       });
     });
 
@@ -152,9 +152,8 @@ describe('problemService', () => {
       await problemService.listProblems({ is_solved: null });
 
       expect(apiClient.get).toHaveBeenCalledWith('/problems/', {
-        params: {}
+        params: {},
       });
     });
   });
 });
-

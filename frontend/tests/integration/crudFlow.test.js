@@ -8,7 +8,7 @@ import * as courseService from '../../src/services/courseService';
 vi.mock('../../src/services/problemService');
 vi.mock('../../src/services/courseService');
 vi.mock('../../src/services/lessonService', () => ({
-  uploadLessonImage: vi.fn()
+  uploadLessonImage: vi.fn(),
 }));
 
 describe('CRUD Operations Integration', () => {
@@ -25,7 +25,7 @@ describe('CRUD Operations Integration', () => {
         title: 'Test Problem',
         description: 'Test Description',
         difficulty: 'EASY',
-        language: 'PYTHON'
+        language: 'PYTHON',
       };
 
       // Create
@@ -34,7 +34,7 @@ describe('CRUD Operations Integration', () => {
         title: 'Test Problem',
         description: 'Test Description',
         difficulty: 'EASY',
-        language: 'PYTHON'
+        language: 'PYTHON',
       });
 
       expect(created).toEqual(mockProblem);
@@ -68,7 +68,7 @@ describe('CRUD Operations Integration', () => {
       const mockCourse = {
         id: 1,
         title: 'Test Course',
-        description: 'Test Description'
+        description: 'Test Description',
       };
 
       // Create
@@ -94,4 +94,3 @@ describe('CRUD Operations Integration', () => {
     });
   });
 });
-

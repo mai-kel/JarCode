@@ -8,14 +8,14 @@ const apiClient = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
+    Accept: 'application/json',
+  },
 });
 
 function getCsrfToken() {
   const cookieValue = document.cookie
     .split('; ')
-    .find(row => row.startsWith('csrftoken='))
+    .find((row) => row.startsWith('csrftoken='))
     ?.split('=')[1];
   return cookieValue;
 }
@@ -55,7 +55,7 @@ apiClient.interceptors.response.use(
     console.error('API Error:', {
       message: standardizedError.message,
       status: standardizedError.status,
-      details: standardizedError.details
+      details: standardizedError.details,
     });
 
     // Reject with standardized error
@@ -64,4 +64,3 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
-

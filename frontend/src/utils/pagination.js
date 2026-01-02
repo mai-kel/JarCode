@@ -8,7 +8,7 @@ export function extractCursor(url) {
   try {
     const u = new URL(url);
     return u.searchParams.get('cursor');
-  } catch (e) {
+  } catch (_e) {
     // Fallback for relative URLs or malformed URLs
     const m = url.match(/[?&]cursor=([^&]+)/);
     return m ? decodeURIComponent(m[1]) : null;
@@ -32,7 +32,7 @@ export function normalizePage(response) {
   if (response.results !== undefined) {
     return {
       results: response.results || [],
-      next: extractCursor(response.next)
+      next: extractCursor(response.next),
     };
   }
 
@@ -46,7 +46,7 @@ export function normalizePage(response) {
     if (response.data.results !== undefined) {
       return {
         results: response.data.results || [],
-        next: extractCursor(response.data.next)
+        next: extractCursor(response.data.next),
       };
     }
   }
@@ -54,4 +54,3 @@ export function normalizePage(response) {
   // Default fallback
   return { results: [], next: null };
 }
-

@@ -2,11 +2,11 @@
   <CourseListView
     title="My Courses"
     :fetcher="fetchMyCourses"
-    :itemAction="editCourse"
-    itemActionLabel="Edit"
-    itemActionIcon="pi pi-pencil"
-    :showCreate="true"
-    emptyMessage="You haven't created any courses yet."
+    :item-action="editCourse"
+    item-action-label="Edit"
+    item-action-icon="pi pi-pencil"
+    :show-create="true"
+    empty-message="You haven't created any courses yet."
     @create="goCreateCourse"
   >
   </CourseListView>
@@ -23,7 +23,8 @@ const courseStore = useCourseStore();
 const authStore = useAuthStore();
 
 const goCreateCourse = () => router.push({ name: 'create-course' });
-const editCourse = (course) => router.push({ name: 'course-detail', params: { courseId: course.id } });
+const editCourse = (course) =>
+  router.push({ name: 'course-detail', params: { courseId: course.id } });
 
 const fetchMyCourses = async (searchQuery = '', cursor = null) => {
   if (!authStore.user) {
