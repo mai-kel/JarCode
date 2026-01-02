@@ -16,6 +16,7 @@ import ProblemEditView from '../views/Problems/ProblemEditView.vue';
 import ProblemView from '../views/Problems/ProblemView.vue';
 import BrowseProblemsView from '../views/Problems/BrowseProblemsView.vue';
 import MyProblemsView from '../views/Problems/MyProblemsView.vue';
+import ProblemCreationTutorialView from '../views/Problems/ProblemCreationTutorialView.vue';
 import CourseChaptersView from '../views/Chapters/CourseChaptersView.vue';
 import ChapterLessonsView from '../views/Lessons/ChapterLessonsView.vue';
 import MyCoursesView from '../views/Courses/MyCoursesView.vue';
@@ -106,6 +107,12 @@ const routes = [
     path: '/my-problems',
     name: 'my-problems',
     component: MyProblemsView,
+    meta: { requiresAuth: true, requiresCreator: true },
+  },
+  {
+    path: '/problem-creation-tutorial',
+    name: 'problem-creation-tutorial',
+    component: ProblemCreationTutorialView,
     meta: { requiresAuth: true, requiresCreator: true },
   },
   {

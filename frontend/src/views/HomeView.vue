@@ -63,6 +63,12 @@ const visibleItems = computed(() => {
       visible: authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator,
     },
     {
+      label: 'Problem Creation Tutorial',
+      icon: 'pi pi-lightbulb',
+      command: () => router.push({ name: 'problem-creation-tutorial' }),
+      visible: authStore.isReady && authStore.isAuthenticated && authStore.user?.is_content_creator,
+    },
+    {
       label: 'Profile',
       icon: 'pi pi-user',
       command: () => router.push({ name: 'profile' }),
