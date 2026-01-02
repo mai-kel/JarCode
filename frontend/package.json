@@ -9,7 +9,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run",
+    "test:watch": "NODE_OPTIONS=--max-old-space-size=4096 vitest",
+    "test:ui": "NODE_OPTIONS=--max-old-space-size=4096 vitest --ui",
+    "test:coverage": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --coverage"
   },
   "dependencies": {
     "@monaco-editor/loader": "^1.6.1",
@@ -28,8 +32,17 @@
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/user-event": "^14.5.1",
+    "@testing-library/vue": "^8.0.1",
     "@vitejs/plugin-vue": "^6.0.1",
+    "@vitest/coverage-v8": "^1.0.4",
+    "@vitest/ui": "^1.0.4",
+    "@vue/test-utils": "^2.4.3",
+    "jsdom": "^23.0.1",
+    "msw": "^2.0.11",
     "vite": "^7.1.7",
-    "vite-plugin-vue-devtools": "^8.0.2"
+    "vite-plugin-vue-devtools": "^8.0.2",
+    "vitest": "^1.0.4"
   }
 }
