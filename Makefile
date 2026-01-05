@@ -1,11 +1,12 @@
 COMPOSE = docker compose
 SERVICE = worker
 
-.PHONY: help test test-frontend test-frontend-coverage build-judges eslint prettier
+.PHONY: help test test-backend-coverage test-frontend test-frontend-coverage build-judges eslint prettier
 
 help:
 	@echo "Available commands:"
 	@echo "  make test-backend            - Run all backend tests"
+	@echo "  make test-backend-coverage   - Run backend tests with coverage"
 	@echo "  make test-frontend           - Run frontend tests"
 	@echo "  make test-frontend-coverage  - Run frontend tests with coverage"
 	@echo "  make eslint                  - Run ESLint with --fix flag on frontend code"
@@ -14,6 +15,9 @@ help:
 
 test:
 	$(COMPOSE) run --rm $(SERVICE) pytest
+
+test-backend-coverage:
+	$(COMPOSE) run --rm $(SERVICE) pytest --cov=. --cov-report=term --cov-report=html
 
 test-frontend:
 	$(COMPOSE) run --rm frontend npm test
