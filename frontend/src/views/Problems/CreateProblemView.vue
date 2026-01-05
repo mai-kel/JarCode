@@ -82,6 +82,7 @@ import Message from 'primevue/message';
 import ProblemEditor from '../../components/ProblemEditor.vue';
 import { Languages, Difficulties } from '../../constants/problems';
 import { useProblemStore } from '../../store/problem';
+import { useUnsavedChanges } from '../../composables/useUnsavedChanges';
 
 const router = useRouter();
 const toast = useToast();
@@ -135,6 +136,14 @@ const handleCreate = async () => {
   const created = await problemStore.createProblem(payload);
   if (created?.id) {
     toast.add({ severity: 'success', summary: 'Problem created', life: 2500 });
+    // Reset form fields to clear dirty state before navigation
+    title.value = '';
+    description.value = '';
+    startingCode.value = '';
+    testCode.value = '';
+    language.value = Languages[0].value;
+    difficulty.value = Difficulties[0].value;
+    submitted.value = false;
     router.push({ name: 'edit-problem', params: { problemId: created.id } });
   } else {
     toast.add({
@@ -147,6 +156,13 @@ const handleCreate = async () => {
 };
 
 const goHome = () => router.push({ name: 'home' });
+
+const isDirty = computed(
+  () =>
+    !!title.value || !!description.value || !!startingCode.value || !!testCode.value
+);
+
+useUnsavedChanges(isDirty);
 </script>
 
 <style scoped></style>

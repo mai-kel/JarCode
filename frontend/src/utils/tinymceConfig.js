@@ -36,7 +36,6 @@ export const STANDARD_PLUGINS = [
   'insertdatetime',
   'table',
   'codesample',
-  'help',
   'wordcount',
 ];
 
@@ -47,7 +46,7 @@ export const STANDARD_TOOLBAR =
   'undo redo | blocks | ' +
   'bold italic backcolor | alignleft aligncenter ' +
   'alignright alignjustify | bullist numlist outdent indent | ' +
-  'removeformat | table | codesample | help';
+  'removeformat | table | codesample';
 
 /**
  * Creates a TinyMCE configuration object

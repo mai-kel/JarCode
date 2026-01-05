@@ -39,7 +39,6 @@ const localTestCode = ref(props.testCode);
 
 const editorInit = createTinyMCEConfig({
   height: 500,
-  codesampleLanguages: [{ text: 'Python', value: 'python' }],
 });
 
 watch(

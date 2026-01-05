@@ -192,4 +192,8 @@ watch(selectedLesson, () => {
   margin-bottom: 1rem;
   background-color: #f5f5f5;
 }
+
+ul.list-none a {
+  text-decoration: none;
+}
 </style>

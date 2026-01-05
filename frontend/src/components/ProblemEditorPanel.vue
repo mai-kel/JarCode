@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, nextTick, onMounted } from 'vue';
 import DOMPurify from 'dompurify';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
@@ -90,6 +90,29 @@ async function submit() {
     isSubmitting.value = false;
   }
 }
+
+// Apply Prism.js syntax highlighting to code blocks
+function highlightCodeBlocks() {
+  nextTick(() => {
+    if (window.Prism) {
+      window.Prism.highlightAll();
+    }
+  });
+}
+
+// Watch for changes in problem to re-highlight code blocks
+watch(
+  () => props.problem,
+  () => {
+    highlightCodeBlocks();
+  },
+  { deep: true }
+);
+
+// Highlight code blocks on mount if problem is already loaded
+onMounted(() => {
+  highlightCodeBlocks();
+});
 </script>
 
 <style scoped>
