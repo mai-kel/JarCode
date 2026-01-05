@@ -60,6 +60,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+static/
 
 # Flask stuff:
 instance/
@@ -136,6 +137,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env_prod
 .envrc
 .venv
 env/
@@ -201,3 +203,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+TODO.txt

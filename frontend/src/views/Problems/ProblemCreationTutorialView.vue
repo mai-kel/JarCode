@@ -33,7 +33,7 @@
         </div>
 
         <!-- Language Sections -->
-        <Accordion :activeIndex="0" class="mb-4">
+        <Accordion :active-index="0" class="mb-4">
           <!-- Python Section -->
           <AccordionTab>
             <template #header>
@@ -82,7 +82,10 @@
 
               <h5 class="mb-2 mt-4">Important Notes</h5>
               <ul class="list-disc ml-4 mb-3">
-                <li>Always import from <code>solution</code> module: <code>from solution import function_name</code></li>
+                <li>
+                  Always import from <code>solution</code> module:
+                  <code>from solution import function_name</code>
+                </li>
                 <li>Test functions must start with <code>test_</code> prefix</li>
                 <li>Use standard Python assertions: <code>assert condition</code></li>
                 <li>You can have multiple test functions in the same test file</li>
@@ -110,8 +113,8 @@
 
               <h5 class="mb-2 mt-4">Starting Code Format</h5>
               <p class="mb-3">
-                The starting code must be in a class named <strong>Solution</strong>. This is a
-                hard requirement - the class name must be exactly <code>Solution</code>.
+                The starting code must be in a class named <strong>Solution</strong>. This is a hard
+                requirement - the class name must be exactly <code>Solution</code>.
               </p>
               <div class="mb-4">
                 <label class="block mb-2 font-semibold">Example Starting Code:</label>
@@ -126,8 +129,8 @@
               <h5 class="mb-2 mt-4">Test Code Format</h5>
               <p class="mb-3">
                 Test code must be in a class named <strong>SolutionTest</strong> and use JUnit 5
-                annotations. Import JUnit assertions and use <code>@Test</code> annotation for
-                each test method.
+                annotations. Import JUnit assertions and use <code>@Test</code> annotation for each
+                test method.
               </p>
               <div class="mb-4">
                 <label class="block mb-2 font-semibold">Example Test Code:</label>
@@ -144,7 +147,9 @@
                 <li>Solution class must be named exactly <code>Solution</code></li>
                 <li>Test class must be named exactly <code>SolutionTest</code></li>
                 <li>Use JUnit 5 annotations: <code>@Test</code> for test methods</li>
-                <li>Import assertions: <code>import static org.junit.jupiter.api.Assertions.*;</code></li>
+                <li>
+                  Import assertions: <code>import static org.junit.jupiter.api.Assertions.*;</code>
+                </li>
                 <li>Compilation errors will result in <code>COMPILATION_ERROR</code> outcome</li>
                 <li>Tests are executed with JUnit Platform Console Standalone</li>
               </ul>
@@ -201,7 +206,9 @@
 
               <h5 class="mb-2 mt-4">Important Notes</h5>
               <ul class="list-disc ml-4 mb-3">
-                <li>Must include Catch2: <code>#include &lt;catch2/catch_test_macros.hpp&gt;</code></li>
+                <li>
+                  Must include Catch2: <code>#include &lt;catch2/catch_test_macros.hpp&gt;</code>
+                </li>
                 <li>Must include solution: <code>#include "solution.cpp"</code></li>
                 <li>Use <code>TEST_CASE("Description", "[tag]")</code> macro for test cases</li>
                 <li>Use <code>REQUIRE(condition)</code> for assertions</li>
@@ -230,12 +237,12 @@
               assertions that clearly indicate what is being tested.
             </li>
             <li class="mb-2">
-              <strong>Error Messages:</strong> Consider how test failures will appear to
-              students - clear assertion messages help with debugging.
+              <strong>Error Messages:</strong> Consider how test failures will appear to students -
+              clear assertion messages help with debugging.
             </li>
             <li class="mb-2">
-              <strong>Test Your Tests:</strong> Before publishing a problem, verify that your
-              test code correctly passes a valid solution and fails an invalid one.
+              <strong>Test Your Tests:</strong> Before publishing a problem, verify that your test
+              code correctly passes a valid solution and fails an invalid one.
             </li>
           </ul>
         </div>
@@ -253,12 +260,12 @@
               <code>SolutionTest</code> are required) or missing JUnit imports.
             </li>
             <li class="mb-2">
-              <strong>C++:</strong> Missing Catch2 includes or incorrect include syntax for
-              solution file.
+              <strong>C++:</strong> Missing Catch2 includes or incorrect include syntax for solution
+              file.
             </li>
             <li class="mb-2">
-              <strong>All Languages:</strong> Test code that doesn't compile or has syntax
-              errors will cause evaluation failures.
+              <strong>All Languages:</strong> Test code that doesn't compile or has syntax errors
+              will cause evaluation failures.
             </li>
             <li class="mb-2">
               <strong>All Languages:</strong> Infinite loops or very slow code may timeout (30
@@ -394,4 +401,3 @@ TEST_CASE("Add with zero", "[add]") {
   margin-bottom: 1rem;
 }
 </style>
-

@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from users.serializers import UserGenericInfoSerializer
 from .models import Course, Chapter, Lesson, LessonImage
-from jarcode.settings import ALLOWED_TAGS, ALLOWED_ATTRIBUTES
+from django.conf import settings
 from nh3 import clean
+
 
 class CourseSerializer(serializers.ModelSerializer):
     owner = UserGenericInfoSerializer(read_only=True)
@@ -33,8 +34,8 @@ class LessonSerializer(serializers.ModelSerializer):
     def validate_content(self, value):
         try:
             value = clean(html=value,
-                          tags=ALLOWED_TAGS,
-                          attributes=ALLOWED_ATTRIBUTES)
+                          tags=settings.ALLOWED_TAGS,
+                          attributes=settings.ALLOWED_ATTRIBUTES)
         except:
             raise serializers.ValidationError("Lesson content is invalid or insecure HTML")
 

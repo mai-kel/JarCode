@@ -9,7 +9,7 @@
           <div class="p-fluid">
             <div class="field">
               <label for="email">Email</label>
-              <InputText id="email" v-model="email"/>
+              <InputText id="email" v-model="email" />
               <div v-if="fieldErrors.email">
                 <div
                   v-for="(m, i) in fieldErrors.email"

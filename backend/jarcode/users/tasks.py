@@ -1,6 +1,6 @@
 from dramatiq import actor
 from django.core.mail import send_mail
-from jarcode.settings import EMAIL_HOST_USER
+from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
@@ -16,7 +16,7 @@ def send_activation_link(email: str, link: str) -> None:
         subject=subject,
         message=plain_message,
         recipient_list=[email],
-        from_email=EMAIL_HOST_USER,
+        from_email=settings.EMAIL_HOST_USER,
         html_message=html_message
     )
 
@@ -32,6 +32,6 @@ def send_password_reset_link(email: str, link: str) -> None:
         subject=subject,
         message=plain_message,
         recipient_list=[email],
-        from_email=EMAIL_HOST_USER,
+        from_email=settings.EMAIL_HOST_USER,
         html_message=html_message
     )

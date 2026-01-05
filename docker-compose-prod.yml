@@ -1,54 +1,38 @@
-
 volumes:
-  postgres_data:
-  django_media:
-  django_static:
+  postgres_data_prod:
+  django_media_prod:
+  django_static_prod:
 
 services:
   reverse-proxy:
     image: nginx:1.27.3
+    container_name: nginx-prod
     restart: always
-    container_name: nginx-dev
     ports:
       - "80:80"
     volumes:
-      - ./nginx/default.conf.template.dev:/etc/nginx/templates/default.conf.template
-      - django_media:/backend/jarcode/media
-      - django_static:/backend/jarcode/static
+      - django_media_prod:/backend/jarcode/media
+      - django_static_prod:/backend/jarcode/static
+      - ./nginx/default.conf.template.prod:/etc/nginx/templates/default.conf.template
+      - ./frontend/dist:/frontend_dist
     depends_on:
-      backend:
+      backend-wsgi-prod:
         condition: service_started
-      frontend:
+      backend-asgi-prod:
         condition: service_started
     environment:
-      DJANGO_PORT: ${DJANGO_PORT}
-      VUE_PORT: ${VUE_PORT}
-
-  frontend:
-    build:
-      context: ./frontend
-    container_name: frontend-dev
-    volumes:
-      - /app/node_modules
-      - ./frontend:/app
-    ports:
-      - "5173:${VUE_PORT}"
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port ${VUE_PORT}"
-    depends_on:
-      backend:
-        condition: service_started
+      DJANGO_WSGI_PORT: ${DJANGO_WSGI_PORT}
+      DJANGO_ASGI_PORT: ${DJANGO_ASGI_PORT}
 
   db:
     image: postgres:17
-    container_name: db-dev
+    container_name: db-prod
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:${POSTGRES_PORT}"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_prod:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -57,22 +41,19 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq-dev
+    container_name: rabbitmq-prod
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-    ports:
-      - "5673:${RABBITMQ_AMQP_PORT}"
-      - "15673:${RABBITMQ_UI_PORT}"
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  backend:
+  backend-wsgi-prod:
     image: jarcode-backend:latest
-    container_name: backend-dev
+    container_name: backend-wsgi-prod
     build:
       context: ./backend
     environment:
@@ -80,7 +61,8 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       RABBITMQ_AMQP_PORT: ${RABBITMQ_AMQP_PORT}
       RABBITMQ_UI_PORT: ${RABBITMQ_UI_PORT}
-      DJANGO_PORT: ${DJANGO_PORT}
+      DJANGO_WSGI_PORT: ${DJANGO_WSGI_PORT}
+      DJANGO_ASGI_PORT: ${DJANGO_ASGI_PORT}
       REDIS_PORT: ${REDIS_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -90,16 +72,52 @@ services:
       EMAIL_HOST_USER: ${EMAIL_HOST_USER}
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
     volumes:
-      - ./backend/jarcode:/app/jarcode
-      - django_media:/app/jarcode/media
-      - django_static:/app/jarcode/static
+      - django_media_prod:/app/jarcode/jarcode/media
+      - django_static_prod:/app/jarcode/jarcode/static
     command: >
       sh -c "python manage.py migrate
       && python manage.py collectstatic --no-input
-      && python manage.py runserver 0.0.0.0:${DJANGO_PORT}"
+      && gunicorn jarcode.wsgi:application --bind 0.0.0.0:${DJANGO_WSGI_PORT}"
     ports:
-      - "8000:${DJANGO_PORT}"
+      - "8000:${DJANGO_WSGI_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  backend-asgi-prod:
+    image: jarcode-backend:latest
+    container_name: backend-asgi-prod
+    build:
+      context: ./backend
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_AMQP_PORT: ${RABBITMQ_AMQP_PORT}
+      RABBITMQ_UI_PORT: ${RABBITMQ_UI_PORT}
+      DJANGO_WSGI_PORT: ${DJANGO_WSGI_PORT}
+      DJANGO_ASGI_PORT: ${DJANGO_ASGI_PORT}
+      REDIS_PORT: ${REDIS_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+    command: >
+      sh -c "daphne jarcode.asgi:application -b 0.0.0.0 -p${DJANGO_ASGI_PORT}"
     depends_on:
       db:
         condition: service_healthy
@@ -110,15 +128,17 @@ services:
 
   worker:
     image: jarcode-backend:latest
-    container_name: worker-dev
+    container_name: worker-prod
     build:
       context: ./backend
+    restart: always
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       RABBITMQ_AMQP_PORT: ${RABBITMQ_AMQP_PORT}
       RABBITMQ_UI_PORT: ${RABBITMQ_UI_PORT}
-      DJANGO_PORT: ${DJANGO_PORT}
+      DJANGO_WSGI_PORT: ${DJANGO_WSGI_PORT}
+      DJANGO_ASGI_PORT: ${DJANGO_ASGI_PORT}
       REDIS_PORT: ${REDIS_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -128,11 +148,13 @@ services:
       EMAIL_HOST_USER: ${EMAIL_HOST_USER}
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
     volumes:
-      - ./backend/jarcode:/app/jarcode
       - /var/run/docker.sock:/var/run/docker.sock
     command: >
-      sh -c "python manage.py rundramatiq"
+      sh -c "python manage.py rundramatiq --processes=${DRAMATIQ_PROCESSES} --threads=${DRAMATIQ_THREADS}"
     depends_on:
       db:
         condition: service_healthy
@@ -142,11 +164,9 @@ services:
         condition: service_healthy
 
   redis:
-    image: redis:latest
-    container_name: redis-dev
+    image: redis:8
+    container_name: redis-prod
     command: ["redis-server"]
-    ports:
-      - "6379:${REDIS_PORT}"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s

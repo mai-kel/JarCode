@@ -50,6 +50,7 @@ window.scrollTo = vi.fn();
 // Mock Prism for TinyMCE
 window.Prism = {
   highlight: vi.fn((code, _grammar, _language) => code),
+  highlightAll: vi.fn(),
   languages: {},
 };
 

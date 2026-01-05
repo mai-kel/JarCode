@@ -36,9 +36,24 @@ export default [
       'vue/first-attribute-linebreak': 'off',
       'vue/html-closing-bracket-newline': 'off',
       // Allow single-word component names (for PrimeVue components)
-      'vue/multi-word-component-names': ['error', {
-        ignores: ['Button', 'Card', 'Password', 'Toast', 'Menubar', 'Avatar', 'Message', 'Textarea', 'Accordion', 'Panel', 'ConfirmDialog'],
-      }],
+      'vue/multi-word-component-names': [
+        'error',
+        {
+          ignores: [
+            'Button',
+            'Card',
+            'Password',
+            'Toast',
+            'Menubar',
+            'Avatar',
+            'Message',
+            'Textarea',
+            'Accordion',
+            'Panel',
+            'ConfirmDialog',
+          ],
+        },
+      ],
       // Allow reserved component names (PrimeVue uses some reserved names)
       'vue/no-reserved-component-names': 'off',
       // Allow v-html with warning (common for rich text content)
@@ -47,11 +62,14 @@ export default [
       'vue/require-default-prop': 'warn',
       'vue/require-prop-types': 'warn',
       // Allow unused vars that start with underscore
-      'no-unused-vars': ['error', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-      }],
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
       // Allow empty catch blocks (sometimes needed)
       'no-empty': ['error', { allowEmptyCatch: true }],
       // Fix auto-fixable issues
@@ -68,11 +86,14 @@ export default [
       },
     },
     rules: {
-      'no-unused-vars': ['error', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-      }],
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
       // Allow multiple components in test files
       'vue/one-component-per-file': 'off',
     },

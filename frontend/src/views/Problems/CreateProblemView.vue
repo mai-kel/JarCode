@@ -158,8 +158,7 @@ const handleCreate = async () => {
 const goHome = () => router.push({ name: 'home' });
 
 const isDirty = computed(
-  () =>
-    !!title.value || !!description.value || !!startingCode.value || !!testCode.value
+  () => !!title.value || !!description.value || !!startingCode.value || !!testCode.value
 );
 
 useUnsavedChanges(isDirty);

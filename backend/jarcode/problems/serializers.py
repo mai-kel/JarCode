@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Problem
 from users.serializers import UserGenericInfoSerializer
-from jarcode.settings import ALLOWED_TAGS, ALLOWED_ATTRIBUTES
+from django.conf import settings
 from nh3 import clean
 
 
@@ -17,8 +17,8 @@ class ProblemSeriazlier(serializers.ModelSerializer):
     def validate_description(self, value):
         try:
             value = clean(html=value,
-                          tags=ALLOWED_TAGS,
-                          attributes=ALLOWED_ATTRIBUTES)
+                          tags=settings.ALLOWED_TAGS,
+                          attributes=settings.ALLOWED_ATTRIBUTES)
         except:
             raise serializers.ValidationError("Problem description is invalid or insecure HTML")
 
