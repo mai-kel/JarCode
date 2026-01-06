@@ -1,0 +1,41 @@
+# Copy to `.env_prod` for production compose:
+#   cp env_prod.example .env_prod
+#
+# NOTE: `.env_prod` is ignored by git (see `.gitignore`). Do not commit secrets.
+
+# RabbitMQ
+RABBITMQ_DEFAULT_USER=user
+RABBITMQ_DEFAULT_PASS=user
+RABBITMQ_AMQP_PORT=5672
+RABBITMQ_UI_PORT=15672
+
+# Django ports (container ports used by Gunicorn/Daphne)
+DJANGO_WSGI_PORT=8000
+DJANGO_ASGI_PORT=8001
+
+# Django settings
+DJANGO_SETTINGS_MODULE=jarcode.settings.settings_prod
+DJANGO_SECRET_KEY=change-me
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,backend-asgi
+
+# Redis
+REDIS_PORT=6379
+
+# Postgres
+POSTGRES_DB=jarcode
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_PORT=5432
+POSTGRES_HOST=db
+
+# Email (used for activation/password reset)
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
+
+# AI (optional)
+GEMINI_API_KEY=
+
+# Dramatiq worker tuning (optional)
+DRAMATIQ_PROCESSES=1
+DRAMATIQ_THREADS=2
+
