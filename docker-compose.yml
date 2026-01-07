@@ -13,8 +13,8 @@ services:
       - "80:80"
     volumes:
       - ./nginx/default.conf.template.dev:/etc/nginx/templates/default.conf.template
-      - django_media:/backend/jarcode/media
-      - django_static:/backend/jarcode/static
+      - django_media:/backend/jarcode/jarcode/media
+      - django_static:/backend/jarcode/jarcode/static
     depends_on:
       backend:
         condition: service_started
@@ -92,8 +92,8 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
     volumes:
       - ./backend/jarcode:/app/jarcode
-      - django_media:/app/jarcode/media
-      - django_static:/app/jarcode/static
+      - django_media:/app/jarcode/jarcode/media
+      - django_static:/app/jarcode/jarcode/static
     command: >
       sh -c "python manage.py migrate
       && python manage.py collectstatic --no-input

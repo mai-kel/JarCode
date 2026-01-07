@@ -4,11 +4,11 @@ server {
     client_max_body_size 12M;
 
     location /static/ {
-        alias /backend/jarcode/static/;
+        alias /backend/jarcode/jarcode/static/;
     }
 
     location /media/ {
-        alias /backend/jarcode/media/;
+        alias /backend/jarcode/jarcode/media/;
     }
 
     location /api/ {
